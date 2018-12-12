@@ -20,11 +20,15 @@ public class MethodNodeWrapper {
 		this.desc = methodNode.desc;
 		this.localVariableNodeWrappers = new ArrayList<LocalVariableNodeWrapper>();
 		this.parameterNodeWrappers = new ArrayList<ParameterNodeWrapper>();
-		for(LocalVariableNode localVariableNode: (List<LocalVariableNode>)methodNode.localVariables){
-			this.localVariableNodeWrappers.add(new LocalVariableNodeWrapper(localVariableNode));
+		if(methodNode.localVariables != null){
+			for(LocalVariableNode localVariableNode: (List<LocalVariableNode>)methodNode.localVariables){
+				this.localVariableNodeWrappers.add(new LocalVariableNodeWrapper(localVariableNode));
+			}
 		}
-		for(ParameterNode parameterNode: (List<ParameterNode>)methodNode.parameters){
-			this.parameterNodeWrappers.add(new ParameterNodeWrapper(parameterNode));
+		if(methodNode.parameters != null){
+			for(ParameterNode parameterNode: (List<ParameterNode>)methodNode.parameters){
+				this.parameterNodeWrappers.add(new ParameterNodeWrapper(parameterNode));
+			}
 		}
 		if(methodNode.signature != null){
 			this.signature = Optional.of(methodNode.signature);

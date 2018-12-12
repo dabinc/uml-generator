@@ -27,11 +27,15 @@ public class ClassNodeWrapper {
 		this.fieldNodeWrappers = new ArrayList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new ArrayList<MethodNodeWrapper>();
 //		this.innerClassNodeWrappers = new ArrayList<ClassNodeWrapper>();
-		for(FieldNode fieldNode: (List<FieldNode>)classNode.fields){
-			this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode));
+		if(classNode.fields != null){
+			for(FieldNode fieldNode: (List<FieldNode>)classNode.fields){
+				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode));
+			}
 		}
-		for(MethodNode methodNode: (List<MethodNode>)classNode.methods){
-			this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode));
+		if(classNode.methods != null){
+			for(MethodNode methodNode: (List<MethodNode>)classNode.methods){
+				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode));
+			}
 		}
 		if(classNode.signature != null){
 			this.signature = Optional.of(classNode.signature);
