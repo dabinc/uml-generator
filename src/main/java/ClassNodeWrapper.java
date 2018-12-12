@@ -1,6 +1,8 @@
 import java.util.List;
 import java.util.Optional;
 
+import org.objectweb.asm.tree.ClassNode;
+
 public class ClassNodeWrapper {
 	public String name;
 	public String desc;
@@ -13,7 +15,7 @@ public class ClassNodeWrapper {
 	
 	
 	
-	public ClassNodeWrapper(/*ClassNode classNode*/){
+	public ClassNodeWrapper(ClassNode classNode){
 		
 	}
 }
