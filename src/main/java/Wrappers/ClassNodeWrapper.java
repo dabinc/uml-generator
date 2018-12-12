@@ -7,6 +7,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import Enums.Modifier;
+
 public class ClassNodeWrapper {
 	public String name;
 	public String supername;
@@ -16,6 +18,7 @@ public class ClassNodeWrapper {
 //	public Optional<String> outerClass;
 	public List<String> interfaces;
 	public Optional<String> signature;
+	public List<Modifier> modifiers;
 	
 	public ClassNodeWrapper(ClassNode classNode){
 		this.name = classNode.name;
@@ -40,6 +43,7 @@ public class ClassNodeWrapper {
 		if(classNode.signature != null){
 			this.signature = Optional.of(classNode.signature);
 		}
+		this.modifiers = Modifier.getModifiers(classNode.access);
 	}
 	
 	

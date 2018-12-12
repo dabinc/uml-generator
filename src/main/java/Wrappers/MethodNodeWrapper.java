@@ -8,12 +8,15 @@ import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.ParameterNode;
 
+import Enums.Modifier;
+
 public class MethodNodeWrapper {
 	public String name;
 	public String desc;
 	public List<LocalVariableNodeWrapper> localVariableNodeWrappers;
 	public List<ParameterNodeWrapper> parameterNodeWrappers;
 	public Optional<String> signature;
+	public List<Modifier> modifiers;
 	
 	public MethodNodeWrapper(MethodNode methodNode){
 		this.name = methodNode.name;
@@ -33,5 +36,6 @@ public class MethodNodeWrapper {
 		if(methodNode.signature != null){
 			this.signature = Optional.of(methodNode.signature);
 		}
+		this.modifiers = Modifier.getModifiers(methodNode.access);
 	}
 }
