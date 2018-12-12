@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import Wrappers.ClassNodeWrapper;
+
 public class RecursiveReaderTest {
 
 	RecursiveReader reader;
@@ -41,5 +43,17 @@ public class RecursiveReaderTest {
 		reader = new RecursiveReader(names);
 		assertEquals(3, reader.getClassNodeWrappers().size());
 	}
+	
+	@Test
+	public void testQuestionLikeDemoMOne() {
+		List<String> names = new ArrayList<String>();
+		names.add("javax.swing.JComponent");
+		reader = new RecursiveReader(names);
+		for(ClassNodeWrapper clazz: reader.getClassNodeWrappers()){
+			System.out.println(clazz.name);
+		}
+		assertEquals(8, reader.getClassNodeWrappers().size());
+	}
+	
 
 }

@@ -1,7 +1,9 @@
 package Program;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
@@ -27,11 +29,23 @@ public class RecursiveReader implements Reader {
 
 	@Override
 	public List<ClassNodeWrapper> getClassNodeWrappers() {
-		List<ClassNodeWrapper> toReturn = new ArrayList<ClassNodeWrapper>();
+		Set<ClassNode> toReturn = getClassNodes(new ArrayList<>());
+		List<ClassNodeWrapper> toReturnReal = new ArrayList<ClassNodeWrapper>();
+		for(ClassNode classNode : toReturn){
+			toReturnReal.add(new ClassNodeWrapper(classNode));
+		}
+		return toReturnReal;
+	}
+	
+	public Set<ClassNode> getClassNodes(ArrayList<String> visitedClassNode){
+		Set<ClassNode> toReturn = new HashSet<ClassNode>();
 		for(ClassReader reader : classReaderList){
 			ClassNode classNode = new ClassNode();
 			reader.accept(classNode, ClassReader.EXPAND_FRAMES);
-			toReturn.add(new ClassNodeWrapper(classNode));
+			if(!visitedClassNode.contains(classNode.name)){
+				toReturn.add(classNode);
+				visitedClassNode.add(classNode.name);
+			}
 			if(!classNode.interfaces.isEmpty() || classNode.superName != null){
 				List<String> classesToRecurse = new ArrayList<String>();
 				if(classNode.superName != null){
@@ -40,10 +54,10 @@ public class RecursiveReader implements Reader {
 				for(Object interfaceName : classNode.interfaces){
 					classesToRecurse.add((String)interfaceName);					
 				}
-				Reader newReader = new RecursiveReader(classesToRecurse);
-				toReturn.addAll(newReader.getClassNodeWrappers());
+				RecursiveReader newReader = new RecursiveReader(classesToRecurse);
+				toReturn.addAll(newReader.getClassNodes(visitedClassNode));
 			}
-		}
+		}	
 		return toReturn;
 	}
 
