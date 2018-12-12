@@ -10,5 +10,6 @@ public class AssociationContainer {
 	public AssociationContainer(ClassNodeWrapper from, ClassNodeWrapper to){
 		this.from = from;
 		this.to = to;
+		this.displayContainer = new DisplayContainer();
 	}	
 }

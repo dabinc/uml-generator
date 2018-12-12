@@ -1,8 +1,15 @@
 package Containers;
 
+import java.util.Optional;
+
 public class DisplayContainer {
-	String color;
+	Optional<String> color;
+	
+	public DisplayContainer(){
+		
+	}
+	
 	public DisplayContainer(String color){
-		this.color = color;
+		this.color = Optional.of(color);
 	}
 }

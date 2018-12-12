@@ -7,5 +7,6 @@ public class MethodContainer {
 	
 	public MethodContainer(MethodNodeWrapper methodNodeWrapper){
 		this.methodNodeWrapper = methodNodeWrapper;
+		this.displayContainer = new DisplayContainer();
 	}
 }

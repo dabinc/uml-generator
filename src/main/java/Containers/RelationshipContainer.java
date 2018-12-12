@@ -10,5 +10,6 @@ public class RelationshipContainer {
 	public RelationshipContainer(ClassNodeWrapper from, ClassNodeWrapper to){
 		this.from = from;
 		this.to = to;
+		this.displayContainer = new DisplayContainer();
 	}	
 }

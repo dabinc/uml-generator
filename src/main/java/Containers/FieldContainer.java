@@ -7,5 +7,6 @@ public class FieldContainer {
 	
 	public FieldContainer(FieldNodeWrapper fieldNodeWrapper){
 		this.fieldNodeWrapper = fieldNodeWrapper;
+		this.displayContainer = new DisplayContainer();
 	}
 }
