@@ -1,3 +1,4 @@
+package Containers;
 
 public class DisplayContainer {
 	String color;

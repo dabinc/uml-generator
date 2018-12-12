@@ -1,4 +1,7 @@
+package Containers;
 import java.util.List;
+
+import Wrappers.ClassNodeWrapper;
 
 public class ClassContainer {
 	public List<FieldContainer> fields;

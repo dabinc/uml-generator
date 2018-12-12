@@ -1,4 +1,7 @@
+package Containers;
 import java.util.List;
+
+import Wrappers.ClassNodeWrapper;
 
 public class ProgramContainer {
 	public List<ClassContainer> classes;

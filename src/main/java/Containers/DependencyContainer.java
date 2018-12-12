@@ -1,3 +1,5 @@
+package Containers;
+import Wrappers.ClassNodeWrapper;
 
 public class DependencyContainer {
 	public ClassNodeWrapper from;
