@@ -1,12 +1,12 @@
 
 public class AssociationContainer {
 
-//	public ClassNode from;
-//	public ClassNode to;
+	public ClassNodeWrapper from;
+	public ClassNodeWrapper to;
 	public DisplayContainer displayContainer;
 	
-	public AssociationContainer(/*ClassNode from, ClassNode to*/){
-//		this.from = from;
-//		this.to = to;
+	public AssociationContainer(ClassNodeWrapper from, ClassNodeWrapper to){
+		this.from = from;
+		this.to = to;
 	}	
 }

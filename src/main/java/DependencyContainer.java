@@ -1,11 +1,11 @@
 
 public class DependencyContainer {
-//	public ClassNode from;
-//	public ClassNode to;
+	public ClassNodeWrapper from;
+	public ClassNodeWrapper to;
 	public DisplayContainer displayContainer;
 	
-	public DependencyContainer(/*ClassNode from, ClassNode to*/){
-//		this.from = from;
-//		this.to = to;
+	public DependencyContainer(ClassNodeWrapper from, ClassNodeWrapper to){
+		this.from = from;
+		this.to = to;
 	}
 }

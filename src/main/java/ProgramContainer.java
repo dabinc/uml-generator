@@ -7,7 +7,7 @@ public class ProgramContainer {
 	public List<AssociationContainer> associations;
 	public DisplayContainer display;
 	
-	public ProgramContainer(/*List<ClassNodes> classesList*/){
+	public ProgramContainer(List<ClassNodeWrapper> classesList){
 		
 	}
 	

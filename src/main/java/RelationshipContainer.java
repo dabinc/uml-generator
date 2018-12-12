@@ -1,12 +1,12 @@
 
 public class RelationshipContainer {
 
-//	public ClassNode from;
-//	public ClassNode to;
+	public ClassNodeWrapper from;
+	public ClassNodeWrapper to;
 	public DisplayContainer displayContainer;
 	
-	public RelationshipContainer(/*ClassNode from, ClassNode to*/){
-//		this.from = from;
-//		this.to = to;
+	public RelationshipContainer(ClassNodeWrapper from, ClassNodeWrapper to){
+		this.from = from;
+		this.to = to;
 	}	
 }

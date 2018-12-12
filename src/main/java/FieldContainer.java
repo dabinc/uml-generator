@@ -1,9 +1,9 @@
 
 public class FieldContainer {
-//	public FieldNode fieldNode;
+	public FieldNodeWrapper fieldNodeWrapper;
 	public DisplayContainer displayContainer;
 	
-	public FieldContainer(/*FieldNode fieldNode*/){
-//		this.fieldNode = fieldNode;
+	public FieldContainer(FieldNodeWrapper fieldNodeWrapper){
+		this.fieldNodeWrapper = fieldNodeWrapper;
 	}
 }

@@ -1,9 +1,9 @@
 
 public class MethodContainer {
-//	public MethodNode methodNode;
+	public MethodNodeWrapper methodNodeWrapper;
 	public DisplayContainer displayContainer;
 	
-	public MethodContainer(/*MethodNode methodNode*/){
-//		this.methodNode = methodNode;
+	public MethodContainer(MethodNodeWrapper methodNodeWrapper){
+		this.methodNodeWrapper = methodNodeWrapper;
 	}
 }

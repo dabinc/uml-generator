@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
+    api 'org.apache.commons:commons-math3:3.6.1', 'gnu.getopt:java-getopt:1.0.13', 'org.ow2.asm:asm:5.0.3'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
@@ -28,5 +28,9 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     
     // https://mvnrepository.com/artifact/gnu.getopt/java-getopt
-	compile group: 'gnu.getopt', name: 'java-getopt', version: '1.0.13'
+	//compile group: 'gnu.getopt', name: 'java-getopt', version: '1.0.13'
+	
+	// https://mvnrepository.com/artifact/org.ow2.asm/asm
+	//compile group: 'org.ow2.asm', name: 'asm', version: '5.0.3'
+	
 }
