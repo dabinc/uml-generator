@@ -39,7 +39,7 @@ public class MethodNodeWrapper {
 		if(methodNode.parameters != null){
 			for(int i = 0; i < ((List<ParameterNode>)methodNode.parameters).size(); i++){
 				this.parameterNodeWrappers.add(new ParameterNodeWrapper(((List<ParameterNode>)methodNode.parameters).get(i), 
-						(Type.getArgumentTypes(methodNode.desc))[i].getClassName().toString()));
+						(Type.getArgumentTypes(methodNode.desc))[i].getClassName()));
 			}
 		}
 		if(methodNode.signature != null){

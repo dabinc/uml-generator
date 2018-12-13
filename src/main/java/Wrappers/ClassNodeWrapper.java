@@ -22,23 +22,26 @@ public class ClassNodeWrapper {
 	public List<Modifier> modifiers;
 	
 	public ClassNodeWrapper(ClassNode classNode){
-		this.name = classNode.name;
-		this.supername = classNode.superName;
+		this.name = realName(classNode.name, "/");
+		this.supername = realName(classNode.superName, "/");	
 //		if(classNode.outerClass != null){
 //			this.outerClass = Optional.of(classNode.outerClass);
 //		}
-		this.interfaces = classNode.interfaces;
+		this.interfaces = new ArrayList<String>();
+		for(String fullInterfaceName : (List<String>)classNode.interfaces){
+			this.interfaces.add(realName(fullInterfaceName, "/"));
+		}
 		this.fieldNodeWrappers = new ArrayList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new ArrayList<MethodNodeWrapper>();
 //		this.innerClassNodeWrappers = new ArrayList<ClassNodeWrapper>();
 		if(classNode.fields != null){
 			for(FieldNode fieldNode: (List<FieldNode>)classNode.fields){
-				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).toString()));
+				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).getClassName()));
 			}
 		}
 		if(classNode.methods != null){
 			for(MethodNode methodNode: (List<MethodNode>)classNode.methods){
-				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName().toString()));
+				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName()));
 			}
 		}
 		if(classNode.signature != null){
@@ -47,5 +50,11 @@ public class ClassNodeWrapper {
 		this.modifiers = Modifier.getModifiers(classNode.access);
 	}
 	
-	
+	public String realName(String fullName, String regex){
+		if(fullName == null){
+			return null;
+		}
+		String[] fullNameSplit = fullName.split(regex);
+		return fullNameSplit[fullNameSplit.length - 1];
+	}
 }

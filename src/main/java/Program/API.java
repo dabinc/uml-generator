@@ -25,21 +25,32 @@ public class API {
 		Reader reader = new DefaultReader(Arrays.asList(classNames));
 		Display display = new TextDisplay();
 		List<PreRenderAnalysis> preRenderAnalyses = new ArrayList<PreRenderAnalysis>();
+		Renderer renderer = new PlantUMLRenderer();
+		
+		for(String option : options){
+			if(this.readerMap.containsKey(option)){
+				reader = this.readerMap.get(option);
+			} else if (this.preRenderMap.containsKey(option)){
+				preRenderAnalyses.add(this.preRenderMap.get(option));
+			} else if (this.displayMap.containsKey(option)){
+				display = this.displayMap.get(option);
+			} else if (this.rendererMap.containsKey(option)){
+				renderer = this.rendererMap.get(option);
+			}
+		}
 		
 		ProgramContainer programContainer = new ProgramContainer(reader.getClassNodeWrappers());
-		
+			
 		for(PreRenderAnalysis preRenderAnalysis : preRenderAnalyses){
 			preRenderAnalysis.modify();
 		}
 		
-		//Default Renderer
-		Renderer renderer = new PlantUMLRenderer(programContainer);
 		
-		display.display(renderer.render());
+		display.display(renderer.render(programContainer));
 	}
 	
 	public void initializeHashMaps(String[] classNames){
-		this.readerMap.put("recursive", new RecursiveReader(Arrays.asList(classNames)));
-		this.displayMap.put("visual", new VisualDisplay());
+		this.readerMap.put("-recursive", new RecursiveReader(Arrays.asList(classNames)));
+		this.displayMap.put("-visual", new VisualDisplay());
 	}
 }

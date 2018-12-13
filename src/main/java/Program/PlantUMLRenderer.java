@@ -12,16 +12,10 @@ import Enums.Modifier;
 
 public class PlantUMLRenderer implements Renderer {
 	
-	private ProgramContainer programContainer;
-	
-	public PlantUMLRenderer(ProgramContainer programContainer){
-		this.programContainer = programContainer;
-	}
-
 	@Override
-	public String render() {
+	public String render(ProgramContainer programContainer) {
 		StringBuilder toReturn = new StringBuilder();
-		toReturn.append(renderProgramContainer(this.programContainer));
+		toReturn.append(renderProgramContainer(programContainer));
 		return toReturn.toString();
 	}
 	
@@ -48,7 +42,6 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		for(Modifier modifier : classContainer.classNodeWrapper.modifiers){
 			toReturn.append(renderClassModifier(modifier));
-			toReturn.append(" ");
 		}
 		toReturn.append("class ");
 		toReturn.append(classContainer.classNodeWrapper.name);
@@ -81,7 +74,6 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		for(Modifier modifier : fieldContainer.fieldNodeWrapper.modifiers){
 			toReturn.append(renderModifier(modifier));
-			toReturn.append(" ");
 		}
 		toReturn.append(fieldContainer.fieldNodeWrapper.name);
 		toReturn.append(": ");
@@ -93,7 +85,6 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		for(Modifier modifier : methodContainer.methodNodeWrapper.modifiers){
 			toReturn.append(renderModifier(modifier));
-			toReturn.append(" ");
 		}
 		toReturn.append(methodContainer.methodNodeWrapper.name);
 		toReturn.append("(");
