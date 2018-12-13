@@ -4,7 +4,7 @@ import Wrappers.ParameterNodeWrapper;
 
 public class ParameterContainer {
 	
-	ParameterNodeWrapper parameterNodeWrapper;
+	public ParameterNodeWrapper parameterNodeWrapper;
 
 	public ParameterContainer(ParameterNodeWrapper parameterNodeWrapper) {
 		this.parameterNodeWrapper = parameterNodeWrapper;

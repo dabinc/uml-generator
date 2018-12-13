@@ -12,13 +12,15 @@ public class FieldNodeWrapper {
 	public String desc;
 	public Optional<String> signature;
 	public List<Modifier> modifiers;
+	public String type;
 	
-	public FieldNodeWrapper(FieldNode fieldNode){
+	public FieldNodeWrapper(FieldNode fieldNode, String type){
 		this.name = fieldNode.name;
 		this.desc = fieldNode.desc;
+		this.type = type;
 		if(fieldNode.signature != null){
 			this.signature = Optional.of(fieldNode.signature);
 		}
-		this.modifiers = Modifier.getModifiers(fieldNode.access);
+		this.modifiers = Modifier.getModifiers(fieldNode.access);	
 	}
 }

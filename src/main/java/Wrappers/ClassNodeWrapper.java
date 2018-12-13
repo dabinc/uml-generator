@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -32,12 +33,12 @@ public class ClassNodeWrapper {
 //		this.innerClassNodeWrappers = new ArrayList<ClassNodeWrapper>();
 		if(classNode.fields != null){
 			for(FieldNode fieldNode: (List<FieldNode>)classNode.fields){
-				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode));
+				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).toString()));
 			}
 		}
 		if(classNode.methods != null){
 			for(MethodNode methodNode: (List<MethodNode>)classNode.methods){
-				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode));
+				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName().toString()));
 			}
 		}
 		if(classNode.signature != null){

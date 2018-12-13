@@ -27,6 +27,7 @@ public class PlantUMLRenderer implements Renderer {
 	
 	private String renderProgramContainer(ProgramContainer programContainer){
 		StringBuilder toReturn = new StringBuilder();
+		toReturn.append("@startuml" + System.lineSeparator());
 		for(ClassContainer classContainer : programContainer.classes){
 			toReturn.append(renderClassContainer(classContainer));
 		}
@@ -39,7 +40,7 @@ public class PlantUMLRenderer implements Renderer {
 		for(AssociationContainer associationContainer : programContainer.associations){
 			toReturn.append(renderAssociationContainer(associationContainer));
 		}
-		//DisplayContainer?
+		toReturn.append("@enduml" + System.lineSeparator());
 		return toReturn.toString();
 	}
 	
@@ -84,7 +85,7 @@ public class PlantUMLRenderer implements Renderer {
 		}
 		toReturn.append(fieldContainer.fieldNodeWrapper.name);
 		toReturn.append(": ");
-		toReturn.append(fieldContainer.fieldNodeWrapper.);//Find Type
+		toReturn.append(fieldContainer.fieldNodeWrapper.type);
 		return toReturn.toString();
 	}
 	
@@ -104,13 +105,15 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(renderParameterContainer(methodContainer.parameterContainers.get(methodContainer.parameterContainers.size() - 1)));
 		}
 		toReturn.append("): ");
-		toReturn.append(methodContainer.methodNodeWrapper.);//Find Type
+		toReturn.append(methodContainer.methodNodeWrapper.type);
 		return toReturn.toString();
 	}
 	
 	private String renderParameterContainer(ParameterContainer parameterContainer){
 		StringBuilder toReturn = new StringBuilder();
-		
+		toReturn.append(parameterContainer.parameterNodeWrapper.name);
+		toReturn.append(": ");
+		toReturn.append(parameterContainer.parameterNodeWrapper.type);
 		return toReturn.toString();
 	}
 	
