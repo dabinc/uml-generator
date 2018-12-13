@@ -10,18 +10,13 @@ public class Main {
 		API api = new API();
 		List<String> classes = new ArrayList<String>();
 		List<String> options = new ArrayList<String>();
-		if(args.length >= 2){
-			classes.add(args[0]);
-			for(int i = 1; i < args.length; i++){
+		for(int i = 0; i < args.length; i++){
+			if(args[i].startsWith("-")){
 				options.add(args[i]);
 			}
-		}
-		else if(args.length == 1){
-			classes.add(args[0]);
-		}
-		else{
-			System.out.println("Please include a class name in your arguments.");
-			return;
+			else{
+				classes.add(args[i]);
+			}
 		}
 		String[] classArray = new String[classes.size()];
 		String[] optionsArray = new String[options.size()];

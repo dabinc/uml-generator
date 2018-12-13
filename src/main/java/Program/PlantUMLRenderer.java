@@ -53,11 +53,11 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append("class ");
 		toReturn.append(classContainer.classNodeWrapper.name);
 		if(classContainer.classNodeWrapper.supername != null){
-			toReturn.append("extends ");
+			toReturn.append(" extends ");
 			toReturn.append(classContainer.classNodeWrapper.supername);
 		}
 		if(!classContainer.classNodeWrapper.interfaces.isEmpty()){
-			toReturn.append("implements ");
+			toReturn.append(" implements ");
 			for(int i = 0; i < classContainer.classNodeWrapper.interfaces.size() - 1; i++){
 				toReturn.append(classContainer.classNodeWrapper.interfaces.get(i));
 				toReturn.append(", ");
