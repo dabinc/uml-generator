@@ -43,7 +43,13 @@ public class PlantUMLRenderer implements Renderer {
 		for(Modifier modifier : classContainer.classNodeWrapper.modifiers){
 			toReturn.append(renderClassModifier(modifier));
 		}
-		toReturn.append("class ");
+		if(classContainer.classNodeWrapper.modifiers.contains(Modifier.INTERFACE)){
+			toReturn.append("interface ");
+		}else if (classContainer.classNodeWrapper.modifiers.contains(Modifier.ABSTRACT)){
+			toReturn.append("abstract class ");
+		}else {
+			toReturn.append("class ");
+		}
 		toReturn.append(classContainer.classNodeWrapper.name);
 		if(classContainer.classNodeWrapper.supername != null){
 			toReturn.append(" extends ");
@@ -125,8 +131,8 @@ public class PlantUMLRenderer implements Renderer {
 	}
 	
 	private String renderClassModifier(Modifier modifier){
-		if(modifier.isAbstract()){
-			return "abstract";
+		if(modifier.isInterface() || modifier.isAbstract()){
+			return "";
 		}
 		else{
 			return renderModifier(modifier);

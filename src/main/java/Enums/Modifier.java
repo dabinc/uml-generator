@@ -10,6 +10,7 @@ import org.objectweb.asm.Opcodes;
 public enum Modifier {
 	PUBLIC,
 	PRIVATE,
+	INTERFACE,
 	PROTECTED,
 	PACKAGE_PROTECTED,
 	ABSTRACT,
@@ -56,6 +57,10 @@ public enum Modifier {
 		return this == VOLATILE;
 	}
 	
+	public boolean isInterface(){
+		return this == INTERFACE;
+	}
+	
 	public static List<Modifier> getModifiers(int accessCodeASM){
 		List<Modifier> toReturn = new ArrayList<Modifier>();
 		populatePairings();
@@ -73,6 +78,7 @@ public enum Modifier {
 		pairings = new HashMap<Integer, Modifier>();
 		pairings.put(Opcodes.ACC_PUBLIC, PUBLIC);
 		pairings.put(Opcodes.ACC_PRIVATE, PRIVATE);
+		pairings.put(Opcodes.ACC_INTERFACE, INTERFACE);
 		pairings.put(Opcodes.ACC_PROTECTED, PROTECTED);
 		pairings.put(Opcodes.ACC_ABSTRACT, ABSTRACT);
 		pairings.put(Opcodes.ACC_STATIC, STATIC);
