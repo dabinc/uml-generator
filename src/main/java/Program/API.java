@@ -42,7 +42,7 @@ public class API {
 		ProgramContainer programContainer = new ProgramContainer(reader.getClassNodeWrappers());
 			
 		for(PreRenderAnalysis preRenderAnalysis : preRenderAnalyses){
-			preRenderAnalysis.modify();
+			preRenderAnalysis.modify(programContainer);
 		}
 		
 		
@@ -52,5 +52,8 @@ public class API {
 	public void initializeHashMaps(String[] classNames){
 		this.readerMap.put("-recursive", new RecursiveReader(Arrays.asList(classNames)));
 		this.displayMap.put("-visual", new VisualDisplay());
+		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderAnalysis());
+		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderAnalysis());
+		this.preRenderMap.put("-protected", new KeepProtectedAndPublicPreRenderAnalysis());
 	}
 }

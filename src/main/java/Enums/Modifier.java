@@ -86,6 +86,15 @@ public enum Modifier {
 		pairings.put(Opcodes.ACC_SYNCHRONIZED, SYNCHRONIZED);
 		pairings.put(Opcodes.ACC_VOLATILE, VOLATILE);
 	}
+
+	public boolean listContains(List<Enums.Modifier> modifiers) {
+		for(Modifier modifier : modifiers){
+			if(modifier == this){
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 
