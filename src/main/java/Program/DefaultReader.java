@@ -10,7 +10,7 @@ import Wrappers.ClassNodeWrapper;
 
 public class DefaultReader implements Reader {
 	
-	List<ClassReader> classReaderList;
+	private List<ClassReader> classReaderList;
 	
 	public DefaultReader(List<String> classNameList){
 		classReaderList = new ArrayList<ClassReader>();

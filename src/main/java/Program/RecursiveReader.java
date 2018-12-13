@@ -12,7 +12,7 @@ import Wrappers.ClassNodeWrapper;
 
 public class RecursiveReader implements Reader {
 	
-	List<ClassReader> classReaderList;
+	private List<ClassReader> classReaderList;
 	
 	public RecursiveReader(List<String> classNameList){
 		classReaderList = new ArrayList<ClassReader>();
@@ -37,7 +37,7 @@ public class RecursiveReader implements Reader {
 		return toReturnReal;
 	}
 	
-	public Set<ClassNode> getClassNodes(ArrayList<String> visitedClassNode){
+	private Set<ClassNode> getClassNodes(List<String> visitedClassNode){
 		Set<ClassNode> toReturn = new HashSet<ClassNode>();
 		for(ClassReader reader : classReaderList){
 			ClassNode classNode = new ClassNode();
