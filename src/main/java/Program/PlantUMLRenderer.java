@@ -102,8 +102,6 @@ public class PlantUMLRenderer implements Renderer {
 	
 	private String renderParameterContainer(ParameterContainer parameterContainer){
 		StringBuilder toReturn = new StringBuilder();
-		toReturn.append(parameterContainer.parameterNodeWrapper.name);
-		toReturn.append(": ");
 		toReturn.append(parameterContainer.parameterNodeWrapper.type);
 		return toReturn.toString();
 	}

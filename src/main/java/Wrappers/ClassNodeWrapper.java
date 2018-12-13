@@ -15,25 +15,19 @@ public class ClassNodeWrapper {
 	public String supername;
 	public List<FieldNodeWrapper> fieldNodeWrappers;
 	public List<MethodNodeWrapper> methodNodeWrappers;
-//	public List<ClassNodeWrapper> innerClassNodeWrappers;
-//	public Optional<String> outerClass;
 	public List<String> interfaces;
 	public Optional<String> signature;
 	public List<Modifier> modifiers;
 	
 	public ClassNodeWrapper(ClassNode classNode){
 		this.name = realName(classNode.name, "/");
-		this.supername = realName(classNode.superName, "/");	
-//		if(classNode.outerClass != null){
-//			this.outerClass = Optional.of(classNode.outerClass);
-//		}
+		this.supername = realName(classNode.superName, "/");
 		this.interfaces = new ArrayList<String>();
 		for(String fullInterfaceName : (List<String>)classNode.interfaces){
 			this.interfaces.add(realName(fullInterfaceName, "/"));
 		}
 		this.fieldNodeWrappers = new ArrayList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new ArrayList<MethodNodeWrapper>();
-//		this.innerClassNodeWrappers = new ArrayList<ClassNodeWrapper>();
 		if(classNode.fields != null){
 			for(FieldNode fieldNode: (List<FieldNode>)classNode.fields){
 				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).getClassName()));
