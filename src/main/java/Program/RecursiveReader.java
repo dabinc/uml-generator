@@ -11,25 +11,11 @@ import org.objectweb.asm.tree.ClassNode;
 import Wrappers.ClassNodeWrapper;
 
 public class RecursiveReader implements Reader {
-	
-	private List<ClassReader> classReaderList;
-	
-	public RecursiveReader(List<String> classNameList){
-		classReaderList = new ArrayList<ClassReader>();
-		int i = 0;
-		try {
-			for(i = 0; i < classNameList.size(); i++){
-				classReaderList.add(new ClassReader(classNameList.get(i)));
-			}			
-		} catch (IOException e) {
-			System.out.println("RecursiveReader could not find: " + classNameList.get(i));
-			e.printStackTrace();
-		}
-	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers() {
-		Set<ClassNode> toReturn = getClassNodes(new ArrayList<String>());
+	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
+		List<ClassReader> classReaderList = getClassReaders(classNames);
+		Set<ClassNode> toReturn = getClassNodes(classReaderList, new ArrayList<String>());
 		List<ClassNodeWrapper> toReturnReal = new ArrayList<ClassNodeWrapper>();
 		for(ClassNode classNode : toReturn){
 			toReturnReal.add(new ClassNodeWrapper(classNode));
@@ -37,7 +23,21 @@ public class RecursiveReader implements Reader {
 		return toReturnReal;
 	}
 	
-	private Set<ClassNode> getClassNodes(List<String> visitedClassNode){
+	private List<ClassReader> getClassReaders(List<String> classNames){
+		List<ClassReader> classReaderList = new ArrayList<ClassReader>();
+		int i = 0;
+		try {
+			for(i = 0; i < classNames.size(); i++){
+				classReaderList.add(new ClassReader(classNames.get(i)));
+			}	
+		} catch (IOException e) {
+			System.out.println("RecursiveReader could not find: " + classNames.get(i));
+			e.printStackTrace();
+		}
+		return classReaderList;
+	}
+	
+	private Set<ClassNode> getClassNodes(List<ClassReader> classReaderList, List<String> visitedClassNode){
 		Set<ClassNode> toReturn = new HashSet<ClassNode>();
 		for(ClassReader reader : classReaderList){
 			ClassNode classNode = new ClassNode();
@@ -54,8 +54,8 @@ public class RecursiveReader implements Reader {
 				for(Object interfaceName : classNode.interfaces){
 					classesToRecurse.add((String)interfaceName);					
 				}
-				RecursiveReader newReader = new RecursiveReader(classesToRecurse);
-				toReturn.addAll(newReader.getClassNodes(visitedClassNode));
+				RecursiveReader newReader = new RecursiveReader();
+				toReturn.addAll(newReader.getClassNodes(getClassReaders(classesToRecurse), visitedClassNode));
 			}
 		}	
 		return toReturn;

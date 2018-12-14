@@ -9,24 +9,19 @@ import org.objectweb.asm.tree.ClassNode;
 import Wrappers.ClassNodeWrapper;
 
 public class DefaultReader implements Reader {
-	
-	private List<ClassReader> classReaderList;
-	
-	public DefaultReader(List<String> classNameList){
-		classReaderList = new ArrayList<ClassReader>();
-		int i = 0;
-		try {
-			for(i = 0; i < classNameList.size(); i++){
-				classReaderList.add(new ClassReader(classNameList.get(i)));
-			}			
-		} catch (IOException e) {
-			System.out.println("DefaultReader could not find: " + classNameList.get(i));
-			e.printStackTrace();
-		}
-	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers() {
+	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
+		List<ClassReader> classReaderList = new ArrayList<ClassReader>();
+		int i = 0;
+		try {
+			for(i = 0; i < classNames.size(); i++){
+				classReaderList.add(new ClassReader(classNames.get(i)));
+			}			
+		} catch (IOException e) {
+			System.out.println("DefaultReader could not find: " + classNames.get(i));
+			e.printStackTrace();
+		}
 		List<ClassNodeWrapper> toReturn = new ArrayList<ClassNodeWrapper>();
 		for(ClassReader reader : classReaderList){
 			ClassNode classNode = new ClassNode();
