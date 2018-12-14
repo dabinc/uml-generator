@@ -27,9 +27,7 @@ public class MethodNodeWrapper {
 		for(int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++){
 			this.parameterNodeWrappers.add(new ParameterNodeWrapper((Type.getArgumentTypes(methodNode.desc))[i].getClassName()));
 		}
-		if(methodNode.signature != null){
-			this.signature = Optional.of(methodNode.signature);
-		}
+		this.signature = Optional.ofNullable(methodNode.signature);
 		this.modifiers = Modifier.getModifiers(methodNode.access);
 	}
 }

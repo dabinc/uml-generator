@@ -12,8 +12,6 @@ public class LocalVariableNodeWrapper {
 	public LocalVariableNodeWrapper(LocalVariableNode localVariableNode){
 		this.name = localVariableNode.name;
 		this.desc = localVariableNode.desc;
-		if(localVariableNode.signature != null){
-			this.signature = Optional.of(localVariableNode.signature);
-		}
+		this.signature = Optional.ofNullable(localVariableNode.signature);
 	}
 }

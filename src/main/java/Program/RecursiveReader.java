@@ -29,7 +29,7 @@ public class RecursiveReader implements Reader {
 
 	@Override
 	public List<ClassNodeWrapper> getClassNodeWrappers() {
-		Set<ClassNode> toReturn = getClassNodes(new ArrayList<>());
+		Set<ClassNode> toReturn = getClassNodes(new ArrayList<String>());
 		List<ClassNodeWrapper> toReturnReal = new ArrayList<ClassNodeWrapper>();
 		for(ClassNode classNode : toReturn){
 			toReturnReal.add(new ClassNodeWrapper(classNode));

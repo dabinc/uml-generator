@@ -18,9 +18,7 @@ public class FieldNodeWrapper {
 		this.name = fieldNode.name;
 		this.desc = fieldNode.desc;
 		this.type = type;
-		if(fieldNode.signature != null){
-			this.signature = Optional.of(fieldNode.signature);
-		}
+		this.signature = Optional.ofNullable(fieldNode.signature);
 		this.modifiers = Modifier.getModifiers(fieldNode.access);	
 	}
 }

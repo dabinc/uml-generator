@@ -38,9 +38,7 @@ public class ClassNodeWrapper {
 				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName()));
 			}
 		}
-		if(classNode.signature != null){
-			this.signature = Optional.of(classNode.signature);
-		}
+		this.signature = Optional.ofNullable(classNode.signature);
 		this.modifiers = Modifier.getModifiers(classNode.access);
 	}
 	
