@@ -15,24 +15,24 @@ public class RecursiveReaderTest {
 	
 	@Test
 	public void testEmptyInput() {
-		reader = new RecursiveReader(new ArrayList<String>());
-		assertEquals(0, reader.getClassNodeWrappers().size());
+		reader = new RecursiveReader();
+		assertEquals(0, reader.getClassNodeWrappers(new ArrayList<String>()).size());
 	}
 
 	@Test
 	public void testNonExistantClassName() {
 		List<String> invalidNames = new ArrayList<String>();
 		invalidNames.add("java.scooby.doo");
-		reader = new RecursiveReader(invalidNames);
-		assertEquals(0, reader.getClassNodeWrappers().size());
+		reader = new RecursiveReader();
+		assertEquals(0, reader.getClassNodeWrappers(invalidNames).size());
 	}
 	
 	@Test
 	public void testOneExistantClassName() {
 		List<String> validNames = new ArrayList<String>();
 		validNames.add("java.util.Collection");
-		reader = new RecursiveReader(validNames);
-		assertEquals(3, reader.getClassNodeWrappers().size());
+		reader = new RecursiveReader();
+		assertEquals(3, reader.getClassNodeWrappers(validNames).size());
 	}
 	
 	@Test
@@ -40,19 +40,19 @@ public class RecursiveReaderTest {
 		List<String> names = new ArrayList<String>();
 		names.add("java.util.Collection");
 		names.add("java.scooby.doo");
-		reader = new RecursiveReader(names);
-		assertEquals(3, reader.getClassNodeWrappers().size());
+		reader = new RecursiveReader();
+		assertEquals(3, reader.getClassNodeWrappers(names).size());
 	}
 	
 	@Test
 	public void testQuestionLikeDemoMOne() {
 		List<String> names = new ArrayList<String>();
 		names.add("javax.swing.JComponent");
-		reader = new RecursiveReader(names);
-		for(ClassNodeWrapper clazz: reader.getClassNodeWrappers()){
+		reader = new RecursiveReader();
+		for(ClassNodeWrapper clazz: reader.getClassNodeWrappers(names)){
 			System.out.println(clazz.name);
 		}
-		assertEquals(8, reader.getClassNodeWrappers().size());
+		assertEquals(8, reader.getClassNodeWrappers(names).size());
 	}
 	
 
