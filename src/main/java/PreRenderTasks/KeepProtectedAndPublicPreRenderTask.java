@@ -1,4 +1,4 @@
-package Program;
+package PreRenderTasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,20 @@ import Containers.FieldContainer;
 import Containers.MethodContainer;
 import Containers.ProgramContainer;
 
-public class KeepProtectedAndPublicPreRenderAnalysis implements PreRenderAnalysis {
+public class KeepProtectedAndPublicPreRenderTask extends PreRenderTaskDecorator {
 
+	public KeepProtectedAndPublicPreRenderTask(PreRenderTask preRenderTask) {
+		super(preRenderTask);
+	}
+	
 	@Override
-	public void modify(ProgramContainer programContainer) {
+	public ProgramContainer getProgramContainer(){
+		ProgramContainer programContainer = super.getProgramContainer();
+		modify(programContainer);
+		return programContainer;
+	}
+	
+	private void modify(ProgramContainer programContainer) {
 		List<ClassContainer> toRemove = new ArrayList<ClassContainer>();
 		for(ClassContainer classContainer : programContainer.classes){
 			if(Enums.Modifier.PUBLIC.listContains(classContainer.classNodeWrapper.modifiers) || Enums.Modifier.PROTECTED.listContains(classContainer.classNodeWrapper.modifiers)){
