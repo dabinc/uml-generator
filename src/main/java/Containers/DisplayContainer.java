@@ -10,6 +10,6 @@ public class DisplayContainer {
 	}
 	
 	public DisplayContainer(String color){
-		this.color = Optional.of(color);
+		this.color = Optional.ofNullable(color);
 	}
 }

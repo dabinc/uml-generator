@@ -1,13 +1,10 @@
 package Program;
 
-import Containers.AssociationContainer;
 import Containers.ClassContainer;
-import Containers.DependencyContainer;
 import Containers.FieldContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
-import Containers.RelationshipContainer;
 import Enums.Modifier;
 
 public class PlantUMLRenderer implements Renderer {
@@ -24,15 +21,6 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append("@startuml" + System.lineSeparator());
 		for(ClassContainer classContainer : programContainer.classes){
 			toReturn.append(renderClassContainer(classContainer));
-		}
-		for(DependencyContainer dependencyContainer : programContainer.dependencies){
-			toReturn.append(renderDependencyContainer(dependencyContainer));
-		}
-		for(RelationshipContainer relationshipContainer : programContainer.relationships){
-			toReturn.append(renderRelationshipContainer(relationshipContainer));
-		}
-		for(AssociationContainer associationContainer : programContainer.associations){
-			toReturn.append(renderAssociationContainer(associationContainer));
 		}
 		toReturn.append("@enduml" + System.lineSeparator());
 		return toReturn.toString();
@@ -109,24 +97,6 @@ public class PlantUMLRenderer implements Renderer {
 	private String renderParameterContainer(ParameterContainer parameterContainer){
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(parameterContainer.parameterNodeWrapper.type);
-		return toReturn.toString();
-	}
-	
-	private String renderDependencyContainer(DependencyContainer dependencyContainer){
-		StringBuilder toReturn = new StringBuilder();
-		
-		return toReturn.toString();
-	}
-	
-	private String renderRelationshipContainer(RelationshipContainer relationshipContainer){
-		StringBuilder toReturn = new StringBuilder();
-		
-		return toReturn.toString();
-	}
-	
-	private String renderAssociationContainer(AssociationContainer associationContainer){
-		StringBuilder toReturn = new StringBuilder();
-		
 		return toReturn.toString();
 	}
 	
