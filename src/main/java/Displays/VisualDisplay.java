@@ -1,4 +1,4 @@
-package Program;
+package Displays;
 
 public class VisualDisplay implements Display{
 

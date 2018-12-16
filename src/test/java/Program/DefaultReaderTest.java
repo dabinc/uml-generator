@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import Readers.DefaultReader;
+
 public class DefaultReaderTest {
 	
 	DefaultReader reader;

@@ -5,12 +5,20 @@ import java.util.List;
 import java.util.Map;
 
 import Containers.ProgramContainer;
+import Displays.Display;
+import Displays.TextDisplay;
+import Displays.VisualDisplay;
 import PreRenderTasks.DefaultPreRenderTask;
 import PreRenderTasks.KeepOnlyPublicPreRenderTaskFactory;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTaskFactory;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTaskFactory;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskFactory;
+import Readers.DefaultReader;
+import Readers.Reader;
+import Readers.RecursiveReader;
+import Renderers.PlantUMLRenderer;
+import Renderers.Renderer;
 import Wrappers.ClassNodeWrapper;
 
 public class API {

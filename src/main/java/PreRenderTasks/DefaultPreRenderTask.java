@@ -15,7 +15,16 @@ public class DefaultPreRenderTask implements PreRenderTask{
 
 	@Override
 	public ProgramContainer getProgramContainer() {
-		return new ProgramContainer(this.classNodeWrappers);
+		//Generate classes
+		ProgramContainer toReturn = new ProgramContainer(this.classNodeWrappers);
+		
+		//Flesh out classes with references to other classes
+		
+		
+		//Setup arrows
+		
+		
+		return toReturn;
 	}
 
 }

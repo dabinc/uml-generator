@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import Readers.RecursiveReader;
 import Wrappers.ClassNodeWrapper;
 
 public class RecursiveReaderTest {
