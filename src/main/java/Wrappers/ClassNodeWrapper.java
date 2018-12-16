@@ -1,5 +1,5 @@
 package Wrappers;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +22,12 @@ public class ClassNodeWrapper {
 	public ClassNodeWrapper(ClassNode classNode){
 		this.name = realName(classNode.name, "/");
 		this.supername = realName(classNode.superName, "/");
-		this.interfaces = new ArrayList<String>();
+		this.interfaces = new LinkedList<String>();
 		for(String fullInterfaceName : (List<String>)classNode.interfaces){
 			this.interfaces.add(realName(fullInterfaceName, "/"));
 		}
-		this.fieldNodeWrappers = new ArrayList<FieldNodeWrapper>();
-		this.methodNodeWrappers = new ArrayList<MethodNodeWrapper>();
+		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
+		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		if(classNode.fields != null){
 			for(FieldNode fieldNode: (List<FieldNode>)classNode.fields){
 				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).getClassName()));
@@ -40,6 +40,20 @@ public class ClassNodeWrapper {
 		}
 		this.signature = Optional.ofNullable(classNode.signature);
 		this.modifiers = Modifier.getModifiers(classNode.access);
+	}
+	
+	public ClassNodeWrapper(String name, Optional<Modifier> modifier){
+		//This is for "fake" ClassNodeWrappers, aka the superclasses and interfaces we don't want to recurse into
+		this.name = realName(name, "/");
+		this.supername = null;
+		this.interfaces = new LinkedList<String>();
+		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
+		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
+		this.signature = Optional.empty();
+		this.modifiers = new LinkedList<Modifier>();
+		if(modifier.isPresent()){
+			this.modifiers.add(modifier.get());
+		}
 	}
 	
 	public String realName(String fullName, String regex){

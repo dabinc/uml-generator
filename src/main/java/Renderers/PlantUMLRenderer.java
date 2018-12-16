@@ -1,10 +1,12 @@
 package Renderers;
 
+import Containers.ArrowContainer;
 import Containers.ClassContainer;
 import Containers.FieldContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
+import Enums.ArrowType;
 import Enums.Modifier;
 
 public class PlantUMLRenderer implements Renderer {
@@ -22,10 +24,13 @@ public class PlantUMLRenderer implements Renderer {
 		for(ClassContainer classContainer : programContainer.classes){
 			toReturn.append(renderClassContainer(classContainer));
 		}
+		for(ArrowContainer arrowContainer : programContainer.arrows){
+			toReturn.append(renderArrowContainer(arrowContainer));
+		}
 		toReturn.append("@enduml" + System.lineSeparator());
 		return toReturn.toString();
 	}
-	
+
 	private String renderClassContainer(ClassContainer classContainer){
 		StringBuilder toReturn = new StringBuilder();
 		for(Modifier modifier : classContainer.classNodeWrapper.modifiers){
@@ -39,18 +44,6 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append("class ");
 		}
 		toReturn.append(classContainer.classNodeWrapper.name);
-		if(classContainer.classNodeWrapper.supername != null){
-			toReturn.append(" extends ");
-			toReturn.append(classContainer.classNodeWrapper.supername);
-		}
-		if(!classContainer.classNodeWrapper.interfaces.isEmpty()){
-			toReturn.append(" implements ");
-			for(int i = 0; i < classContainer.classNodeWrapper.interfaces.size() - 1; i++){
-				toReturn.append(classContainer.classNodeWrapper.interfaces.get(i));
-				toReturn.append(", ");
-			}
-			toReturn.append(classContainer.classNodeWrapper.interfaces.get(classContainer.classNodeWrapper.interfaces.size() - 1));
-		}
 		toReturn.append("{" + System.lineSeparator());
 		for(FieldContainer fieldContainer : classContainer.fields){
 			toReturn.append(renderFieldContainer(fieldContainer));
@@ -100,6 +93,33 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 	
+	private String renderArrowContainer(ArrowContainer arrowContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.append(arrowContainer.to.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderArrowType(arrowContainer.arrowType));
+		toReturn.append(" ");
+		toReturn.append(arrowContainer.from.classNodeWrapper.name);		
+		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
+	}
+	
+	private String renderArrowType(ArrowType arrowType) {
+		if(arrowType.isInheritance()){
+			return "<|--";
+		}
+		else if(arrowType.isImplementation()){
+			return "<|..";
+		}
+		else if(arrowType.isDependency()){
+			return "<..";
+		}
+		else if(arrowType.isAssociation()){
+			return "<--";
+		}
+		return "";
+	}
+
 	private String renderClassModifier(Modifier modifier){
 		if(modifier.isInterface() || modifier.isAbstract()){
 			return "";

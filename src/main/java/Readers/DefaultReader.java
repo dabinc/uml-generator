@@ -2,10 +2,12 @@ package Readers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
+import Enums.Modifier;
 import Wrappers.ClassNodeWrapper;
 
 public class DefaultReader implements Reader {
@@ -27,6 +29,12 @@ public class DefaultReader implements Reader {
 			ClassNode classNode = new ClassNode();
 			reader.accept(classNode, ClassReader.EXPAND_FRAMES);
 			toReturn.add(new ClassNodeWrapper(classNode));
+			if(classNode.superName != null){
+				toReturn.add(new ClassNodeWrapper(classNode.superName, Optional.empty()));
+			}
+			for(String interfaceName : (List<String>)classNode.interfaces){
+				toReturn.add(new ClassNodeWrapper(interfaceName, Optional.of(Modifier.INTERFACE)));
+			}
 		}
 		return toReturn;
 	}
