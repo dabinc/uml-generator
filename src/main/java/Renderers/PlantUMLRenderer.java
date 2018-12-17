@@ -2,6 +2,7 @@ package Renderers;
 
 import Containers.ArrowContainer;
 import Containers.ClassContainer;
+import Containers.DisplayContainer;
 import Containers.FieldContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
@@ -44,6 +45,9 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append("class ");
 		}
 		toReturn.append(classContainer.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(classContainer.displayContainer));
+		toReturn.append(" ");
 		toReturn.append("{" + System.lineSeparator());
 		for(FieldContainer fieldContainer : classContainer.fields){
 			toReturn.append(renderFieldContainer(fieldContainer));
@@ -56,23 +60,29 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append("}" + System.lineSeparator());
 		return toReturn.toString();
 	}
-	
+
 	private String renderFieldContainer(FieldContainer fieldContainer){
 		StringBuilder toReturn = new StringBuilder();
 		for(Modifier modifier : fieldContainer.fieldNodeWrapper.modifiers){
 			toReturn.append(renderModifier(modifier));
 		}
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHTML(fieldContainer.displayContainer));
+		toReturn.append(" ");
 		toReturn.append(fieldContainer.fieldNodeWrapper.name);
 		toReturn.append(": ");
 		toReturn.append(fieldContainer.fieldNodeWrapper.type);
 		return toReturn.toString();
 	}
-	
+
 	private String renderMethodContainer(MethodContainer methodContainer){
 		StringBuilder toReturn = new StringBuilder();
 		for(Modifier modifier : methodContainer.methodNodeWrapper.modifiers){
 			toReturn.append(renderModifier(modifier));
 		}
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHTML(methodContainer.displayContainer));
+		toReturn.append(" ");
 		toReturn.append(methodContainer.methodNodeWrapper.name);
 		toReturn.append("(");
 		if(!methodContainer.parameterContainers.isEmpty()){
@@ -99,9 +109,27 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(" ");
 		toReturn.append(renderArrowType(arrowContainer.arrowType));
 		toReturn.append(" ");
-		toReturn.append(arrowContainer.from.classNodeWrapper.name);		
+		toReturn.append(arrowContainer.from.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(arrowContainer.displayContainer));
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
+	}
+	
+	private String renderDisplayContainerHashTag(DisplayContainer displayContainer) {
+		if(displayContainer.color.isPresent()){
+			return "#" + displayContainer.color.get();
+		}
+		return "";
+	}
+	
+
+	
+	private Object renderDisplayContainerHTML(DisplayContainer displayContainer) {
+		if(displayContainer.color.isPresent()){
+			return "<font color = \"" + displayContainer.color.get() + "\">"; 
+		}
+		return "";
 	}
 	
 	private String renderArrowType(ArrowType arrowType) {

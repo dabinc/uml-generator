@@ -3,7 +3,7 @@ package Containers;
 import java.util.Optional;
 
 public class DisplayContainer {
-	Optional<String> color;
+	public Optional<String> color;
 	
 	public DisplayContainer(){
 		this.color = Optional.empty();
