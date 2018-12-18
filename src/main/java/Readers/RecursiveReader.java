@@ -1,7 +1,7 @@
 package Readers;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,8 +15,8 @@ public class RecursiveReader implements Reader {
 	@Override
 	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
 		List<ClassReader> classReaderList = getClassReaders(classNames);
-		Set<ClassNode> toReturn = getClassNodes(classReaderList, new ArrayList<String>());
-		List<ClassNodeWrapper> toReturnReal = new ArrayList<ClassNodeWrapper>();
+		Set<ClassNode> toReturn = getClassNodes(classReaderList, new LinkedList<String>());
+		List<ClassNodeWrapper> toReturnReal = new LinkedList<ClassNodeWrapper>();
 		for(ClassNode classNode : toReturn){
 			toReturnReal.add(new ClassNodeWrapper(classNode));
 		}
@@ -24,7 +24,7 @@ public class RecursiveReader implements Reader {
 	}
 	
 	private List<ClassReader> getClassReaders(List<String> classNames){
-		List<ClassReader> classReaderList = new ArrayList<ClassReader>();
+		List<ClassReader> classReaderList = new LinkedList<ClassReader>();
 		int i = 0;
 		try {
 			for(i = 0; i < classNames.size(); i++){
@@ -47,7 +47,7 @@ public class RecursiveReader implements Reader {
 				visitedClassNode.add(classNode.name);
 			}
 			if(!classNode.interfaces.isEmpty() || classNode.superName != null){
-				List<String> classesToRecurse = new ArrayList<String>();
+				List<String> classesToRecurse = new LinkedList<String>();
 				if(classNode.superName != null){
 					classesToRecurse.add(classNode.superName);
 				}

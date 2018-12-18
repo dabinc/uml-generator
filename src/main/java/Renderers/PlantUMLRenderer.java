@@ -123,8 +123,6 @@ public class PlantUMLRenderer implements Renderer {
 		return "";
 	}
 	
-
-	
 	private Object renderDisplayContainerHTML(DisplayContainer displayContainer) {
 		if(displayContainer.color.isPresent()){
 			return "<font color = \"" + displayContainer.color.get() + "\">"; 

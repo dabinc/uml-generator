@@ -32,10 +32,10 @@ public class API {
 		this.preRenderMap = new HashMap<>();
 		this.displayMap = new HashMap<>();
 		this.rendererMap = new HashMap<>();
-	}
-	public void use(String[] classNames, String[] options){
 		initializeHashMaps();
-		//Default Values
+	}
+	
+	public void use(String[] classNames, String[] options){		
 		Reader reader = new DefaultReader();
 		Display display = new TextDisplay();
 		Renderer renderer = new PlantUMLRenderer();
@@ -65,7 +65,7 @@ public class API {
 		display.display(renderer.render(programContainer));
 	}
 	
-	public void initializeHashMaps(){
+	private void initializeHashMaps(){
 		this.readerMap.put("-recursive", new RecursiveReader());
 		this.displayMap.put("-visual", new VisualDisplay());
 		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
