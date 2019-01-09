@@ -1,5 +1,6 @@
 package PreRenderTasks;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,9 +56,11 @@ public class DefaultPreRenderTask implements PreRenderTask{
 				toReturn.arrows.add(new AssociationArrowContainer(associatedClass, classContainer));
 			}
 			//TODO Add Cardinality
-			//TODO Remove association/dependency duplicates
 			//TODO Add two way arrows
-			for(ClassContainer dependencyClass : classContainer.dependencies){
+			List<ClassContainer> nonDuplicateDependencies = new LinkedList<ClassContainer>();
+			nonDuplicateDependencies.addAll(classContainer.dependencies);
+			nonDuplicateDependencies.removeAll(classContainer.associations);
+			for(ClassContainer dependencyClass : nonDuplicateDependencies){
 				toReturn.arrows.add(new DependencyArrowContainer(dependencyClass, classContainer));
 			}
 			
