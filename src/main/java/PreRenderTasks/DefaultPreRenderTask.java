@@ -4,12 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
 import Containers.ProgramContainer;
+import Containers.TwoWayArrowDecorator;
 import Wrappers.ClassNodeWrapper;
 
 public class DefaultPreRenderTask implements PreRenderTask{
@@ -51,18 +53,27 @@ public class DefaultPreRenderTask implements PreRenderTask{
 		}
 		
 		//Setup Arrows
+		List<ClassContainer> visitedClasses = new LinkedList<ClassContainer>();
 		for(ClassContainer classContainer : toReturn.classes){
+			visitedClasses.add(classContainer);
 			//TODO Add Cardinality
 			for(ClassContainer associatedClass : classContainer.associations){
-				toReturn.arrows.add(new AssociationArrowContainer(associatedClass, classContainer));
+				ArrowContainer toAdd = new AssociationArrowContainer(associatedClass, classContainer);
+				if(associatedClass.associations.contains(classContainer) && !visitedClasses.contains(associatedClass)){
+					toAdd = new TwoWayArrowDecorator(toAdd);
+				}
+				toReturn.arrows.add(toAdd);
 			}
 			//TODO Add Cardinality
-			//TODO Add two way arrows
 			List<ClassContainer> nonDuplicateDependencies = new LinkedList<ClassContainer>();
 			nonDuplicateDependencies.addAll(classContainer.dependencies);
 			nonDuplicateDependencies.removeAll(classContainer.associations);
 			for(ClassContainer dependencyClass : nonDuplicateDependencies){
-				toReturn.arrows.add(new DependencyArrowContainer(dependencyClass, classContainer));
+				ArrowContainer toAdd = new DependencyArrowContainer(dependencyClass, classContainer);
+				if(dependencyClass.dependencies.contains(classContainer) && !visitedClasses.contains(dependencyClass)){
+					toAdd = new TwoWayArrowDecorator(toAdd);
+				}
+				toReturn.arrows.add(toAdd);
 			}
 			
 			
