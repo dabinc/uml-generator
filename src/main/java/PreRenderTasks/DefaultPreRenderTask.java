@@ -41,7 +41,7 @@ public class DefaultPreRenderTask implements PreRenderTask{
 					}
 				}
 				for(String dependencyName : fromClass.classNodeWrapper.dependencies){
-					if(dependencyName.equals(toClass.classNodeWrapper.name)){
+					if(dependencyName.equals(toClass.classNodeWrapper.name) ){
 						fromClass.dependencies.add(toClass);
 					}
 				}
