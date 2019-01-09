@@ -14,6 +14,8 @@ public class ClassContainer {
 	
 	public Optional<ClassContainer> superclass;
 	public List<ClassContainer> interfaces;
+	public List<ClassContainer> dependencies;
+	public List<ClassContainer> associations;
 	
 	public ClassNodeWrapper classNodeWrapper;	
 	
@@ -30,5 +32,7 @@ public class ClassContainer {
 		}
 		this.superclass = Optional.empty();
 		this.interfaces = new LinkedList<ClassContainer>();
+		this.dependencies = new LinkedList<ClassContainer>();
+		this.associations = new LinkedList<ClassContainer>();
 	}
 }

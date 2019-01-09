@@ -4,8 +4,8 @@ import Renderers.Renderer;
 
 public class AssociationArrowContainer extends ArrowContainer {
 
-	public AssociationArrowContainer(ClassContainer to, ClassContainer from) {
-		super(to, from);
+	public AssociationArrowContainer(ClassContainer to, ClassContainer from, String toCardinality, String fromCardinality) {
+		super(to, from, toCardinality, fromCardinality);
 	}
 
 	@Override
