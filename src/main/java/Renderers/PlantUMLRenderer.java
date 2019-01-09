@@ -202,5 +202,16 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
+
+	@Override
+	public String modifyToTwoWay(String baseArrow) {
+		String arrowAndAfter = baseArrow.substring(baseArrow.indexOf('<'));
+		String arrow = arrowAndAfter.substring(0, arrowAndAfter.indexOf(' '));
+		char arrowLineChar = arrow.charAt(arrow.length() - 1);
+		String arrowHead = arrow.substring(1, arrow.indexOf(arrowLineChar));
+		String newArrow = arrow + arrowHead + ">";
+		String newFull = baseArrow.replace(arrow, newArrow);
+		return newFull;
+	}
 	
 }
