@@ -36,6 +36,7 @@ public class DefaultPreRenderTask implements PreRenderTask{
 						fromClass.interfaces.add(toClass);
 					}
 				}
+				//The Readers will handle making sure that there are not duplicates within associations and dependencies
 				for(String associationName : fromClass.classNodeWrapper.associations){
 					if(associationName.equals(toClass.classNodeWrapper.name)){
 						fromClass.associations.add(toClass);

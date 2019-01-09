@@ -1,6 +1,6 @@
 package Renderers;
 
-import Containers.ArrowContainer;
+import Containers.AbstractArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
@@ -28,7 +28,7 @@ public class PlantUMLRenderer implements Renderer {
 		for(ClassContainer classContainer : programContainer.classes){
 			toReturn.append(renderClassContainer(classContainer));
 		}
-		for(ArrowContainer arrowContainer : programContainer.arrows){
+		for(AbstractArrowContainer arrowContainer : programContainer.arrows){
 			toReturn.append(renderArrowContainer(arrowContainer));
 		}
 		toReturn.append("@enduml" + System.lineSeparator());
@@ -106,7 +106,7 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 	
-	private String renderArrowContainer(ArrowContainer arrowContainer) {
+	private String renderArrowContainer(AbstractArrowContainer arrowContainer) {
 		return arrowContainer.render(this);
 	}
 	
@@ -201,6 +201,17 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(renderDisplayContainerHashTag(implementationArrowContainer.displayContainer));
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
+	}
+
+	@Override
+	public String modifyToTwoWay(String baseArrow) {
+		String arrowAndAfter = baseArrow.substring(baseArrow.indexOf('<'));
+		String arrow = arrowAndAfter.substring(0, arrowAndAfter.indexOf(' '));
+		char arrowLineChar = arrow.charAt(arrow.length() - 1);
+		String arrowHead = arrow.substring(1, arrow.indexOf(arrowLineChar));
+		String newArrow = arrow.toString() + arrowHead + ">";
+		String newFull = baseArrow.replaceFirst(arrow, newArrow);
+		return newFull;
 	}
 	
 }

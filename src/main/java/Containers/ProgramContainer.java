@@ -6,14 +6,14 @@ import Wrappers.ClassNodeWrapper;
 
 public class ProgramContainer {
 	public List<ClassContainer> classes;
-	public List<ArrowContainer> arrows;
+	public List<AbstractArrowContainer> arrows;
 	
 	public ProgramContainer(List<ClassNodeWrapper> classesList){
 		this.classes = new LinkedList<ClassContainer>();
 		for(ClassNodeWrapper wrapper : classesList){
 			this.classes.add(new ClassContainer(wrapper));
 		}
-		this.arrows = new LinkedList<ArrowContainer>();
+		this.arrows = new LinkedList<AbstractArrowContainer>();
 	}
 	
 }
