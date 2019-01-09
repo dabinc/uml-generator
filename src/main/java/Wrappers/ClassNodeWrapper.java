@@ -23,7 +23,7 @@ public class ClassNodeWrapper {
 	
 	public ClassNodeWrapper(ClassNode classNode){
 		this.name = classNode.name.replaceAll("/", ".");
-		this.supername = classNode.superName.replaceAll("/", ".");
+		this.supername = classNode.superName == null ? "" : classNode.superName.replaceAll("/", ".");
 		this.interfaces = new LinkedList<String>();
 		this.associations = new LinkedList<String>();
 		this.dependencies = new LinkedList<String>();

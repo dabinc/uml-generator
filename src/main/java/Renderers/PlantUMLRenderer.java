@@ -1,6 +1,6 @@
 package Renderers;
 
-import Containers.AbstractArrowContainer;
+import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
@@ -28,7 +28,7 @@ public class PlantUMLRenderer implements Renderer {
 		for(ClassContainer classContainer : programContainer.classes){
 			toReturn.append(renderClassContainer(classContainer));
 		}
-		for(AbstractArrowContainer arrowContainer : programContainer.arrows){
+		for(ArrowContainer arrowContainer : programContainer.arrows){
 			toReturn.append(renderArrowContainer(arrowContainer));
 		}
 		toReturn.append("@enduml" + System.lineSeparator());
@@ -106,7 +106,7 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 	
-	private String renderArrowContainer(AbstractArrowContainer arrowContainer) {
+	private String renderArrowContainer(ArrowContainer arrowContainer) {
 		return arrowContainer.render(this);
 	}
 	
@@ -209,8 +209,8 @@ public class PlantUMLRenderer implements Renderer {
 		String arrow = arrowAndAfter.substring(0, arrowAndAfter.indexOf(' '));
 		char arrowLineChar = arrow.charAt(arrow.length() - 1);
 		String arrowHead = arrow.substring(1, arrow.indexOf(arrowLineChar));
-		String newArrow = arrow.toString() + arrowHead + ">";
-		String newFull = baseArrow.replaceFirst(arrow, newArrow);
+		String newArrow = arrow + arrowHead + ">";
+		String newFull = baseArrow.replace(arrow, newArrow);
 		return newFull;
 	}
 	
