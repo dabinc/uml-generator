@@ -7,7 +7,7 @@ import java.util.Map;
 import Containers.ProgramContainer;
 import Displays.Display;
 import Displays.TextDisplay;
-import Displays.VisualDisplay;
+import Displays.FileDisplay;
 import PreRenderTasks.DefaultPreRenderTask;
 import PreRenderTasks.KeepOnlyPublicPreRenderTaskFactory;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTaskFactory;
@@ -67,7 +67,7 @@ public class API {
 	
 	private void initializeHashMaps(){
 		this.readerMap.put("-recursive", new RecursiveReader());
-		this.displayMap.put("-visual", new VisualDisplay());
+		this.displayMap.put("-file", new FileDisplay());
 		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());
 		this.preRenderMap.put("-protected", new KeepProtectedAndPublicPreRenderTaskFactory());

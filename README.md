@@ -8,7 +8,7 @@ Pass in any number of the options below to args:
 2. "-private" renders everything
 3. "-protected" render only procteded or public classes, fields, and methods
 4. "-public" render only public classes, fields, and methods
-5. "-visual" render visually (YET TO BE IMPLEMENTED)
+5. "-file" render to a file
 
 The default options are to not recurse into superclasses and interfacess, private level analysis, text display, and using PlantUML
 
