@@ -1,13 +1,16 @@
 package Renderers;
 
 import Containers.ArrowContainer;
+import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
+import Containers.DependencyArrowContainer;
 import Containers.DisplayContainer;
 import Containers.FieldContainer;
+import Containers.ImplementationArrowContainer;
+import Containers.InheritanceArrowContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
-import Enums.ArrowType;
 import Enums.Modifier;
 
 public class PlantUMLRenderer implements Renderer {
@@ -104,16 +107,7 @@ public class PlantUMLRenderer implements Renderer {
 	}
 	
 	private String renderArrowContainer(ArrowContainer arrowContainer) {
-		StringBuilder toReturn = new StringBuilder();
-		toReturn.append(arrowContainer.to.classNodeWrapper.name);
-		toReturn.append(" ");
-		toReturn.append(renderArrowType(arrowContainer.arrowType));
-		toReturn.append(" ");
-		toReturn.append(arrowContainer.from.classNodeWrapper.name);
-		toReturn.append(" ");
-		toReturn.append(renderDisplayContainerHashTag(arrowContainer.displayContainer));
-		toReturn.append(System.lineSeparator());
-		return toReturn.toString();
+		return arrowContainer.render(this);
 	}
 	
 	private String renderDisplayContainerHashTag(DisplayContainer displayContainer) {
@@ -126,22 +120,6 @@ public class PlantUMLRenderer implements Renderer {
 	private Object renderDisplayContainerHTML(DisplayContainer displayContainer) {
 		if(displayContainer.color.isPresent()){
 			return "<font color = \"" + displayContainer.color.get() + "\">"; 
-		}
-		return "";
-	}
-	
-	private String renderArrowType(ArrowType arrowType) {
-		if(arrowType.isInheritance()){
-			return "<|--";
-		}
-		else if(arrowType.isImplementation()){
-			return "<|..";
-		}
-		else if(arrowType.isDependency()){
-			return "<..";
-		}
-		else if(arrowType.isAssociation()){
-			return "<--";
 		}
 		return "";
 	}
@@ -175,6 +153,54 @@ public class PlantUMLRenderer implements Renderer {
 			return "{static}";
 		}
 		return "";
+	}
+
+	@Override
+	public String renderDependencyArrowContainer(DependencyArrowContainer dependencyArrowContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.append(dependencyArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(" <.. ");
+		toReturn.append(dependencyArrowContainer.from.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(dependencyArrowContainer.displayContainer));
+		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderAssociationArrowContainer(AssociationArrowContainer associationArrowContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.append(associationArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(" <-- ");
+		toReturn.append(associationArrowContainer.from.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(associationArrowContainer.displayContainer));
+		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderInheritanceArrowContainer(InheritanceArrowContainer inheritanceArrowContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.append(inheritanceArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(" <|-- ");
+		toReturn.append(inheritanceArrowContainer.from.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(inheritanceArrowContainer.displayContainer));
+		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderImplementationArrowContainer(ImplementationArrowContainer implementationArrowContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.append(implementationArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(" <|.. ");
+		toReturn.append(implementationArrowContainer.from.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(implementationArrowContainer.displayContainer));
+		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
 	}
 	
 }

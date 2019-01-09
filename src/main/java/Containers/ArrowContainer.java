@@ -1,17 +1,17 @@
 package Containers;
 
-import Enums.ArrowType;
+import Renderers.Renderer;
 
-public class ArrowContainer {
+public abstract class ArrowContainer {
 	public ClassContainer to;
 	public ClassContainer from;
 	public DisplayContainer displayContainer;
-	public ArrowType arrowType;
 	
-	public ArrowContainer(ClassContainer to, ClassContainer from, ArrowType arrowType){
+	public ArrowContainer(ClassContainer to, ClassContainer from){
 		this.to = to;
 		this.from = from;
-		this.arrowType = arrowType;
 		this.displayContainer = new DisplayContainer();
 	}
+	
+	public abstract String render(Renderer renderer);
 }

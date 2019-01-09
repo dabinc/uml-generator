@@ -20,11 +20,11 @@ public class ClassNodeWrapper {
 	public List<Modifier> modifiers;
 	
 	public ClassNodeWrapper(ClassNode classNode){
-		this.name = realName(classNode.name, "/");
-		this.supername = realName(classNode.superName, "/");
+		this.name = classNode.name.replaceAll("/", ".");
+		this.supername = classNode.superName.replaceAll("/", ".");
 		this.interfaces = new LinkedList<String>();
 		for(String fullInterfaceName : (List<String>)classNode.interfaces){
-			this.interfaces.add(realName(fullInterfaceName, "/"));
+			this.interfaces.add(fullInterfaceName.replaceAll("/", "."));
 		}
 		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
@@ -44,7 +44,7 @@ public class ClassNodeWrapper {
 	
 	public ClassNodeWrapper(String name, Optional<Modifier> modifier){
 		//This is for "fake" ClassNodeWrappers, aka the superclasses and interfaces we don't want to recurse into
-		this.name = realName(name, "/");
+		this.name = name.replaceAll("/", ".");
 		this.supername = null;
 		this.interfaces = new LinkedList<String>();
 		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
@@ -54,13 +54,5 @@ public class ClassNodeWrapper {
 		if(modifier.isPresent()){
 			this.modifiers.add(modifier.get());
 		}
-	}
-	
-	public String realName(String fullName, String regex){
-		if(fullName == null){
-			return null;
-		}
-		String[] fullNameSplit = fullName.split(regex);
-		return fullNameSplit[fullNameSplit.length - 1];
 	}
 }

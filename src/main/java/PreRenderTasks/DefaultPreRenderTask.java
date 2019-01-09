@@ -5,8 +5,9 @@ import java.util.Optional;
 
 import Containers.ArrowContainer;
 import Containers.ClassContainer;
+import Containers.ImplementationArrowContainer;
+import Containers.InheritanceArrowContainer;
 import Containers.ProgramContainer;
-import Enums.ArrowType;
 import Wrappers.ClassNodeWrapper;
 
 public class DefaultPreRenderTask implements PreRenderTask{
@@ -39,10 +40,10 @@ public class DefaultPreRenderTask implements PreRenderTask{
 		//Setup Arrows
 		for(ClassContainer classContainer : toReturn.classes){
 			if(classContainer.superclass.isPresent()){
-				toReturn.arrows.add(new ArrowContainer(classContainer.superclass.get(), classContainer, ArrowType.INHERITANCE));
+				toReturn.arrows.add(new InheritanceArrowContainer(classContainer.superclass.get(), classContainer));
 			}
 			for(ClassContainer implementedClass : classContainer.interfaces){
-				toReturn.arrows.add(new ArrowContainer(implementedClass, classContainer, ArrowType.IMPLEMENTATION));
+				toReturn.arrows.add(new ImplementationArrowContainer(implementedClass, classContainer));
 			}
 		}
 		
