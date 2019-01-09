@@ -3,6 +3,10 @@ package Containers;
 import Renderers.Renderer;
 
 public class DependencyArrowContainer extends ArrowContainer {
+	
+	public DependencyArrowContainer(ClassContainer to, ClassContainer from) {
+		super(to, from, null, null);
+	}
 
 	public DependencyArrowContainer(ClassContainer to, ClassContainer from, String toCardinality, String fromCardinality) {
 		super(to, from, toCardinality, fromCardinality);

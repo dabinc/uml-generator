@@ -16,6 +16,8 @@ public class ClassNodeWrapper {
 	public List<FieldNodeWrapper> fieldNodeWrappers;
 	public List<MethodNodeWrapper> methodNodeWrappers;
 	public List<String> interfaces;
+	public List<String> associations;
+	public List<String> dependencies;
 	public Optional<String> signature;
 	public List<Modifier> modifiers;
 	
@@ -23,6 +25,8 @@ public class ClassNodeWrapper {
 		this.name = classNode.name.replaceAll("/", ".");
 		this.supername = classNode.superName.replaceAll("/", ".");
 		this.interfaces = new LinkedList<String>();
+		this.associations = new LinkedList<String>();
+		this.dependencies = new LinkedList<String>();
 		for(String fullInterfaceName : (List<String>)classNode.interfaces){
 			this.interfaces.add(fullInterfaceName.replaceAll("/", "."));
 		}
@@ -47,6 +51,8 @@ public class ClassNodeWrapper {
 		this.name = name.replaceAll("/", ".");
 		this.supername = null;
 		this.interfaces = new LinkedList<String>();
+		this.associations = new LinkedList<String>();
+		this.dependencies = new LinkedList<String>();
 		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		this.signature = Optional.empty();
