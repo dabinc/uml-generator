@@ -10,7 +10,7 @@ public class FileDisplay implements Display{
 	public void display(String plantUMLCode) {
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter("temp\\plantUML-" + System.currentTimeMillis() + ".txt", "UTF-8");
+			writer = new PrintWriter("temp" + System.getProperty("file.separator") + "plantUML-" + System.currentTimeMillis() + ".txt", "UTF-8");
 			writer.println(plantUMLCode);
 			writer.close();
 		} catch (FileNotFoundException e) {
