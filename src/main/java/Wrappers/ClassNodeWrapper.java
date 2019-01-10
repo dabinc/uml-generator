@@ -103,7 +103,8 @@ public class ClassNodeWrapper {
 									}
 								}
 							}
-						}				
+						}	
+						
 						@Override
 						public void visitEnd() {
 							super.visitEnd();
