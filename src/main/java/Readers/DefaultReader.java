@@ -111,13 +111,15 @@ public class DefaultReader implements Reader {
 						};
 						sr.acceptType(sv);
 					} else {
-						String field = Type.getType(fieldNode.desc).toString();
-						associations.add(field.substring(1,field.length()-1).replaceAll("/", "."));
-						if(!passed.contains(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")))){
-//							neededClasses.add(new ClassNodeWrapper(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")), Optional.empty()));
-							ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")), Optional.empty());
-							neededClasses.add(toAdd);
-							passed.add(toAdd.name);
+						if(!isPrimitive(Type.getType(fieldNode.desc).getClassName())){
+							String field = Type.getType(fieldNode.desc).toString();
+							associations.add(field.substring(1,field.length()-1).replaceAll("/", "."));
+							if(!passed.contains(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")))){
+//								neededClasses.add(new ClassNodeWrapper(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")), Optional.empty()));
+								ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")), Optional.empty());
+								neededClasses.add(toAdd);
+								passed.add(toAdd.name);
+							}
 						}
 					}
 				}
@@ -156,13 +158,15 @@ public class DefaultReader implements Reader {
 						if(Type.getArgumentTypes(methodNode.desc).length != 0){
 							for(int i1 = 0; i1 < Type.getArgumentTypes(methodNode.desc).length; i1++){
 								String name =removeArrayFromName((Type.getArgumentTypes(methodNode.desc))[i1].getClassName().replaceAll("/", "."));
-								if(!dependencies.contains(name)){
-									dependencies.add(name);
-									if(!passed.contains(removeArrayFromName(name))){
-//										neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name), Optional.empty()));
-										ClassNodeWrapper toAdd = new ClassNodeWrapper(name, Optional.empty());
-										neededClasses.add(toAdd);
-										passed.add(toAdd.name);
+								if(!isPrimitive(name)){
+									if(!dependencies.contains(name)){
+										dependencies.add(name);
+										if(!passed.contains(removeArrayFromName(name))){
+//											neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name), Optional.empty()));
+											ClassNodeWrapper toAdd = new ClassNodeWrapper(name, Optional.empty());
+											neededClasses.add(toAdd);
+											passed.add(toAdd.name);
+										}
 									}
 								}
 							}
@@ -170,13 +174,15 @@ public class DefaultReader implements Reader {
 						
 						if (!Type.getReturnType(methodNode.desc).getClassName().toString().equals("void")){
 							String name =removeArrayFromName(Type.getReturnType(methodNode.desc).getClassName()).replaceAll("/", ".");
-							if(!dependencies.contains(name)){
-								dependencies.add(name);
-								if(!passed.contains(name)){
-//									neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name), Optional.empty()));
-									ClassNodeWrapper toAdd = new ClassNodeWrapper(name, Optional.empty());
-									neededClasses.add(toAdd);
-									passed.add(toAdd.name);
+							if(!isPrimitive(name)){
+								if(!dependencies.contains(name)){
+									dependencies.add(name);
+									if(!passed.contains(name)){
+//										neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name), Optional.empty()));
+										ClassNodeWrapper toAdd = new ClassNodeWrapper(name, Optional.empty());
+										neededClasses.add(toAdd);
+										passed.add(toAdd.name);
+									}
 								}
 							}
 						}
@@ -194,6 +200,15 @@ public class DefaultReader implements Reader {
 			return name.substring(0, name.indexOf('['));
 		}
 		return name;
+	}
+	
+	public boolean isPrimitive(String name){
+		if(name.equals(Type.BOOLEAN_TYPE.getClassName()) || name.equals(Type.BYTE_TYPE.getClassName()) || name.equals(Type.CHAR_TYPE.getClassName()) || name.equals(Type.DOUBLE_TYPE.getClassName())
+				|| name.equals(Type.FLOAT_TYPE.getClassName()) || name.equals(Type.INT_TYPE.getClassName()) || name.equals(Type.LONG_TYPE.getClassName()) || name.equals(Type.SHORT_TYPE.getClassName())
+						|| name.equals(Type.VOID_TYPE.getClassName())){
+			return true;
+		}
+		return false;
 	}
 
 }

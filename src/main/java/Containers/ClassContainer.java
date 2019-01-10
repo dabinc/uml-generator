@@ -17,7 +17,7 @@ public class ClassContainer {
 	public List<ClassContainer> dependencies;
 	public List<ClassContainer> associations;
 	
-	public ClassNodeWrapper classNodeWrapper;	
+	public ClassNodeWrapper classNodeWrapper;
 	
 	public ClassContainer(ClassNodeWrapper classNodeWrapper){
 		this.classNodeWrapper = classNodeWrapper;

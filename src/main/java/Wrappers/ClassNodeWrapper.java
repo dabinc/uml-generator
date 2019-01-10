@@ -46,9 +46,11 @@ public class ClassNodeWrapper {
 						public void visitClassType(String name) {
 							// TODO Auto-generated method stub
 							super.visitClassType(name);
-							if(!associations.contains(name.replaceAll("/", "."))){
-								associations.add(name.replaceAll("/", "."));
-								
+							if(!isPrimitive(removeArrayFromName(name))){
+								if(!associations.contains(name.replaceAll("/", "."))){
+									associations.add(name.replaceAll("/", "."));
+									
+								}
 							}
 						}
 						
@@ -56,8 +58,10 @@ public class ClassNodeWrapper {
 						public void visitTypeVariable(String name) {
 							// TODO Auto-generated method stub
 							super.visitTypeVariable(name);
-							if(!associations.contains(name.replaceAll("/", "."))){
-								associations.add(name.replaceAll("/", "."));
+							if(!isPrimitive(removeArrayFromName(name))){
+								if(!associations.contains(name.replaceAll("/", "."))){
+									associations.add(name.replaceAll("/", "."));
+								}
 							}
 						}				
 						@Override
@@ -68,8 +72,10 @@ public class ClassNodeWrapper {
 					};
 					sr.acceptType(sv);
 				} else {
-					String field = Type.getType(fieldNode.desc).toString();
-					this.associations.add(field.substring(1,field.length()-1).replaceAll("/", "."));
+					if(!isPrimitive(removeArrayFromName(Type.getType(fieldNode.desc).getClassName()))){
+						String field = Type.getType(fieldNode.desc).toString();
+						this.associations.add(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")));
+					}
 				}
 			}
 		} 
@@ -84,8 +90,10 @@ public class ClassNodeWrapper {
 						public void visitClassType(String name) {
 							// TODO Auto-generated method stub
 							super.visitClassType(name);
-							if(!dependencies.contains(name.replaceAll("/", "."))){
-								dependencies.add(name.replaceAll("/", "."));
+							if(!isPrimitive(removeArrayFromName(name))){
+								if(!dependencies.contains(removeArrayFromName(name).replaceAll("/", "."))){
+									dependencies.add(removeArrayFromName(name).replaceAll("/", "."));
+								}
 							}
 						}
 						
@@ -102,16 +110,20 @@ public class ClassNodeWrapper {
 					if(Type.getArgumentTypes(methodNode.desc).length != 0){
 						for(int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++){
 							String name =(Type.getArgumentTypes(methodNode.desc))[i].getClassName().replaceAll("/", ".");
-							if(!this.dependencies.contains(name)){
-								this.dependencies.add(name);
+							if(!isPrimitive(removeArrayFromName(name))){
+								if(!this.dependencies.contains(removeArrayFromName(name))){
+									this.dependencies.add(removeArrayFromName(name));
+								}
 							}
 						}
 					}
 					
 					if (!Type.getReturnType(methodNode.desc).getClassName().toString().equals("void")){
 						String name =(Type.getReturnType(methodNode.desc).getClassName()).replaceAll("/", ".");
-						if(!this.dependencies.contains(name)){
-							this.dependencies.add(name);
+						if(!isPrimitive(removeArrayFromName(name))){
+							if(!this.dependencies.contains(removeArrayFromName(name))){
+								this.dependencies.add(removeArrayFromName(name));
+							}
 						}
 					}
 				}
@@ -135,5 +147,21 @@ public class ClassNodeWrapper {
 		if(modifier.isPresent()){
 			this.modifiers.add(modifier.get());
 		}
+	}
+	
+	public String removeArrayFromName(String name){
+		if(name.contains("[")){
+			return name.substring(0, name.indexOf('['));
+		}
+		return name;
+	}
+	
+	public boolean isPrimitive(String name){
+		if(name.equals(Type.BOOLEAN_TYPE.getClassName()) || name.equals(Type.BYTE_TYPE.getClassName()) || name.equals(Type.CHAR_TYPE.getClassName()) || name.equals(Type.DOUBLE_TYPE.getClassName())
+				|| name.equals(Type.FLOAT_TYPE.getClassName()) || name.equals(Type.INT_TYPE.getClassName()) || name.equals(Type.LONG_TYPE.getClassName()) || name.equals(Type.SHORT_TYPE.getClassName())
+						|| name.equals(Type.VOID_TYPE.getClassName())){
+			return true;
+		}
+		return false;
 	}
 }
