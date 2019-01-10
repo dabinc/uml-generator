@@ -24,24 +24,31 @@ public class RecursiveReader implements Reader {
 		List<String> nextNames = new LinkedList<String>();
 		for(ClassReader reader : classReaderList){
 			ClassNode classNode = new ClassNode();
-			reader.accept(classNode, ClassReader.EXPAND_FRAMES);
-			ClassNodeWrapper toAdd = new ClassNodeWrapper(classNode);
-			if(!visitedClassNames.contains(toAdd.name)){
+			reader.accept(classNode, ClassReader.EXPAND_FRAMES);			
+			if(!visitedClassNames.contains(classNode.name.replaceAll("/", "."))){
+				ClassNodeWrapper toAdd = new ClassNodeWrapper(classNode);
 				toReturn.add(toAdd);
 				visitedClassNames.add(toAdd.name);
-				nextNames.addAll(toAdd.interfaces);
-				if(toAdd.supername != null){
+				for(String interfaceName : toAdd.interfaces){
+					if(!visitedClassNames.contains(interfaceName)){
+						nextNames.add(interfaceName);
+					}
+				}
+				if(toAdd.supername != null && !visitedClassNames.contains(toAdd.supername)){
 					nextNames.add(toAdd.supername);
 				}
 				for(CardinalityWrapper cardinalityWrapper : toAdd.associations){
-					nextNames.add(cardinalityWrapper.toClass);
+					if(!visitedClassNames.contains(cardinalityWrapper.toClass)){
+						nextNames.add(cardinalityWrapper.toClass);
+					}
 				}
 				for(CardinalityWrapper cardinalityWrapper : toAdd.dependencies){
-					nextNames.add(cardinalityWrapper.toClass);
+					if(!visitedClassNames.contains(cardinalityWrapper.toClass)){
+						nextNames.add(cardinalityWrapper.toClass);
+					}
 				}
 			}
 		}
-		nextNames.removeAll(visitedClassNames);
 		if(!nextNames.isEmpty()){
 			toReturn.addAll(recursiveGetClassNodeWrappers(nextNames, visitedClassNames));
 		}		
