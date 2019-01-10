@@ -1,7 +1,8 @@
 package Wrappers;
-import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.objectweb.asm.Opcodes;
@@ -20,8 +21,8 @@ public class ClassNodeWrapper {
 	public List<FieldNodeWrapper> fieldNodeWrappers;
 	public List<MethodNodeWrapper> methodNodeWrappers;
 	public List<String> interfaces;
-	public List<String> associations;
-	public List<String> dependencies;
+	public List<CardinalityWrapper> associations;
+	public List<CardinalityWrapper> dependencies;
 	public Optional<String> signature;
 	public List<Modifier> modifiers;
 	
@@ -29,8 +30,8 @@ public class ClassNodeWrapper {
 		this.name = classNode.name.replaceAll("/", ".");
 		this.supername = classNode.superName == null ? "" : classNode.superName.replaceAll("/", ".");
 		this.interfaces = new LinkedList<String>();
-		this.associations = new LinkedList<String>();
-		this.dependencies = new LinkedList<String>();
+		this.associations = new LinkedList<CardinalityWrapper>();
+		this.dependencies = new LinkedList<CardinalityWrapper>();
 		for(String fullInterfaceName : (List<String>)classNode.interfaces){
 			this.interfaces.add(fullInterfaceName.replaceAll("/", "."));
 		}
@@ -42,39 +43,83 @@ public class ClassNodeWrapper {
 				if(fieldNode.signature != null){
 					SignatureReader sr = new SignatureReader(fieldNode.signature);
 					SignatureVisitor sv = new SignatureVisitor(Opcodes.ASM5) {
+						TypeNameNode current = null;
+						
 						@Override
 						public void visitClassType(String name) {
-							// TODO Auto-generated method stub
 							super.visitClassType(name);
 							if(!isPrimitive(removeArrayFromName(name))){
-								if(!associations.contains(name.replaceAll("/", "."))){
-									associations.add(name.replaceAll("/", "."));
-									
+								current = new TypeNameNode(removeArrayFromName(name).replaceAll("/", "."), current);
+								if(current.parent != null){
+									current.parent.children.add(current);
+								}
+								Optional<CardinalityWrapper> match = Optional.empty();
+								for(CardinalityWrapper wrapper : associations){
+									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+										match = Optional.of(wrapper);
+									}
+								}
+								if(!match.isPresent()){
+									if(current.parent != null){
+										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
+									}
+									else{
+										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
+									}
+								}
+								else{
+									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
+										match.get().isOneToMany = true;
+									}
 								}
 							}
 						}
 						
 						@Override
 						public void visitTypeVariable(String name) {
-							// TODO Auto-generated method stub
 							super.visitTypeVariable(name);
 							if(!isPrimitive(removeArrayFromName(name))){
-								if(!associations.contains(name.replaceAll("/", "."))){
-									associations.add(name.replaceAll("/", "."));
+								current = new TypeNameNode(removeArrayFromName(name).replaceAll("/", "."), current);
+								if(current.parent != null){
+									current.parent.children.add(current);
+								}
+								Optional<CardinalityWrapper> match = Optional.empty();
+								for(CardinalityWrapper wrapper : associations){
+									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+										match = Optional.of(wrapper);
+									}
+								}
+								if(!match.isPresent()){
+									if(current.parent != null){
+										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
+									}
+									else{
+										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
+									}
+								}
+								else{
+									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
+										match.get().isOneToMany = true;
+									}
 								}
 							}
 						}				
 						@Override
 						public void visitEnd() {
-							// TODO Auto-generated method stub
 							super.visitEnd();
+							current = current.parent;
 						};
 					};
 					sr.acceptType(sv);
 				} else {
 					if(!isPrimitive(removeArrayFromName(Type.getType(fieldNode.desc).getClassName()))){
-						String field = Type.getType(fieldNode.desc).toString();
-						this.associations.add(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")));
+						String field = Type.getType(fieldNode.desc).getClassName().toString();
+						if(removeArrayFromName(field).length() == field.length()){
+							this.associations.add(new CardinalityWrapper(removeArrayFromName(field.replaceAll("/", ".")), false));
+						}
+						else{
+							this.associations.add(new CardinalityWrapper(removeArrayFromName(field.replaceAll("/", ".")), true));
+						}						
 					}
 				}
 			}
@@ -85,22 +130,42 @@ public class ClassNodeWrapper {
 				if(methodNode.signature != null){
 					SignatureReader sr = new SignatureReader(methodNode.signature);
 					SignatureVisitor sv = new SignatureVisitor(Opcodes.ASM5) {
+						TypeNameNode current = null;
 							
 						@Override
 						public void visitClassType(String name) {
-							// TODO Auto-generated method stub
 							super.visitClassType(name);
 							if(!isPrimitive(removeArrayFromName(name))){
-								if(!dependencies.contains(removeArrayFromName(name).replaceAll("/", "."))){
-									dependencies.add(removeArrayFromName(name).replaceAll("/", "."));
+								current = new TypeNameNode(removeArrayFromName(name).replaceAll("/", "."), current);
+								if(current.parent != null){
+									current.parent.children.add(current);
+								}
+								Optional<CardinalityWrapper> match = Optional.empty();
+								for(CardinalityWrapper wrapper : dependencies){
+									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+										match = Optional.of(wrapper);
+									}
+								}
+								if(!match.isPresent()){
+									if(current.parent != null){
+										dependencies.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
+									}
+									else{
+										dependencies.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
+									}
+								}
+								else{
+									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
+										match.get().isOneToMany = true;
+									}
 								}
 							}
 						}
 						
 						@Override
 						public void visitEnd() {
-							// TODO Auto-generated method stub
 							super.visitEnd();
+							current = current.parent;
 						};
 						
 					};
@@ -111,8 +176,24 @@ public class ClassNodeWrapper {
 						for(int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++){
 							String name =(Type.getArgumentTypes(methodNode.desc))[i].getClassName().replaceAll("/", ".");
 							if(!isPrimitive(removeArrayFromName(name))){
-								if(!this.dependencies.contains(removeArrayFromName(name))){
-									this.dependencies.add(removeArrayFromName(name));
+								Optional<CardinalityWrapper> match = Optional.empty();
+								for(CardinalityWrapper wrapper : dependencies){
+									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+										match = Optional.of(wrapper);
+									}
+								}
+								if(!match.isPresent()){
+									if(name.equals(removeArrayFromName(name))){
+										this.dependencies.add(new CardinalityWrapper(name, false));
+									}
+									else{
+										this.dependencies.add(new CardinalityWrapper(name, true));
+									}									
+								}
+								else{
+									if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
+										match.get().isOneToMany = true;
+									}
 								}
 							}
 						}
@@ -121,8 +202,24 @@ public class ClassNodeWrapper {
 					if (!Type.getReturnType(methodNode.desc).getClassName().toString().equals("void")){
 						String name =(Type.getReturnType(methodNode.desc).getClassName()).replaceAll("/", ".");
 						if(!isPrimitive(removeArrayFromName(name))){
-							if(!this.dependencies.contains(removeArrayFromName(name))){
-								this.dependencies.add(removeArrayFromName(name));
+							Optional<CardinalityWrapper> match = Optional.empty();
+							for(CardinalityWrapper wrapper : dependencies){
+								if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+									match = Optional.of(wrapper);
+								}
+							}
+							if(!match.isPresent()){
+								if(name.equals(removeArrayFromName(name))){
+									this.dependencies.add(new CardinalityWrapper(name, false));
+								}
+								else{
+									this.dependencies.add(new CardinalityWrapper(name, true));
+								}									
+							}
+							else{
+								if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
+									match.get().isOneToMany = true;
+								}
 							}
 						}
 					}
@@ -138,8 +235,8 @@ public class ClassNodeWrapper {
 		this.name = name.replaceAll("/", ".");
 		this.supername = null;
 		this.interfaces = new LinkedList<String>();
-		this.associations = new LinkedList<String>();
-		this.dependencies = new LinkedList<String>();
+		this.associations = new LinkedList<CardinalityWrapper>();
+		this.dependencies = new LinkedList<CardinalityWrapper>();
 		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		this.signature = Optional.empty();
@@ -163,5 +260,31 @@ public class ClassNodeWrapper {
 			return true;
 		}
 		return false;
+	}
+	
+	private class TypeNameNode{
+		public String fullTypeName;
+		public List<TypeNameNode> children;
+		public TypeNameNode parent;
+		
+		public TypeNameNode(String fullTypeName, TypeNameNode parent){
+			this.fullTypeName = fullTypeName;
+			this.parent = parent;
+			this.children = new LinkedList<TypeNameNode>();
+		}
+		
+		public boolean extendsCollectionOrMap(){
+			boolean toReturn = false;
+			try {
+				Class<?> clazz = Class.forName(fullTypeName);				
+				toReturn = Collection.class.isAssignableFrom(clazz) || Map.class.isAssignableFrom(clazz);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			if(!toReturn && this.parent != null){
+				toReturn = this.parent.extendsCollectionOrMap();
+			}
+			return toReturn;
+		}
 	}
 }

@@ -17,6 +17,7 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Enums.Modifier;
+import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 import Wrappers.FieldNodeWrapper;
 import Wrappers.MethodNodeWrapper;
@@ -47,168 +48,38 @@ public class DefaultReader implements Reader {
 		
 		List<String> associations = new LinkedList<>();
 		List<String> dependencies = new LinkedList<>();
-//		Set<String> passedClasses = new HashSet<>();
+		Set<String> passedClasses = new HashSet<>();
 		Set<ClassNodeWrapper> neededClasses = new HashSet<>();
 		for(ClassNodeWrapper classNodeWrapper : toReturn){
 			if(classNodeWrapper.supername != null && !passed.contains(classNodeWrapper.supername)){
-//				neededClasses.add(new ClassNodeWrapper(classNodeWrapper.supername, Optional.empty()));
-//				passed.add(classNodeWrapper.supername);
-				
 				ClassNodeWrapper toAdd = new ClassNodeWrapper(classNodeWrapper.supername, Optional.empty());
 				neededClasses.add(toAdd);
 				passed.add(toAdd.name);
 			}
 			for(String interfaceName : classNodeWrapper.interfaces){
-				if(!passed.contains(interfaceName)){
-//					neededClasses.add(new ClassNodeWrapper(interfaceName, Optional.empty()));
-//					passed.add(interfaceName);
-					
+				if(!passed.contains(interfaceName)){					
 					ClassNodeWrapper toAdd = new ClassNodeWrapper(interfaceName, Optional.empty());
 					neededClasses.add(toAdd);
 					passed.add(toAdd.name);
 				}
 			}
-			
-			if(classNodeWrapper.fieldNodeWrappers!= null){
-				for(FieldNodeWrapper fieldNode: (List<FieldNodeWrapper>)classNodeWrapper.fieldNodeWrappers){
-					if(fieldNode.signature.isPresent()){
-						SignatureReader sr = new SignatureReader(fieldNode.signature.get());
-						SignatureVisitor sv = new SignatureVisitor(Opcodes.ASM5) {
-							@Override
-							public void visitClassType(String name) {
-								// TODO Auto-generated method stub
-								super.visitClassType(name);
-								if(!associations.contains(name.replaceAll("/", "."))){
-									associations.add(name.replaceAll("/", "."));
-									if(!passed.contains(removeArrayFromName(name.replaceAll("/", ".")))){
-//										neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name.replaceAll("/", ".")), Optional.empty()));
-										ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(name.replaceAll("/", ".")), Optional.empty());
-										neededClasses.add(toAdd);
-										passed.add(toAdd.name);
-									}
-								}
-							}
-							
-							@Override
-							public void visitTypeVariable(String name) {
-								// TODO Auto-generated method stub
-								super.visitTypeVariable(name);
-								if(!associations.contains(name.replaceAll("/", "."))){
-									associations.add(name.replaceAll("/", "."));
-									if(!passed.contains(removeArrayFromName(name.replaceAll("/", ".")))){
-//										neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name.replaceAll("/", ".")), Optional.empty()));
-										ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(name.replaceAll("/", ".")), Optional.empty());
-										neededClasses.add(toAdd);
-										passed.add(toAdd.name);
-									}
-								}
-							}				
-							@Override
-							public void visitEnd() {
-								// TODO Auto-generated method stub
-								super.visitEnd();
-							};
-						};
-						sr.acceptType(sv);
-					} else {
-						if(!isPrimitive(Type.getType(fieldNode.desc).getClassName())){
-							String field = Type.getType(fieldNode.desc).getClassName().toString();
-							associations.add(field);
-							if(!passed.contains(removeArrayFromName(field.replaceAll("/", ".")))){
-//								neededClasses.add(new ClassNodeWrapper(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")), Optional.empty()));
-								ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(field.replaceAll("/", ".")), Optional.empty());
-								neededClasses.add(toAdd);
-								passed.add(toAdd.name);
-							}
-						}
-					}
+			for(CardinalityWrapper cardinalityWrapper : classNodeWrapper.associations){
+				if(!passed.contains(cardinalityWrapper.toClass)){
+					ClassNodeWrapper toAdd = new ClassNodeWrapper(cardinalityWrapper.toClass, Optional.empty());
+					neededClasses.add(toAdd);
+					passed.add(toAdd.name);
 				}
-			} 
-			if(classNodeWrapper.methodNodeWrappers != null){
-				for(MethodNodeWrapper methodNode: (List<MethodNodeWrapper>)classNodeWrapper.methodNodeWrappers){
-					if(methodNode.signature.isPresent()){
-						SignatureReader sr = new SignatureReader(methodNode.signature.get());
-						SignatureVisitor sv = new SignatureVisitor(Opcodes.ASM5) {
-								
-							@Override
-							public void visitClassType(String name) {
-								// TODO Auto-generated method stub
-								super.visitClassType(name);
-								if(!dependencies.contains(name.replaceAll("/", "."))){
-									dependencies.add(name.replaceAll("/", "."));
-									if(!passed.contains(removeArrayFromName(name))){
-//										neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name.replaceAll("/", ".")), Optional.empty()));
-										ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(name.replaceAll("/", ".")), Optional.empty());
-										neededClasses.add(toAdd);
-										passed.add(toAdd.name);
-									}
-								}
-							}
-							
-							@Override
-							public void visitEnd() {
-								// TODO Auto-generated method stub
-								super.visitEnd();
-							};
-							
-						};
-						sr.accept(sv);
-					} else {
-						// gets the parameters 
-						if(Type.getArgumentTypes(methodNode.desc).length != 0){
-							for(int i1 = 0; i1 < Type.getArgumentTypes(methodNode.desc).length; i1++){
-								String name =removeArrayFromName((Type.getArgumentTypes(methodNode.desc))[i1].getClassName().replaceAll("/", "."));
-								if(!isPrimitive(name)){
-									if(!dependencies.contains(name)){
-										dependencies.add(name);
-										if(!passed.contains(removeArrayFromName(name))){
-//											neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name), Optional.empty()));
-											ClassNodeWrapper toAdd = new ClassNodeWrapper(name, Optional.empty());
-											neededClasses.add(toAdd);
-											passed.add(toAdd.name);
-										}
-									}
-								}
-							}
-						}
-						
-						if (!Type.getReturnType(methodNode.desc).getClassName().toString().equals("void")){
-							String name =removeArrayFromName(Type.getReturnType(methodNode.desc).getClassName()).replaceAll("/", ".");
-							if(!isPrimitive(name)){
-								if(!dependencies.contains(name)){
-									dependencies.add(name);
-									if(!passed.contains(name)){
-//										neededClasses.add(new ClassNodeWrapper(removeArrayFromName(name), Optional.empty()));
-										ClassNodeWrapper toAdd = new ClassNodeWrapper(name, Optional.empty());
-										neededClasses.add(toAdd);
-										passed.add(toAdd.name);
-									}
-								}
-							}
-						}
-					}
+			}
+			for(CardinalityWrapper cardinalityWrapper : classNodeWrapper.dependencies){
+				if(!passed.contains(cardinalityWrapper.toClass)){
+					ClassNodeWrapper toAdd = new ClassNodeWrapper(cardinalityWrapper.toClass, Optional.empty());
+					neededClasses.add(toAdd);
+					passed.add(toAdd.name);
 				}
 			}
 		}
-		
+				
 		toReturn.addAll(neededClasses);
 		return toReturn;
 	}
-	
-	public String removeArrayFromName(String name){
-		if(name.contains("[")){
-			return name.substring(0, name.indexOf('['));
-		}
-		return name;
-	}
-	
-	public boolean isPrimitive(String name){
-		if(name.equals(Type.BOOLEAN_TYPE.getClassName()) || name.equals(Type.BYTE_TYPE.getClassName()) || name.equals(Type.CHAR_TYPE.getClassName()) || name.equals(Type.DOUBLE_TYPE.getClassName())
-				|| name.equals(Type.FLOAT_TYPE.getClassName()) || name.equals(Type.INT_TYPE.getClassName()) || name.equals(Type.LONG_TYPE.getClassName()) || name.equals(Type.SHORT_TYPE.getClassName())
-						|| name.equals(Type.VOID_TYPE.getClassName())){
-			return true;
-		}
-		return false;
-	}
-
 }

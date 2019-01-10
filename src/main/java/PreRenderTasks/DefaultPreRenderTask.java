@@ -12,6 +12,7 @@ import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
 import Containers.ProgramContainer;
 import Containers.TwoWayArrowDecorator;
+import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 
 public class DefaultPreRenderTask implements PreRenderTask{
@@ -38,13 +39,13 @@ public class DefaultPreRenderTask implements PreRenderTask{
 						fromClass.interfaces.add(toClass);
 					}
 				}
-				for(String associationName : fromClass.classNodeWrapper.associations){
-					if(associationName.equals(toClass.classNodeWrapper.name)){
+				for(CardinalityWrapper associationName : fromClass.classNodeWrapper.associations){
+					if(associationName.toClass.equals(toClass.classNodeWrapper.name)){
 						fromClass.associations.add(toClass);
 					}
 				}
-				for(String dependencyName : fromClass.classNodeWrapper.dependencies){
-					if(dependencyName.equals(toClass.classNodeWrapper.name) ){
+				for(CardinalityWrapper dependencyName : fromClass.classNodeWrapper.dependencies){
+					if(dependencyName.toClass.equals(toClass.classNodeWrapper.name) ){
 						fromClass.dependencies.add(toClass);
 					}
 				}
@@ -55,20 +56,30 @@ public class DefaultPreRenderTask implements PreRenderTask{
 		List<ClassContainer> visitedClasses = new LinkedList<ClassContainer>();
 		for(ClassContainer classContainer : toReturn.classes){
 			visitedClasses.add(classContainer);
-			//TODO Add Cardinality
 			for(ClassContainer associatedClass : classContainer.associations){
-				ArrowContainer toAdd = new AssociationArrowContainer(associatedClass, classContainer);
+				boolean isOneToMany = false;
+				for(CardinalityWrapper cardinalityWrapper : classContainer.classNodeWrapper.associations){
+					if(cardinalityWrapper.toClass.equals(associatedClass.classNodeWrapper.name)){
+						isOneToMany = cardinalityWrapper.isOneToMany;
+					}
+				}
+				ArrowContainer toAdd = isOneToMany ? new AssociationArrowContainer(associatedClass, classContainer, "*") : new AssociationArrowContainer(associatedClass, classContainer);
 				if(associatedClass.associations.contains(classContainer) && !visitedClasses.contains(associatedClass)){
 					toAdd = new TwoWayArrowDecorator(toAdd);
 				}
 				toReturn.arrows.add(toAdd);
 			}
-			//TODO Add Cardinality
 			List<ClassContainer> nonDuplicateDependencies = new LinkedList<ClassContainer>();
 			nonDuplicateDependencies.addAll(classContainer.dependencies);
 			nonDuplicateDependencies.removeAll(classContainer.associations);
 			for(ClassContainer dependencyClass : nonDuplicateDependencies){
-				ArrowContainer toAdd = new DependencyArrowContainer(dependencyClass, classContainer);
+				boolean isOneToMany = false;
+				for(CardinalityWrapper cardinalityWrapper : classContainer.classNodeWrapper.dependencies){
+					if(cardinalityWrapper.toClass.equals(dependencyClass.classNodeWrapper.name)){
+						isOneToMany = cardinalityWrapper.isOneToMany;
+					}
+				}
+				ArrowContainer toAdd = isOneToMany ? new DependencyArrowContainer(dependencyClass, classContainer, "*") : new DependencyArrowContainer(dependencyClass, classContainer);
 				if(dependencyClass.dependencies.contains(classContainer) && !visitedClasses.contains(dependencyClass)){
 					toAdd = new TwoWayArrowDecorator(toAdd);
 				}
