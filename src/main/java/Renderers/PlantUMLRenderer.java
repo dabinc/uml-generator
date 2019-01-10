@@ -159,7 +159,9 @@ public class PlantUMLRenderer implements Renderer {
 	public String renderDependencyArrowContainer(DependencyArrowContainer dependencyArrowContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(dependencyArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(dependencyArrowContainer.toCardinality.isPresent() ? " \"" + dependencyArrowContainer.toCardinality.get() + "\"" : "");
 		toReturn.append(" <.. ");
+		toReturn.append(dependencyArrowContainer.fromCardinality.isPresent() ? "\"" + dependencyArrowContainer.fromCardinality.get() + "\" " : "");
 		toReturn.append(dependencyArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(dependencyArrowContainer.displayContainer));
@@ -171,8 +173,10 @@ public class PlantUMLRenderer implements Renderer {
 	public String renderAssociationArrowContainer(AssociationArrowContainer associationArrowContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(associationArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(associationArrowContainer.toCardinality.isPresent() ? " \"" + associationArrowContainer.toCardinality.get() + "\"" : "");
 		toReturn.append(" <-- ");
-		toReturn.append(associationArrowContainer.from.classNodeWrapper.name);
+		toReturn.append(associationArrowContainer.fromCardinality.isPresent() ? "\"" + associationArrowContainer.fromCardinality.get() + "\" " : "");
+		toReturn.append(associationArrowContainer.from.classNodeWrapper.name);		
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(associationArrowContainer.displayContainer));
 		toReturn.append(System.lineSeparator());
@@ -183,7 +187,9 @@ public class PlantUMLRenderer implements Renderer {
 	public String renderInheritanceArrowContainer(InheritanceArrowContainer inheritanceArrowContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(inheritanceArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(inheritanceArrowContainer.toCardinality.isPresent() ? " \"" + inheritanceArrowContainer.toCardinality.get() + "\"" : "");
 		toReturn.append(" <|-- ");
+		toReturn.append(inheritanceArrowContainer.fromCardinality.isPresent() ? "\"" + inheritanceArrowContainer.fromCardinality.get() + "\" " : "");
 		toReturn.append(inheritanceArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(inheritanceArrowContainer.displayContainer));
@@ -195,7 +201,9 @@ public class PlantUMLRenderer implements Renderer {
 	public String renderImplementationArrowContainer(ImplementationArrowContainer implementationArrowContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(implementationArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(implementationArrowContainer.toCardinality.isPresent() ? " \"" + implementationArrowContainer.toCardinality.get() + "\"" : "");
 		toReturn.append(" <|.. ");
+		toReturn.append(implementationArrowContainer.fromCardinality.isPresent() ? "\"" + implementationArrowContainer.fromCardinality.get() + "\" " : "");
 		toReturn.append(implementationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(implementationArrowContainer.displayContainer));

@@ -5,7 +5,11 @@ import Renderers.Renderer;
 public class AssociationArrowContainer extends AbstractArrowContainer {
 	
 	public AssociationArrowContainer(ClassContainer to, ClassContainer from){
-		super(to, from, null, null);
+		super(to, from, "1", "1");
+	}
+	
+	public AssociationArrowContainer(ClassContainer to, ClassContainer from, String toCardinality){
+		super(to, from, toCardinality, "1");
 	}
 
 	public AssociationArrowContainer(ClassContainer to, ClassContainer from, String toCardinality, String fromCardinality) {
