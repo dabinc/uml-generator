@@ -83,25 +83,25 @@ public class ClassNodeWrapper {
 								if(current.parent != null){
 									current.parent.children.add(current);
 								}
-								Optional<CardinalityWrapper> match = Optional.empty();
-								for(CardinalityWrapper wrapper : associations){
-									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
-										match = Optional.of(wrapper);
-									}
-								}
-								if(!match.isPresent()){
-									if(current.parent != null){
-										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
-									}
-									else{
-										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
-									}
-								}
-								else{
-									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
-										match.get().isOneToMany = true;
-									}
-								}
+//								Optional<CardinalityWrapper> match = Optional.empty();
+//								for(CardinalityWrapper wrapper : associations){
+//									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+//										match = Optional.of(wrapper);
+//									}
+//								}
+//								if(!match.isPresent()){
+//									if(current.parent != null){
+//										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
+//									}
+//									else{
+//										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
+//									}
+//								}
+//								else{
+//									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
+//										match.get().isOneToMany = true;
+//									}
+//								}
 							}
 						}	
 						
