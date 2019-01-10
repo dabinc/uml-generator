@@ -112,11 +112,11 @@ public class DefaultReader implements Reader {
 						sr.acceptType(sv);
 					} else {
 						if(!isPrimitive(Type.getType(fieldNode.desc).getClassName())){
-							String field = Type.getType(fieldNode.desc).toString();
-							associations.add(field.substring(1,field.length()-1).replaceAll("/", "."));
-							if(!passed.contains(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")))){
+							String field = Type.getType(fieldNode.desc).getClassName().toString();
+							associations.add(field);
+							if(!passed.contains(removeArrayFromName(field.replaceAll("/", ".")))){
 //								neededClasses.add(new ClassNodeWrapper(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")), Optional.empty()));
-								ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(field.substring(1,field.length()-1).replaceAll("/", ".")), Optional.empty());
+								ClassNodeWrapper toAdd = new ClassNodeWrapper(removeArrayFromName(field.replaceAll("/", ".")), Optional.empty());
 								neededClasses.add(toAdd);
 								passed.add(toAdd.name);
 							}
