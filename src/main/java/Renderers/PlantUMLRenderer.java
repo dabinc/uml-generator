@@ -5,6 +5,8 @@ import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
 import Containers.DisplayContainer;
+import Containers.DoubleAssociationArrowContainer;
+import Containers.DoubleDependencyArrowContainer;
 import Containers.FieldContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
@@ -210,16 +212,45 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
-
+	
 	@Override
-	public String modifyToTwoWay(String baseArrow) {
-		String arrowAndAfter = baseArrow.substring(baseArrow.indexOf('<'));
-		String arrow = arrowAndAfter.substring(0, arrowAndAfter.indexOf(' '));
-		char arrowLineChar = arrow.charAt(arrow.length() - 1);
-		String arrowHead = arrow.substring(1, arrow.indexOf(arrowLineChar));
-		String newArrow = arrow + arrowHead + ">";
-		String newFull = baseArrow.replace(arrow, newArrow);
-		return newFull;
+	public String renderDoubleAssociationArrowContainer(
+			DoubleAssociationArrowContainer doubleAssociationARrowContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.append(doubleAssociationARrowContainer.to.classNodeWrapper.name);
+		toReturn.append(doubleAssociationARrowContainer.toCardinality.isPresent() ? " \"" + doubleAssociationARrowContainer.toCardinality.get() + "\"" : "");
+		toReturn.append(" <--> ");
+		toReturn.append(doubleAssociationARrowContainer.fromCardinality.isPresent() ? "\"" + doubleAssociationARrowContainer.fromCardinality.get() + "\" " : "");
+		toReturn.append(doubleAssociationARrowContainer.from.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(doubleAssociationARrowContainer.displayContainer));
+		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
 	}
+	
+	@Override
+	public String renderDoubleDependencyArrowContainer(DoubleDependencyArrowContainer doubleDependencyArrowContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		toReturn.append(doubleDependencyArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(doubleDependencyArrowContainer.toCardinality.isPresent() ? " \"" + doubleDependencyArrowContainer.toCardinality.get() + "\"" : "");
+		toReturn.append(" <..> ");
+		toReturn.append(doubleDependencyArrowContainer.fromCardinality.isPresent() ? "\"" + doubleDependencyArrowContainer.fromCardinality.get() + "\" " : "");
+		toReturn.append(doubleDependencyArrowContainer.from.classNodeWrapper.name);
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHashTag(doubleDependencyArrowContainer.displayContainer));
+		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
+	}
+
+//	@Override
+//	public String modifyToTwoWay(String baseArrow) {
+//		String arrowAndAfter = baseArrow.substring(baseArrow.indexOf('<'));
+//		String arrow = arrowAndAfter.substring(0, arrowAndAfter.indexOf(' '));
+//		char arrowLineChar = arrow.charAt(arrow.length() - 1);
+//		String arrowHead = arrow.substring(1, arrow.indexOf(arrowLineChar));
+//		String newArrow = arrow + arrowHead + ">";
+//		String newFull = baseArrow.replace(arrow, newArrow);
+//		return newFull;
+//	}
 	
 }

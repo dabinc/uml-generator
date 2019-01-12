@@ -10,8 +10,9 @@ public class TwoWayArrowDecorator extends ArrowContainerDecorator {
 	
 	@Override
 	public String render(Renderer renderer){
-		String baseArrow = super.render(renderer);
-		return renderer.modifyToTwoWay(baseArrow);
+//		String baseArrow = super.render(renderer);
+//		return renderer.modifyToTwoWay(baseArrow);
+		return "";
 	}
 
 }

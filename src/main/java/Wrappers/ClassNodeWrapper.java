@@ -185,10 +185,10 @@ public class ClassNodeWrapper {
 								}
 								if(!match.isPresent()){
 									if(name.equals(removeArrayFromName(name))){
-										this.dependencies.add(new CardinalityWrapper(name, false));
+										this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), false));
 									}
 									else{
-										this.dependencies.add(new CardinalityWrapper(name, true));
+										this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
 									}									
 								}
 								else{
@@ -211,10 +211,10 @@ public class ClassNodeWrapper {
 							}
 							if(!match.isPresent()){
 								if(name.equals(removeArrayFromName(name))){
-									this.dependencies.add(new CardinalityWrapper(name, false));
+									this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), false));
 								}
 								else{
-									this.dependencies.add(new CardinalityWrapper(name, true));
+									this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
 								}									
 							}
 							else{
