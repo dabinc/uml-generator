@@ -16,9 +16,9 @@ import PreRenderTasks.KeepProtectedAndPublicPreRenderTaskFactory;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskFactory;
 import Readers.ASMReader;
+import Readers.PackageFilterReaderFactory;
 import Readers.Reader;
 import Readers.ReaderFactory;
-import Readers.RecursiveReader;
 import Readers.RecursiveReaderFactory;
 import Renderers.PlantUMLRenderer;
 import Renderers.Renderer;
@@ -26,12 +26,14 @@ import Wrappers.ClassNodeWrapper;
 
 public class API {
 	private Map<String, ReaderFactory> readerMap;
+	private Map<String, ReaderFactory> readerFilterMap;
 	private Map<String, PreRenderTaskFactory> preRenderMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
 	
 	public API(){
 		this.readerMap = new HashMap<>();
+		this.readerFilterMap = new HashMap<>();
 		this.preRenderMap = new HashMap<>();
 		this.displayMap = new HashMap<>();
 		this.rendererMap = new HashMap<>();
@@ -57,6 +59,15 @@ public class API {
 			}
 		}
 		
+		for(String option : options){
+			for(String key : this.readerFilterMap.keySet()){
+				if(option.startsWith(key)){
+					String[] args = option.substring(key.length()).split(",");
+					reader = this.readerFilterMap.get(key).getReader(reader, Arrays.asList(args));
+				}
+			}
+		}
+		
 		List<String> classNameList = new LinkedList<String>();
 		for(String className : classNames){
 			classNameList.add(className);
@@ -79,6 +90,8 @@ public class API {
 	
 	private void initializeHashMaps(){
 		this.readerMap.put("-recursive", new RecursiveReaderFactory());
+		this.readerMap.put("-package", new PackageFilterReaderFactory());
+		this.readerFilterMap.put("-package=", new PackageFilterReaderFactory());
 		this.displayMap.put("-file", new FileDisplay());
 		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());

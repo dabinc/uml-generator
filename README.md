@@ -9,6 +9,8 @@ Pass in any number of the options below to args:
 3. "-protected" render only procteded or public classes, fields, and methods
 4. "-public" render only public classes, fields, and methods
 5. "-file" render to a file
+6. "-package" limits rendering to the packages of the passed in classes
+7. "-package=package1,package2,package3..." limits rendering to the packages specified after =
 
 The default options are to not recurse into superclasses and interfacess, private level analysis, text display, and using PlantUML
 

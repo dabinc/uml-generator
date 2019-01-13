@@ -2,16 +2,16 @@ package Readers;
 
 import java.util.List;
 
-public class RecursiveReaderFactory implements ReaderFactory {
+public class PackageFilterReaderFactory implements ReaderFactory {
 
 	@Override
 	public Reader getReader(Reader reader, List<String> options) {
-		return getReader(reader);
+		return new PackageFilterReader(reader, options);
 	}
 
 	@Override
 	public Reader getReader(Reader reader) {
-		return new RecursiveReader(reader);
+		return new PackageFilterReader(reader);
 	}
 
 }

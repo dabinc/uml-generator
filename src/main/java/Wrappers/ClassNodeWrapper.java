@@ -17,7 +17,7 @@ import Enums.Modifier;
 
 public class ClassNodeWrapper {
 	public String name;
-	public String supername;
+	public Optional<String> supername;
 	public List<FieldNodeWrapper> fieldNodeWrappers;
 	public List<MethodNodeWrapper> methodNodeWrappers;
 	public List<String> interfaces;
@@ -28,7 +28,7 @@ public class ClassNodeWrapper {
 	
 	public ClassNodeWrapper(ClassNode classNode){
 		this.name = classNode.name.replaceAll("/", ".");
-		this.supername = classNode.superName == null ? "" : classNode.superName.replaceAll("/", ".");
+		this.supername = classNode.superName == null ? Optional.empty() : Optional.of(classNode.superName.replaceAll("/", "."));
 		this.interfaces = new LinkedList<String>();
 		this.associations = new LinkedList<CardinalityWrapper>();
 		this.dependencies = new LinkedList<CardinalityWrapper>();

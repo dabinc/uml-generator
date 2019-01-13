@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import Containers.AbstractArrowContainer;
-import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
@@ -14,7 +13,6 @@ import Containers.DoubleDependencyArrowContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
 import Containers.ProgramContainer;
-import Containers.TwoWayArrowDecorator;
 import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 
@@ -34,7 +32,7 @@ public class DefaultPreRenderTask implements PreRenderTask{
 		//Flesh out classes with references to other classes
 		for(ClassContainer fromClass : toReturn.classes){
 			for(ClassContainer toClass : toReturn.classes){
-				if(fromClass.classNodeWrapper.supername != null && fromClass.classNodeWrapper.supername.equals(toClass.classNodeWrapper.name)){
+				if(fromClass.classNodeWrapper.supername.isPresent() && fromClass.classNodeWrapper.supername.get().equals(toClass.classNodeWrapper.name)){
 					fromClass.superclass = Optional.of(toClass);
 				}
 				for(String interfaceName : fromClass.classNodeWrapper.interfaces){

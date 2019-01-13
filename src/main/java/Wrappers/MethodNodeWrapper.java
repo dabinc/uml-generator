@@ -9,7 +9,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
-//import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Enums.Modifier;
@@ -36,10 +35,9 @@ public class MethodNodeWrapper {
 		this.methodOwners = new LinkedList<String>();
 		for (int i = 0; i < this.instructions.size(); i++) {
 			AbstractInsnNode insn = this.instructions.get(i);
-			// FIXME: Is instanceof the best way to deal with the instruction's type?
-			if (insn instanceof MethodInsnNode) {
+			if (MethodInsnNode.class.isAssignableFrom(insn.getClass())) {
 				MethodInsnNode methodCall = (MethodInsnNode) insn;
-				if(methodCall != null && methodCall.owner != null){
+				if(methodCall.owner != null){
 					this.methodOwners.add(methodCall.owner.replaceAll("/", "."));
 				}
 			} 

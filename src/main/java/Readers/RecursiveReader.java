@@ -19,37 +19,28 @@ public class RecursiveReader extends ReaderDecorator {
 	private List<ClassNodeWrapper> recursiveGetClassNodeWrappers(List<ClassNodeWrapper> classNodeWrappers, List<String> visitedClassNames){
 		List<String> classesToVisit = new LinkedList<String>();
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
-		List<String> packages = new LinkedList<String>();
-		packages.add("Containers");packages.add("Displays");packages.add("Enums");
-		packages.add("Readers");packages.add("Program");packages.add("PreRenderTasks");
-		packages.add("Renderers");packages.add("TestFiles");packages.add("Wrappers");
 		for(ClassNodeWrapper classNodeWrapper : classNodeWrappers){			
-			if(classNodeWrapper.signature.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername) && !classesToVisit.contains(classNodeWrapper.supername) 
-					&& classNodeWrapper.supername.contains (".")&& packages.contains(classNodeWrapper.supername.split("\\.")[0])){
-				classesToVisit.add(classNodeWrapper.supername);
+			if(classNodeWrapper.supername.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername) && !classesToVisit.contains(classNodeWrapper.supername)){
+				classesToVisit.add(classNodeWrapper.supername.get());
 			}
 			for(String interfaceName : classNodeWrapper.interfaces){
-				if(!visitedClassNames.contains(interfaceName) && !classesToVisit.contains(interfaceName)
-						&& interfaceName.contains (".")&& packages.contains(interfaceName.split("\\.")[0])){
+				if(!visitedClassNames.contains(interfaceName) && !classesToVisit.contains(interfaceName)){
 					classesToVisit.add(interfaceName);
 				}
 			}
 			for(CardinalityWrapper association : classNodeWrapper.associations){
-				if(!visitedClassNames.contains(association.toClass) && !classesToVisit.contains(association.toClass)
-						&& association.toClass.contains (".") && packages.contains(association.toClass.split("\\.")[0])){
+				if(!visitedClassNames.contains(association.toClass) && !classesToVisit.contains(association.toClass)){
 					classesToVisit.add(association.toClass);
 				}
 			}
 			for(CardinalityWrapper dependency : classNodeWrapper.dependencies){
-				if(!visitedClassNames.contains(dependency.toClass) && !classesToVisit.contains(dependency.toClass)
-						&& dependency.toClass.contains (".")&& packages.contains(dependency.toClass.split("\\.")[0])){
+				if(!visitedClassNames.contains(dependency.toClass) && !classesToVisit.contains(dependency.toClass)){
 					classesToVisit.add(dependency.toClass);
 				}
 			}
 			for(MethodNodeWrapper methodNodeWrapper : classNodeWrapper.methodNodeWrappers){
 				for(String methodOwner : methodNodeWrapper.methodOwners){
-					if(!visitedClassNames.contains(methodOwner) && !classesToVisit.contains(methodOwner)
-							&& methodOwner.contains (".") && packages.contains(methodOwner.split("\\.")[0])){
+					if(!visitedClassNames.contains(methodOwner) && !classesToVisit.contains(methodOwner)){
 						classesToVisit.add(methodOwner);
 					}
 				}
