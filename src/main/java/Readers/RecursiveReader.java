@@ -19,8 +19,8 @@ public class RecursiveReader extends ReaderDecorator {
 	private List<ClassNodeWrapper> recursiveGetClassNodeWrappers(List<ClassNodeWrapper> classNodeWrappers, List<String> visitedClassNames){
 		List<String> classesToVisit = new LinkedList<String>();
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
-		for(ClassNodeWrapper classNodeWrapper : classNodeWrappers){			
-			if(classNodeWrapper.supername.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername) && !classesToVisit.contains(classNodeWrapper.supername)){
+		for(ClassNodeWrapper classNodeWrapper : classNodeWrappers){
+			if(classNodeWrapper.supername.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername.get()) && !classesToVisit.contains(classNodeWrapper.supername.get())){
 				classesToVisit.add(classNodeWrapper.supername.get());
 			}
 			for(String interfaceName : classNodeWrapper.interfaces){
