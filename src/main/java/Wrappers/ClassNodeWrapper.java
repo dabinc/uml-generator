@@ -231,22 +231,6 @@ public class ClassNodeWrapper {
 		this.modifiers = Modifier.getModifiers(classNode.access);
 	}
 	
-	public ClassNodeWrapper(String name, Optional<Modifier> modifier){
-		//This is for "fake" ClassNodeWrappers, aka the superclasses and interfaces we don't want to recurse into
-		this.name = name.replaceAll("/", ".");
-		this.supername = null;
-		this.interfaces = new LinkedList<String>();
-		this.associations = new LinkedList<CardinalityWrapper>();
-		this.dependencies = new LinkedList<CardinalityWrapper>();
-		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
-		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
-		this.signature = Optional.empty();
-		this.modifiers = new LinkedList<Modifier>();
-		if(modifier.isPresent()){
-			this.modifiers.add(modifier.get());
-		}
-	}
-	
 	public String removeArrayFromName(String name){
 		if(name.contains("[")){
 			return name.substring(0, name.indexOf('['));

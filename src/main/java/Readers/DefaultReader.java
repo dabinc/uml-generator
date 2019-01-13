@@ -45,41 +45,6 @@ public class DefaultReader implements Reader {
 			toReturn.add(toAdd);
 			passed.add(toAdd.name);
 		}
-		
-		List<String> associations = new LinkedList<>();
-		List<String> dependencies = new LinkedList<>();
-		Set<String> passedClasses = new HashSet<>();
-		Set<ClassNodeWrapper> neededClasses = new HashSet<>();
-		for(ClassNodeWrapper classNodeWrapper : toReturn){
-			if(classNodeWrapper.supername != null && !passed.contains(classNodeWrapper.supername)){
-				ClassNodeWrapper toAdd = new ClassNodeWrapper(classNodeWrapper.supername, Optional.empty());
-				neededClasses.add(toAdd);
-				passed.add(toAdd.name);
-			}
-			for(String interfaceName : classNodeWrapper.interfaces){
-				if(!passed.contains(interfaceName)){					
-					ClassNodeWrapper toAdd = new ClassNodeWrapper(interfaceName, Optional.empty());
-					neededClasses.add(toAdd);
-					passed.add(toAdd.name);
-				}
-			}
-			for(CardinalityWrapper cardinalityWrapper : classNodeWrapper.associations){
-				if(!passed.contains(cardinalityWrapper.toClass)){
-					ClassNodeWrapper toAdd = new ClassNodeWrapper(cardinalityWrapper.toClass, Optional.empty());
-					neededClasses.add(toAdd);
-					passed.add(toAdd.name);
-				}
-			}
-			for(CardinalityWrapper cardinalityWrapper : classNodeWrapper.dependencies){
-				if(!passed.contains(cardinalityWrapper.toClass)){
-					ClassNodeWrapper toAdd = new ClassNodeWrapper(cardinalityWrapper.toClass, Optional.empty());
-					neededClasses.add(toAdd);
-					passed.add(toAdd.name);
-				}
-			}
-		}
-				
-		toReturn.addAll(neededClasses);
 		return toReturn;
 	}
 }
