@@ -24,7 +24,7 @@ public class RecursiveReader extends ReaderDecorator {
 		packages.add("Readers");packages.add("Program");packages.add("PreRenderTasks");
 		packages.add("Renderers");packages.add("TestFiles");packages.add("Wrappers");
 		for(ClassNodeWrapper classNodeWrapper : classNodeWrappers){			
-			if(classNodeWrapper.signature.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername) && !classesToVisit.contains(classNodeWrapper.supername) 
+			if(classNodeWrapper.supername != "" && !visitedClassNames.contains(classNodeWrapper.supername) && !classesToVisit.contains(classNodeWrapper.supername) 
 					&& classNodeWrapper.supername.contains (".")&& packages.contains(classNodeWrapper.supername.split("\\.")[0])){
 				classesToVisit.add(classNodeWrapper.supername);
 			}
