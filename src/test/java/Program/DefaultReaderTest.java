@@ -7,15 +7,15 @@ import java.util.List;
 
 import org.junit.Test;
 
-import Readers.DefaultReader;
+import Readers.ASMReader;
 
 public class DefaultReaderTest {
 	
-	DefaultReader reader;
+	ASMReader reader;
 	
 	@Test
 	public void testEmptyInput() {
-		reader = new DefaultReader();
+		reader = new ASMReader();
 		assertEquals(0, reader.getClassNodeWrappers(new ArrayList<String>()).size());
 	}
 
@@ -23,7 +23,7 @@ public class DefaultReaderTest {
 	public void testNonExistantClassName() {
 		List<String> invalidNames = new ArrayList<String>();
 		invalidNames.add("java.scooby.doo");
-		reader = new DefaultReader();
+		reader = new ASMReader();
 		assertEquals(0, reader.getClassNodeWrappers(invalidNames).size());
 	}
 	
@@ -31,7 +31,7 @@ public class DefaultReaderTest {
 	public void testOneExistantClassName() {
 		List<String> validNames = new ArrayList<String>();
 		validNames.add("java.lang.Iterable");
-		reader = new DefaultReader();
+		reader = new ASMReader();
 		assertEquals(1, reader.getClassNodeWrappers(validNames).size());
 	}
 	
@@ -40,7 +40,7 @@ public class DefaultReaderTest {
 		List<String> names = new ArrayList<String>();
 		names.add("java.lang.Iterable");
 		names.add("java.scooby.doo");
-		reader = new DefaultReader();
+		reader = new ASMReader();
 		assertEquals(1, reader.getClassNodeWrappers(names).size());
 	}
 }

@@ -22,7 +22,7 @@ import Wrappers.ClassNodeWrapper;
 import Wrappers.FieldNodeWrapper;
 import Wrappers.MethodNodeWrapper;
 
-public class DefaultReader implements Reader {
+public class ASMReader implements Reader {
 
 	@Override
 	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {

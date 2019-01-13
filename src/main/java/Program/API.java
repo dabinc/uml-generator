@@ -1,6 +1,7 @@
 package Program;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,15 +15,17 @@ import PreRenderTasks.KeepPrivateAndUpPreRenderTaskFactory;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTaskFactory;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskFactory;
-import Readers.DefaultReader;
+import Readers.ASMReader;
 import Readers.Reader;
+import Readers.ReaderFactory;
 import Readers.RecursiveReader;
+import Readers.RecursiveReaderFactory;
 import Renderers.PlantUMLRenderer;
 import Renderers.Renderer;
 import Wrappers.ClassNodeWrapper;
 
 public class API {
-	private Map<String, Reader> readerMap;
+	private Map<String, ReaderFactory> readerMap;
 	private Map<String, PreRenderTaskFactory> preRenderMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
@@ -36,21 +39,30 @@ public class API {
 	}
 	
 	public void use(String[] classNames, String[] options){		
-		Reader reader = new DefaultReader();
+		Reader reader = new ASMReader();
 		Display display = new TextDisplay();
 		Renderer renderer = new PlantUMLRenderer();
 		
 		for(String option : options){
-			if(this.readerMap.containsKey(option)){
-				reader = this.readerMap.get(option);
-			} else if (this.displayMap.containsKey(option)){
+			if (this.displayMap.containsKey(option)){
 				display = this.displayMap.get(option);
 			} else if (this.rendererMap.containsKey(option)){
 				renderer = this.rendererMap.get(option);
 			}
 		}
 		
-		List<ClassNodeWrapper> classNodeWrappers = reader.getClassNodeWrappers(Arrays.asList(classNames));
+		for(String option : options){
+			if(this.readerMap.containsKey(option)){
+				reader = this.readerMap.get(option).getReader(reader);
+			}
+		}
+		
+		List<String> classNameList = new LinkedList<String>();
+		for(String className : classNames){
+			classNameList.add(className);
+		}
+		
+		List<ClassNodeWrapper> classNodeWrappers = reader.getClassNodeWrappers(classNameList);
 		
 		PreRenderTask preRenderTask = new DefaultPreRenderTask(classNodeWrappers);
 		
@@ -66,7 +78,7 @@ public class API {
 	}
 	
 	private void initializeHashMaps(){
-		this.readerMap.put("-recursive", new RecursiveReader());
+		this.readerMap.put("-recursive", new RecursiveReaderFactory());
 		this.displayMap.put("-file", new FileDisplay());
 		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());
