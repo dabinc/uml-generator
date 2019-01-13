@@ -20,7 +20,7 @@ public class RecursiveReader extends ReaderDecorator {
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
 		
 		for(ClassNodeWrapper classNodeWrapper : classNodeWrappers){
-			if(classNodeWrapper.supername != null && !visitedClassNames.contains(classNodeWrapper.supername) && !classesToVisit.contains(classNodeWrapper.supername)){
+			if(classNodeWrapper.supername != null && classNodeWrapper.signature.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername) && !classesToVisit.contains(classNodeWrapper.supername)){
 				classesToVisit.add(classNodeWrapper.supername);
 			}
 			for(String interfaceName : classNodeWrapper.interfaces){
