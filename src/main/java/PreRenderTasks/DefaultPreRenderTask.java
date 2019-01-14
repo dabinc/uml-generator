@@ -12,6 +12,7 @@ import Containers.DoubleAssociationArrowContainer;
 import Containers.DoubleDependencyArrowContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
+import Containers.MethodContainer;
 import Containers.ProgramContainer;
 import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
@@ -46,8 +47,15 @@ public class DefaultPreRenderTask implements PreRenderTask{
 					}
 				}
 				for(CardinalityWrapper dependencyName : fromClass.classNodeWrapper.dependencies){
-					if(dependencyName.toClass.equals(toClass.classNodeWrapper.name) ){
+					if(dependencyName.toClass.equals(toClass.classNodeWrapper.name)){
 						fromClass.dependencies.add(toClass);
+					}
+				}
+				for(MethodContainer method : fromClass.methods){
+					for(CardinalityWrapper dependencyName : method.methodNodeWrapper.dependencies){
+						if(dependencyName.toClass.equals(toClass.classNodeWrapper.name)){
+							fromClass.dependencies.add(toClass);
+						}
 					}
 				}
 			}
