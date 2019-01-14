@@ -17,18 +17,14 @@ public class ASMReader implements Reader {
 	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
 		List<ClassReader> classReaderList = new ArrayList<ClassReader>();
 		for(int i = 0; i < classNames.size(); i++){
-			String name = removeArrayFromName(Type.getObjectType(classNames.get(i)).getClassName());
-			if(!isPrimitive(name)){
-				try{
-					classReaderList.add(new ClassReader(name));
-				}
-				catch (IOException e) {
-					System.out.println("ASMReader could not find: " + name);
-					e.printStackTrace();
-				}
+			try{
+				classReaderList.add(new ClassReader(classNames.get(i)));
+			}
+			catch (IOException e) {
+				System.out.println("ASMReader could not find: " + classNames.get(i));
+				e.printStackTrace();
 			}
 		}
-		
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
 		Set<String> passed = new HashSet<>();
 		for(ClassReader reader : classReaderList){
@@ -41,19 +37,4 @@ public class ASMReader implements Reader {
 		return toReturn;
 	}
 	
-	public String removeArrayFromName(String name){
-		if(name.contains("[")){
-			return name.substring(0, name.indexOf('['));
-		}
-		return name;
-	}
-	
-	public boolean isPrimitive(String name){
-		if(name.equals(Type.BOOLEAN_TYPE.getClassName()) || name.equals(Type.BYTE_TYPE.getClassName()) || name.equals(Type.CHAR_TYPE.getClassName()) || name.equals(Type.DOUBLE_TYPE.getClassName())
-				|| name.equals(Type.FLOAT_TYPE.getClassName()) || name.equals(Type.INT_TYPE.getClassName()) || name.equals(Type.LONG_TYPE.getClassName()) || name.equals(Type.SHORT_TYPE.getClassName())
-						|| name.equals(Type.VOID_TYPE.getClassName())){
-			return true;
-		}
-		return false;
-	}
 }
