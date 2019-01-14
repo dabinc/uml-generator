@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import Wrappers.ClassNodeWrapper;
 
@@ -24,7 +25,6 @@ public class ASMReader implements Reader {
 				e.printStackTrace();
 			}
 		}
-		
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
 		Set<String> passed = new HashSet<>();
 		for(ClassReader reader : classReaderList){
@@ -36,4 +36,5 @@ public class ASMReader implements Reader {
 		}
 		return toReturn;
 	}
+	
 }
