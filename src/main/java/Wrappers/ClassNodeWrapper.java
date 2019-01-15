@@ -47,24 +47,25 @@ public class ClassNodeWrapper {
 						
 						@Override
 						public void visitClassType(String name) {
-							super.visitClassType(name);
-							if(!isPrimitive(removeArrayFromName(name))){
-								current = new TypeNameNode(removeArrayFromName(name).replaceAll("/", "."), current);
+							String newName = removeArrayFromName(Type.getObjectType(name).getClassName()).replaceAll("/", ".");
+							super.visitClassType(newName);
+							if(!isPrimitive(newName)){
+								current = new TypeNameNode(newName, current);
 								if(current.parent != null){
 									current.parent.children.add(current);
 								}
 								Optional<CardinalityWrapper> match = Optional.empty();
 								for(CardinalityWrapper wrapper : associations){
-									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+									if(wrapper.toClass.equals(newName)){
 										match = Optional.of(wrapper);
 									}
 								}
 								if(!match.isPresent()){
 									if(current.parent != null){
-										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
+										associations.add(new CardinalityWrapper(newName, current.parent.extendsCollectionOrMap()));
 									}
 									else{
-										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
+										associations.add(new CardinalityWrapper(newName, false));
 									}
 								}
 								else{
@@ -75,11 +76,13 @@ public class ClassNodeWrapper {
 							}
 						}
 						
+						
 						@Override
 						public void visitTypeVariable(String name) {
-							super.visitTypeVariable(name);
-							if(!isPrimitive(removeArrayFromName(name))){
-								current = new TypeNameNode(removeArrayFromName(name).replaceAll("/", "."), current);
+							String newName = removeArrayFromName(Type.getObjectType(name).getClassName()).replaceAll("/", ".");
+							super.visitTypeVariable(newName);
+							if(!isPrimitive(newName)){
+								current = new TypeNameNode(name, current);
 								if(current.parent != null){
 									current.parent.children.add(current);
 								}
@@ -135,24 +138,25 @@ public class ClassNodeWrapper {
 							
 						@Override
 						public void visitClassType(String name) {
-							super.visitClassType(name);
-							if(!isPrimitive(removeArrayFromName(name))){
-								current = new TypeNameNode(removeArrayFromName(name).replaceAll("/", "."), current);
+							String newName = removeArrayFromName(Type.getObjectType(name).getClassName()).replaceAll("/", ".");
+							super.visitClassType(newName);
+							if(!isPrimitive(newName)){
+								current = new TypeNameNode(newName, current);
 								if(current.parent != null){
 									current.parent.children.add(current);
 								}
 								Optional<CardinalityWrapper> match = Optional.empty();
 								for(CardinalityWrapper wrapper : dependencies){
-									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+									if(wrapper.toClass.equals(newName)){
 										match = Optional.of(wrapper);
 									}
 								}
 								if(!match.isPresent()){
 									if(current.parent != null){
-										dependencies.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
+										dependencies.add(new CardinalityWrapper(newName, current.parent.extendsCollectionOrMap()));
 									}
 									else{
-										dependencies.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
+										dependencies.add(new CardinalityWrapper(newName, false));
 									}
 								}
 								else{

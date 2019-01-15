@@ -1,8 +1,7 @@
 package Readers;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.objectweb.asm.Type;
+import java.util.Optional;
 
 import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
@@ -32,22 +31,19 @@ public class RecursiveReader extends ReaderDecorator {
 				}
 			}
 			for(CardinalityWrapper association : classNodeWrapper.associations){
-				String name = removeArrayFromName(Type.getObjectType(association.toClass).getClassName());
-				if(!visitedClassNames.contains(name) && !classesToVisit.contains(name) && !isPrimitive(name)){
-					classesToVisit.add(name);
+				if(!visitedClassNames.contains(association.toClass) && !classesToVisit.contains(association.toClass)){
+					classesToVisit.add(association.toClass);
 				}
 			}
 			for(CardinalityWrapper dependency : classNodeWrapper.dependencies){
-				String name = removeArrayFromName(Type.getObjectType(dependency.toClass).getClassName());
-				if(!visitedClassNames.contains(name) && !classesToVisit.contains(name) && !isPrimitive(name)){
-					classesToVisit.add(name);
+				if(!visitedClassNames.contains(dependency.toClass) && !classesToVisit.contains(dependency.toClass)){
+					classesToVisit.add(dependency.toClass);
 				}
 			}
 			for(MethodNodeWrapper methodNodeWrapper : classNodeWrapper.methodNodeWrappers){
 				for(String methodOwner : methodNodeWrapper.methodOwners){
-					String name = removeArrayFromName(Type.getObjectType(methodOwner).getClassName());
-					if(!visitedClassNames.contains(name) && !classesToVisit.contains(name) && !isPrimitive(name)){
-						classesToVisit.add(name);
+					if(!visitedClassNames.contains(methodOwner) && !classesToVisit.contains(methodOwner)){
+						classesToVisit.add(methodOwner);
 					}
 				}
 			}
@@ -62,22 +58,6 @@ public class RecursiveReader extends ReaderDecorator {
 		toReturn.addAll(classNodeWrappers);
 		toReturn.addAll(recursiveGetClassNodeWrappers(super.getClassNodeWrappers(classesToVisit), visitedClassNames));
 		return toReturn;
-	}
-	
-	public String removeArrayFromName(String name){
-		if(name.contains("[")){
-			return name.substring(0, name.indexOf('['));
-		}
-		return name;
-	}
-	
-	public boolean isPrimitive(String name){
-		if(name.equals(Type.BOOLEAN_TYPE.getClassName()) || name.equals(Type.BYTE_TYPE.getClassName()) || name.equals(Type.CHAR_TYPE.getClassName()) || name.equals(Type.DOUBLE_TYPE.getClassName())
-				|| name.equals(Type.FLOAT_TYPE.getClassName()) || name.equals(Type.INT_TYPE.getClassName()) || name.equals(Type.LONG_TYPE.getClassName()) || name.equals(Type.SHORT_TYPE.getClassName())
-						|| name.equals(Type.VOID_TYPE.getClassName())){
-			return true;
-		}
-		return false;
 	}
 	
 //	private List<ClassNodeWrapper> recursiveGetClassNodeWrappers(List<String> classNames, List<String> visitedClassNames){
