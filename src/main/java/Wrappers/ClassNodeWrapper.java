@@ -38,7 +38,7 @@ public class ClassNodeWrapper {
 		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		if(classNode.fields != null){
-			for(FieldNode fieldNode: (List<FieldNode>)classNode.fields){
+			for(FieldNode fieldNode : (List<FieldNode>)classNode.fields){
 				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).getClassName()));
 				if(fieldNode.signature != null){
 					SignatureReader sr = new SignatureReader(fieldNode.signature);
@@ -129,7 +129,7 @@ public class ClassNodeWrapper {
 			}
 		} 
 		if(classNode.methods != null){
-			for(MethodNode methodNode: (List<MethodNode>)classNode.methods){
+			for(MethodNode methodNode : (List<MethodNode>)classNode.methods){
 				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName()));
 				if(methodNode.signature != null){
 					SignatureReader sr = new SignatureReader(methodNode.signature);
@@ -179,16 +179,16 @@ public class ClassNodeWrapper {
 					// gets the parameters 
 					if(Type.getArgumentTypes(methodNode.desc).length != 0){
 						for(int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++){
-							String name = removeArrayFromName((Type.getArgumentTypes(methodNode.desc))[i].getClassName());
+							String name = Type.getArgumentTypes(methodNode.desc)[i].getClassName();
 							if(!isPrimitive(name)){
 								Optional<CardinalityWrapper> match = Optional.empty();
 								for(CardinalityWrapper wrapper : dependencies){
-									if(wrapper.toClass.equals(name)){
+									if(wrapper.toClass.equals(removeArrayFromName(name))){
 										match = Optional.of(wrapper);
 									}
 								}
 								if(!match.isPresent()){
-									if(name.equals(name)){
+									if(name.equals(removeArrayFromName(name))){
 										this.dependencies.add(new CardinalityWrapper(name, false));
 									}
 									else{
@@ -196,7 +196,7 @@ public class ClassNodeWrapper {
 									}									
 								}
 								else{
-									if(!match.get().isOneToMany && !name.equals(name)){
+									if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
 										match.get().isOneToMany = true;
 									}
 								}
@@ -205,16 +205,16 @@ public class ClassNodeWrapper {
 					}
 					
 					if (!Type.getReturnType(methodNode.desc).getClassName().toString().equals("void")){
-						String name = removeArrayFromName((Type.getReturnType(methodNode.desc).getClassName()));
+						String name = Type.getReturnType(methodNode.desc).getClassName();
 						if(!isPrimitive(name)){
 							Optional<CardinalityWrapper> match = Optional.empty();
 							for(CardinalityWrapper wrapper : dependencies){
-								if(wrapper.toClass.equals(name)){
+								if(wrapper.toClass.equals(removeArrayFromName(name))){
 									match = Optional.of(wrapper);
 								}
 							}
 							if(!match.isPresent()){
-								if(name.equals(name)){
+								if(name.equals(removeArrayFromName(name))){
 									this.dependencies.add(new CardinalityWrapper(name, false));
 								}
 								else{
@@ -222,12 +222,25 @@ public class ClassNodeWrapper {
 								}									
 							}
 							else{
-								if(!match.get().isOneToMany && !name.equals(name)){
+								if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
 									match.get().isOneToMany = true;
 								}
 							}
 						}
 					}
+				}
+			}
+		}
+		for(MethodNodeWrapper methodNodeWrapper : this.methodNodeWrappers){
+			for(CardinalityWrapper methodDependency : methodNodeWrapper.dependencies){
+				Optional<CardinalityWrapper> match = Optional.empty();
+				for(CardinalityWrapper classDependency : this.dependencies){
+					if(classDependency.toClass.equals(methodDependency.toClass)){
+						match = Optional.of(classDependency);
+					}
+				}
+				if(!match.isPresent()){
+					this.dependencies.add(methodDependency);
 				}
 			}
 		}

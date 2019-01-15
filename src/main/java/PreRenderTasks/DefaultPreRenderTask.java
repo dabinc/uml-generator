@@ -51,13 +51,6 @@ public class DefaultPreRenderTask implements PreRenderTask{
 						fromClass.dependencies.add(toClass);
 					}
 				}
-				for(MethodContainer method : fromClass.methods){
-					for(CardinalityWrapper dependencyName : method.methodNodeWrapper.dependencies){
-						if(dependencyName.toClass.equals(toClass.classNodeWrapper.name)){
-							fromClass.dependencies.add(toClass);
-						}
-					}
-				}
 			}
 		}
 		
@@ -74,7 +67,6 @@ public class DefaultPreRenderTask implements PreRenderTask{
 				}
 				AbstractArrowContainer toAdd = isOneToMany ? new AssociationArrowContainer(associatedClass, classContainer, "*") : new AssociationArrowContainer(associatedClass, classContainer);	
 				if(associatedClass.associations.contains(classContainer) && !visitedClasses.contains(associatedClass)){
-//					toAdd = new TwoWayArrowDecorator(toAdd);
 					toAdd = isOneToMany ? new DoubleAssociationArrowContainer(associatedClass, classContainer, "*"):new DoubleAssociationArrowContainer(associatedClass, classContainer);
 				}
 				toReturn.arrows.add(toAdd);
@@ -85,20 +77,15 @@ public class DefaultPreRenderTask implements PreRenderTask{
 			for(ClassContainer dependencyClass : nonDuplicateDependencies){
 				boolean isOneToMany = false;
 				for(CardinalityWrapper cardinalityWrapper : classContainer.classNodeWrapper.dependencies){
-					if(cardinalityWrapper.toClass.equals(dependencyClass.classNodeWrapper.name)){
-						isOneToMany = cardinalityWrapper.isOneToMany;
+					if(cardinalityWrapper.toClass.equals(dependencyClass.classNodeWrapper.name) && cardinalityWrapper.isOneToMany){
+						isOneToMany = true;
+						break;
 					}
 				}
 				AbstractArrowContainer toAdd = isOneToMany ? new DependencyArrowContainer(dependencyClass, classContainer, "*") : new DependencyArrowContainer(dependencyClass, classContainer);
 				if(dependencyClass.dependencies.contains(classContainer) && !visitedClasses.contains(dependencyClass)){
-//					toAdd = new TwoWayArrowDecorator(toAdd);
 					toAdd = isOneToMany ? new DoubleDependencyArrowContainer(dependencyClass, classContainer, "*") : new DoubleDependencyArrowContainer(dependencyClass, classContainer);
-//					toReturn.arrows.add(toAdd);
-				} 
-//				else if(dependencyClass.dependencies.contains(classContainer) && !visitedClasses.contains(dependencyClass)){
-//					toAdd = isOneToMany ? new DependencyArrowContainer(dependencyClass, classContainer, "*") : new DependencyArrowContainer(dependencyClass, classContainer);
-//					toReturn.arrows.add(toAdd);
-//				}
+				}
 				toReturn.arrows.add(toAdd);
 				
 			}
