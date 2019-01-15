@@ -27,13 +27,13 @@ public class ClassNodeWrapper {
 	public List<Modifier> modifiers;
 	
 	public ClassNodeWrapper(ClassNode classNode){
-		this.name = classNode.name.replaceAll("/", ".");
-		this.supername = classNode.superName == null ? Optional.empty() : Optional.of(classNode.superName.replaceAll("/", "."));
+		this.name = Type.getObjectType(classNode.name).getClassName();
+		this.supername = classNode.superName == null ? Optional.empty() : Optional.of(Type.getObjectType(classNode.superName).getClassName());
 		this.interfaces = new LinkedList<String>();
 		this.associations = new LinkedList<CardinalityWrapper>();
 		this.dependencies = new LinkedList<CardinalityWrapper>();
 		for(String fullInterfaceName : (List<String>)classNode.interfaces){
-			this.interfaces.add(fullInterfaceName.replaceAll("/", "."));
+			this.interfaces.add(Type.getObjectType(fullInterfaceName).getClassName());
 		}
 		this.fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
 		this.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
@@ -47,7 +47,7 @@ public class ClassNodeWrapper {
 						
 						@Override
 						public void visitClassType(String name) {
-							String newName = removeArrayFromName(Type.getObjectType(name).getClassName()).replaceAll("/", ".");
+							String newName = removeArrayFromName(Type.getObjectType(name).getClassName());
 							super.visitClassType(newName);
 							if(!isPrimitive(newName)){
 								current = new TypeNameNode(newName, current);
@@ -79,10 +79,10 @@ public class ClassNodeWrapper {
 						
 						@Override
 						public void visitTypeVariable(String name) {
-							String newName = removeArrayFromName(Type.getObjectType(name).getClassName()).replaceAll("/", ".");
+							String newName = removeArrayFromName(Type.getObjectType(name).getClassName());
 							super.visitTypeVariable(newName);
 							if(!isPrimitive(newName)){
-								current = new TypeNameNode(name, current);
+								current = new TypeNameNode(newName, current);
 								if(current.parent != null){
 									current.parent.children.add(current);
 								}
@@ -119,10 +119,10 @@ public class ClassNodeWrapper {
 					if(!isPrimitive(removeArrayFromName(Type.getType(fieldNode.desc).getClassName()))){
 						String field = Type.getType(fieldNode.desc).getClassName().toString();
 						if(removeArrayFromName(field).length() == field.length()){
-							this.associations.add(new CardinalityWrapper(removeArrayFromName(field.replaceAll("/", ".")), false));
+							this.associations.add(new CardinalityWrapper(removeArrayFromName(field), false));
 						}
 						else{
-							this.associations.add(new CardinalityWrapper(removeArrayFromName(field.replaceAll("/", ".")), true));
+							this.associations.add(new CardinalityWrapper(removeArrayFromName(field), true));
 						}						
 					}
 				}
@@ -138,7 +138,7 @@ public class ClassNodeWrapper {
 							
 						@Override
 						public void visitClassType(String name) {
-							String newName = removeArrayFromName(Type.getObjectType(name).getClassName()).replaceAll("/", ".");
+							String newName = removeArrayFromName(Type.getObjectType(name).getClassName());
 							super.visitClassType(newName);
 							if(!isPrimitive(newName)){
 								current = new TypeNameNode(newName, current);
@@ -179,24 +179,24 @@ public class ClassNodeWrapper {
 					// gets the parameters 
 					if(Type.getArgumentTypes(methodNode.desc).length != 0){
 						for(int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++){
-							String name =(Type.getArgumentTypes(methodNode.desc))[i].getClassName().replaceAll("/", ".");
-							if(!isPrimitive(removeArrayFromName(name))){
+							String name = removeArrayFromName((Type.getArgumentTypes(methodNode.desc))[i].getClassName());
+							if(!isPrimitive(name)){
 								Optional<CardinalityWrapper> match = Optional.empty();
 								for(CardinalityWrapper wrapper : dependencies){
-									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+									if(wrapper.toClass.equals(name)){
 										match = Optional.of(wrapper);
 									}
 								}
 								if(!match.isPresent()){
-									if(name.equals(removeArrayFromName(name))){
-										this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), false));
+									if(name.equals(name)){
+										this.dependencies.add(new CardinalityWrapper(name, false));
 									}
 									else{
-										this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
+										this.dependencies.add(new CardinalityWrapper(name, true));
 									}									
 								}
 								else{
-									if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
+									if(!match.get().isOneToMany && !name.equals(name)){
 										match.get().isOneToMany = true;
 									}
 								}
@@ -205,24 +205,24 @@ public class ClassNodeWrapper {
 					}
 					
 					if (!Type.getReturnType(methodNode.desc).getClassName().toString().equals("void")){
-						String name =(Type.getReturnType(methodNode.desc).getClassName()).replaceAll("/", ".");
-						if(!isPrimitive(removeArrayFromName(name))){
+						String name = removeArrayFromName((Type.getReturnType(methodNode.desc).getClassName()));
+						if(!isPrimitive(name)){
 							Optional<CardinalityWrapper> match = Optional.empty();
 							for(CardinalityWrapper wrapper : dependencies){
-								if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
+								if(wrapper.toClass.equals(name)){
 									match = Optional.of(wrapper);
 								}
 							}
 							if(!match.isPresent()){
-								if(name.equals(removeArrayFromName(name))){
-									this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), false));
+								if(name.equals(name)){
+									this.dependencies.add(new CardinalityWrapper(name, false));
 								}
 								else{
-									this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
+									this.dependencies.add(new CardinalityWrapper(name, true));
 								}									
 							}
 							else{
-								if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
+								if(!match.get().isOneToMany && !name.equals(name)){
 									match.get().isOneToMany = true;
 								}
 							}
