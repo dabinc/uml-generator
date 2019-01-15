@@ -18,8 +18,6 @@ public class ASMReader implements Reader {
 		List<ClassReader> classReaderList = new ArrayList<ClassReader>();
 		for(int i = 0; i < classNames.size(); i++){
 			String name = removeArrayFromName(Type.getObjectType(classNames.get(i)).getClassName());
-			System.out.println(classNames.get(i));
-//			System.out.println(name);
 			if(!isPrimitive(name)){
 				try{
 					classReaderList.add(new ClassReader(name));

@@ -37,7 +37,7 @@ public class PackageFilterReader extends ReaderDecorator {
 	
 	private void populateValidPackages(List<String> classNames){
 		for(String className : classNames){
-			this.validPackages.add(0, className.substring(className.lastIndexOf(".") + 1));			
+			this.validPackages.add(className.substring(0, className.lastIndexOf(".") + 1));			
 		}
 	}
 

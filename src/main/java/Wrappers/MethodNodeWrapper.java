@@ -21,7 +21,7 @@ public class MethodNodeWrapper {
 	public Optional<String> signature;
 	public List<Modifier> modifiers;
 	public String type;
-	public List<String> methodOwners;
+	public List<CardinalityWrapper> dependencies;
 	
 	public MethodNodeWrapper(MethodNode methodNode, String type){
 		this.name = methodNode.name;
@@ -32,17 +32,25 @@ public class MethodNodeWrapper {
 			this.parameterNodeWrappers.add(new ParameterNodeWrapper((Type.getArgumentTypes(methodNode.desc))[i].getClassName()));
 		}
 		this.instructions = methodNode.instructions;
-		this.methodOwners = new LinkedList<String>();
+		this.dependencies = new LinkedList<CardinalityWrapper>();
 		for (int i = 0; i < this.instructions.size(); i++) {
 			AbstractInsnNode insn = this.instructions.get(i);
 			if (MethodInsnNode.class.isAssignableFrom(insn.getClass())) {
 				MethodInsnNode methodCall = (MethodInsnNode) insn;
 				if(methodCall.owner != null){
-					this.methodOwners.add(methodCall.owner.replaceAll("/", "."));
+					this.dependencies.add(new CardinalityWrapper(removeArrayFromName(Type.getObjectType(methodCall.owner).getClassName()), false));
 				}
 			} 
 		}
 		this.signature = Optional.ofNullable(methodNode.signature);
 		this.modifiers = Modifier.getModifiers(methodNode.access);
 	}
+	
+	public String removeArrayFromName(String name){
+		if(name.contains("[")){
+			return name.substring(0, name.indexOf('['));
+		}
+		return name;
+	}
+	
 }
