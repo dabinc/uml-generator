@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import Containers.AbstractArrowContainer;
+import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
@@ -12,7 +12,6 @@ import Containers.DoubleAssociationArrowContainer;
 import Containers.DoubleDependencyArrowContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
-import Containers.MethodContainer;
 import Containers.ProgramContainer;
 import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
@@ -61,15 +60,37 @@ public class DefaultPreRenderTask implements PreRenderTask{
 			for(ClassContainer associatedClass : classContainer.associations){
 				boolean isOneToMany = false;
 				for(CardinalityWrapper cardinalityWrapper : classContainer.classNodeWrapper.associations){
-					if(cardinalityWrapper.toClass.equals(associatedClass.classNodeWrapper.name)){
-						isOneToMany = cardinalityWrapper.isOneToMany;
+					if(cardinalityWrapper.toClass.equals(associatedClass.classNodeWrapper.name) && cardinalityWrapper.isOneToMany){
+						isOneToMany = true;
+						break;
 					}
 				}
-				AbstractArrowContainer toAdd = isOneToMany ? new AssociationArrowContainer(associatedClass, classContainer, "*") : new AssociationArrowContainer(associatedClass, classContainer);	
+				ArrowContainer toAdd = isOneToMany ? new AssociationArrowContainer(associatedClass, classContainer, "*") : new AssociationArrowContainer(associatedClass, classContainer);	
 				if(associatedClass.associations.contains(classContainer) && !visitedClasses.contains(associatedClass)){
-					toAdd = isOneToMany ? new DoubleAssociationArrowContainer(associatedClass, classContainer, "*"):new DoubleAssociationArrowContainer(associatedClass, classContainer);
+					boolean isOtherOneToMany = false;
+					for(CardinalityWrapper cardinalityWrapper : associatedClass.classNodeWrapper.associations){
+						if(cardinalityWrapper.toClass.equals(classContainer.classNodeWrapper.name) && cardinalityWrapper.isOneToMany){
+							isOtherOneToMany = true;
+							break;
+						}
+					}
+					if(isOneToMany && isOtherOneToMany){
+						toAdd = new DoubleAssociationArrowContainer(classContainer, associatedClass, "*", "*");
+					}
+					else if(isOneToMany){
+						toAdd = new DoubleAssociationArrowContainer(classContainer, associatedClass, "*");
+					}
+					else if(isOtherOneToMany){
+						toAdd = new DoubleAssociationArrowContainer(classContainer, associatedClass, "1", "*");
+					}
+					else{
+						toAdd = new DoubleAssociationArrowContainer(classContainer, associatedClass);
+					}
+					toReturn.arrows.add(toAdd);
 				}
-				toReturn.arrows.add(toAdd);
+				else if(!associatedClass.associations.contains(classContainer)){
+					toReturn.arrows.add(toAdd);
+				}				
 			}
 			List<ClassContainer> nonDuplicateDependencies = new LinkedList<ClassContainer>();
 			nonDuplicateDependencies.addAll(classContainer.dependencies);
@@ -82,12 +103,32 @@ public class DefaultPreRenderTask implements PreRenderTask{
 						break;
 					}
 				}
-				AbstractArrowContainer toAdd = isOneToMany ? new DependencyArrowContainer(dependencyClass, classContainer, "*") : new DependencyArrowContainer(dependencyClass, classContainer);
+				ArrowContainer toAdd = isOneToMany ? new DependencyArrowContainer(dependencyClass, classContainer, "*") : new DependencyArrowContainer(dependencyClass, classContainer);
 				if(dependencyClass.dependencies.contains(classContainer) && !visitedClasses.contains(dependencyClass)){
-					toAdd = isOneToMany ? new DoubleDependencyArrowContainer(dependencyClass, classContainer, "*") : new DoubleDependencyArrowContainer(dependencyClass, classContainer);
+					boolean isOtherOneToMany = false;
+					for(CardinalityWrapper cardinalityWrapper : dependencyClass.classNodeWrapper.dependencies){
+						if(cardinalityWrapper.toClass.equals(classContainer.classNodeWrapper.name) && cardinalityWrapper.isOneToMany){
+							isOtherOneToMany = true;
+							break;
+						}
+					}
+					if(isOneToMany && isOtherOneToMany){
+						toAdd = new DoubleDependencyArrowContainer(classContainer, dependencyClass, "*", "*");
+					}
+					else if(isOneToMany){
+						toAdd = new DoubleDependencyArrowContainer(classContainer, dependencyClass, "*");
+					}
+					else if(isOtherOneToMany){
+						toAdd = new DoubleDependencyArrowContainer(classContainer, dependencyClass, "1", "*");
+					}
+					else{
+						toAdd = new DoubleDependencyArrowContainer(classContainer, dependencyClass);
+					}
+					toReturn.arrows.add(toAdd);
 				}
-				toReturn.arrows.add(toAdd);
-				
+				else if(!dependencyClass.dependencies.contains(classContainer)){
+					toReturn.arrows.add(toAdd);
+				}	
 			}
 			
 			if(classContainer.superclass.isPresent()){
