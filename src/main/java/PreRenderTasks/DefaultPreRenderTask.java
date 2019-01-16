@@ -81,7 +81,7 @@ public class DefaultPreRenderTask implements PreRenderTask{
 		return toReturn;
 	}
 	
-	private <T extends ArrowContainer, K extends ArrowContainer> List<ArrowContainer> generateRelationshipArrows(ClassContainer fromClass, ClassContainer toClass, List<ClassContainer> fromClassRelations,
+	private <T extends ArrowContainer, K extends ArrowContainer> List<ArrowContainer> generateRelationshipArrows(ClassContainer fromClass, ClassContainer toClass, List<ClassContainer> toClassRelations,
 		List<CardinalityWrapper> fromClassWrapperRelations, List<CardinalityWrapper> toClassWrapperRelations, List<ClassContainer> visitedClasses, Class<T> normalArrowClass, Class<K> doubleArrowClass){
 		List<ArrowContainer> toReturn = new LinkedList<ArrowContainer>();
 		boolean isOneToMany = false;
@@ -92,7 +92,7 @@ public class DefaultPreRenderTask implements PreRenderTask{
 			}
 		}
 		ArrowContainer toAdd = isOneToMany ? generateArrowContainer(normalArrowClass, toClass, fromClass, "*") : generateArrowContainer(normalArrowClass, toClass, fromClass);
-		if(fromClassRelations.contains(fromClass) && !visitedClasses.contains(toClass)){
+		if(toClassRelations.contains(fromClass) && !visitedClasses.contains(toClass)){
 			boolean isOtherOneToMany = false;
 			for(CardinalityWrapper cardinalityWrapper : toClassWrapperRelations){
 				if(cardinalityWrapper.toClass.equals(fromClass.classNodeWrapper.name) && cardinalityWrapper.isOneToMany){
@@ -114,7 +114,7 @@ public class DefaultPreRenderTask implements PreRenderTask{
 			}
 			toReturn.add(toAdd);
 		}
-		else if(!fromClassRelations.contains(fromClass)){
+		else if(!toClassRelations.contains(fromClass)){
 			toReturn.add(toAdd);
 		}
 		return toReturn;
