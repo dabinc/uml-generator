@@ -45,15 +45,7 @@ public class ClassNodeWrapper {
 					SignatureVisitor sv = new RelationSignatureVisitor(Opcodes.ASM5, this.associations);
 					sr.acceptType(sv);
 				} else {
-					if(!isPrimitive(removeArrayFromName(Type.getType(fieldNode.desc).getClassName()))){
-						String field = Type.getType(fieldNode.desc).getClassName().toString();
-						if(removeArrayFromName(field).length() == field.length()){
-							this.associations.add(new CardinalityWrapper(removeArrayFromName(field), false));
-						}
-						else{
-							this.associations.add(new CardinalityWrapper(removeArrayFromName(field), true));
-						}						
-					}
+					populateRelationsWithNonGenerics(this.associations, Type.getType(fieldNode.desc).getClassName());
 				}
 			}
 		} 
@@ -68,54 +60,12 @@ public class ClassNodeWrapper {
 					// gets the parameters 
 					if(Type.getArgumentTypes(methodNode.desc).length != 0){
 						for(int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++){
-							String name = Type.getArgumentTypes(methodNode.desc)[i].getClassName();
-							if(!isPrimitive(name)){
-								Optional<CardinalityWrapper> match = Optional.empty();
-								for(CardinalityWrapper wrapper : dependencies){
-									if(wrapper.toClass.equals(removeArrayFromName(name))){
-										match = Optional.of(wrapper);
-									}
-								}
-								if(!match.isPresent()){
-									if(name.equals(removeArrayFromName(name))){
-										this.dependencies.add(new CardinalityWrapper(name, false));
-									}
-									else{
-										this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
-									}									
-								}
-								else{
-									if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
-										match.get().isOneToMany = true;
-									}
-								}
-							}
+							populateRelationsWithNonGenerics(this.dependencies, Type.getArgumentTypes(methodNode.desc)[i].getClassName());
 						}
 					}
 					
 					if (!Type.getReturnType(methodNode.desc).getClassName().toString().equals("void")){
-						String name = Type.getReturnType(methodNode.desc).getClassName();
-						if(!isPrimitive(name)){
-							Optional<CardinalityWrapper> match = Optional.empty();
-							for(CardinalityWrapper wrapper : dependencies){
-								if(wrapper.toClass.equals(removeArrayFromName(name))){
-									match = Optional.of(wrapper);
-								}
-							}
-							if(!match.isPresent()){
-								if(name.equals(removeArrayFromName(name))){
-									this.dependencies.add(new CardinalityWrapper(name, false));
-								}
-								else{
-									this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
-								}									
-							}
-							else{
-								if(!match.get().isOneToMany && !name.equals(removeArrayFromName(name))){
-									match.get().isOneToMany = true;
-								}
-							}
-						}
+						populateRelationsWithNonGenerics(dependencies, Type.getReturnType(methodNode.desc).getClassName());
 					}
 				}
 			}
@@ -137,20 +87,42 @@ public class ClassNodeWrapper {
 		this.modifiers = Modifier.getModifiers(classNode.access);
 	}
 	
-	public String removeArrayFromName(String name){
+	private String removeArrayFromName(String name){
 		if(name.contains("[")){
 			return name.substring(0, name.indexOf('['));
 		}
 		return name;
 	}
 	
-	public boolean isPrimitive(String name){
+	private boolean isPrimitive(String name){
 		if(name.equals(Type.BOOLEAN_TYPE.getClassName()) || name.equals(Type.BYTE_TYPE.getClassName()) || name.equals(Type.CHAR_TYPE.getClassName()) || name.equals(Type.DOUBLE_TYPE.getClassName())
 				|| name.equals(Type.FLOAT_TYPE.getClassName()) || name.equals(Type.INT_TYPE.getClassName()) || name.equals(Type.LONG_TYPE.getClassName()) || name.equals(Type.SHORT_TYPE.getClassName())
 						|| name.equals(Type.VOID_TYPE.getClassName())){
 			return true;
 		}
 		return false;
+	}
+	
+	private void populateRelationsWithNonGenerics(List<CardinalityWrapper> relationships, String name){
+		if(!isPrimitive(name)){
+			Optional<CardinalityWrapper> match = Optional.empty();
+			for(CardinalityWrapper wrapper : relationships){
+				if(wrapper.toClass.equals(removeArrayFromName(name))){
+					match = Optional.of(wrapper);
+				}
+			}
+			if(!match.isPresent()){
+				if(name.equals(removeArrayFromName(name))){
+					relationships.add(new CardinalityWrapper(name, false));
+				}
+				else{
+					relationships.add(new CardinalityWrapper(removeArrayFromName(name), true));
+				}									
+			}
+			else{
+				match.get().isOneToMany = match.get().isOneToMany || !name.equals(removeArrayFromName(name));
+			}
+		}
 	}
 	
 	private class TypeNameNode{
