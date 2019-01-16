@@ -42,78 +42,7 @@ public class ClassNodeWrapper {
 				this.fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).getClassName()));
 				if(fieldNode.signature != null){
 					SignatureReader sr = new SignatureReader(fieldNode.signature);
-					SignatureVisitor sv = new SignatureVisitor(Opcodes.ASM5) {
-						TypeNameNode current = null;
-						
-						@Override
-						public void visitClassType(String name) {
-							String newName = removeArrayFromName(Type.getObjectType(name).getClassName());
-							super.visitClassType(newName);
-							if(!isPrimitive(newName)){
-								current = new TypeNameNode(newName, current);
-								if(current.parent != null){
-									current.parent.children.add(current);
-								}
-								Optional<CardinalityWrapper> match = Optional.empty();
-								for(CardinalityWrapper wrapper : associations){
-									if(wrapper.toClass.equals(newName)){
-										match = Optional.of(wrapper);
-									}
-								}
-								if(!match.isPresent()){
-									if(current.parent != null){
-										associations.add(new CardinalityWrapper(newName, current.parent.extendsCollectionOrMap()));
-									}
-									else{
-										associations.add(new CardinalityWrapper(newName, false));
-									}
-								}
-								else{
-									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
-										match.get().isOneToMany = true;
-									}
-								}
-							}
-						}
-						
-						
-						@Override
-						public void visitTypeVariable(String name) {
-							String newName = removeArrayFromName(Type.getObjectType(name).getClassName());
-							super.visitTypeVariable(newName);
-							if(!isPrimitive(newName)){
-								current = new TypeNameNode(newName, current);
-								if(current.parent != null){
-									current.parent.children.add(current);
-								}
-//								Optional<CardinalityWrapper> match = Optional.empty();
-//								for(CardinalityWrapper wrapper : associations){
-//									if(wrapper.toClass.equals(removeArrayFromName(name).replaceAll("/", "."))){
-//										match = Optional.of(wrapper);
-//									}
-//								}
-//								if(!match.isPresent()){
-//									if(current.parent != null){
-//										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), current.parent.extendsCollectionOrMap()));
-//									}
-//									else{
-//										associations.add(new CardinalityWrapper(removeArrayFromName(name).replaceAll("/", "."), false));
-//									}
-//								}
-//								else{
-//									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
-//										match.get().isOneToMany = true;
-//									}
-//								}
-							}
-						}	
-						
-						@Override
-						public void visitEnd() {
-							super.visitEnd();
-							current = current.parent;
-						};
-					};
+					SignatureVisitor sv = new RelationSignatureVisitor(Opcodes.ASM5, this.associations);
 					sr.acceptType(sv);
 				} else {
 					if(!isPrimitive(removeArrayFromName(Type.getType(fieldNode.desc).getClassName()))){
@@ -133,47 +62,7 @@ public class ClassNodeWrapper {
 				this.methodNodeWrappers.add(new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName()));
 				if(methodNode.signature != null){
 					SignatureReader sr = new SignatureReader(methodNode.signature);
-					SignatureVisitor sv = new SignatureVisitor(Opcodes.ASM5) {
-						TypeNameNode current = null;
-							
-						@Override
-						public void visitClassType(String name) {
-							String newName = removeArrayFromName(Type.getObjectType(name).getClassName());
-							super.visitClassType(newName);
-							if(!isPrimitive(newName)){
-								current = new TypeNameNode(newName, current);
-								if(current.parent != null){
-									current.parent.children.add(current);
-								}
-								Optional<CardinalityWrapper> match = Optional.empty();
-								for(CardinalityWrapper wrapper : dependencies){
-									if(wrapper.toClass.equals(newName)){
-										match = Optional.of(wrapper);
-									}
-								}
-								if(!match.isPresent()){
-									if(current.parent != null){
-										dependencies.add(new CardinalityWrapper(newName, current.parent.extendsCollectionOrMap()));
-									}
-									else{
-										dependencies.add(new CardinalityWrapper(newName, false));
-									}
-								}
-								else{
-									if(!match.get().isOneToMany && current.parent != null && current.parent.extendsCollectionOrMap()){
-										match.get().isOneToMany = true;
-									}
-								}
-							}
-						}
-						
-						@Override
-						public void visitEnd() {
-							super.visitEnd();
-							current = current.parent;
-						};
-						
-					};
+					SignatureVisitor sv = new RelationSignatureVisitor(Opcodes.ASM5, this.dependencies);
 					sr.accept(sv);
 				} else {
 					// gets the parameters 
@@ -192,7 +81,7 @@ public class ClassNodeWrapper {
 										this.dependencies.add(new CardinalityWrapper(name, false));
 									}
 									else{
-										this.dependencies.add(new CardinalityWrapper(name, true));
+										this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
 									}									
 								}
 								else{
@@ -218,7 +107,7 @@ public class ClassNodeWrapper {
 									this.dependencies.add(new CardinalityWrapper(name, false));
 								}
 								else{
-									this.dependencies.add(new CardinalityWrapper(name, true));
+									this.dependencies.add(new CardinalityWrapper(removeArrayFromName(name), true));
 								}									
 							}
 							else{
@@ -288,5 +177,55 @@ public class ClassNodeWrapper {
 			}
 			return toReturn;
 		}
+	}
+	
+	private class RelationSignatureVisitor extends SignatureVisitor{
+		
+		List<CardinalityWrapper> cardinalityWrappers;
+
+		public RelationSignatureVisitor(int api, List<CardinalityWrapper> cardinalityWrappers) {
+			super(api);
+			this.cardinalityWrappers = cardinalityWrappers;
+		}
+		
+		TypeNameNode current = null;
+		
+		@Override
+		public void visitClassType(String name) {
+			String newName = removeArrayFromName(Type.getObjectType(name).getClassName());
+			super.visitClassType(newName);
+			if(!isPrimitive(newName)){
+				current = new TypeNameNode(newName, current);
+				if(current.parent != null){
+					current.parent.children.add(current);
+				}
+				Optional<CardinalityWrapper> match = Optional.empty();
+				for(CardinalityWrapper wrapper : cardinalityWrappers){
+					if(wrapper.toClass.equals(newName)){
+						match = Optional.of(wrapper);
+					}
+				}
+				if(!match.isPresent()){
+					if(current.parent != null){
+						cardinalityWrappers.add(new CardinalityWrapper(newName, current.parent.extendsCollectionOrMap()));
+					}
+					else{
+						cardinalityWrappers.add(new CardinalityWrapper(newName, false));
+					}
+				}
+				else{
+					if(current.parent != null){
+						match.get().isOneToMany = match.get().isOneToMany || current.parent.extendsCollectionOrMap();
+					}
+				}
+			}
+		}
+		
+		@Override
+		public void visitEnd() {
+			super.visitEnd();
+			current = current.parent;
+		};
+		
 	}
 }
