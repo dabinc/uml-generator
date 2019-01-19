@@ -16,11 +16,11 @@ import Enums.Modifier;
 public class MethodNodeWrapper {
 	public String name;
 	public String desc;
-	public InsnList instructions;
 	public List<ParameterNodeWrapper> parameterNodeWrappers;
 	public Optional<String> signature;
 	public List<Modifier> modifiers;
 	public String type;
+	public List<InstructionNodeWrapper> instructionNodeWrappers;
 	public List<CardinalityWrapper> dependencies;
 	
 	public MethodNodeWrapper(MethodNode methodNode, String type){
@@ -31,10 +31,11 @@ public class MethodNodeWrapper {
 		for(int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++){
 			this.parameterNodeWrappers.add(new ParameterNodeWrapper((Type.getArgumentTypes(methodNode.desc))[i].getClassName()));
 		}
-		this.instructions = methodNode.instructions;
+		this.instructionNodeWrappers = new LinkedList<InstructionNodeWrapper>();
 		this.dependencies = new LinkedList<CardinalityWrapper>();
-		for (int i = 0; i < this.instructions.size(); i++) {
-			AbstractInsnNode insn = this.instructions.get(i);
+		for (int i = 0; i < methodNode.instructions.size(); i++) {
+			this.instructionNodeWrappers.add(new InstructionNodeWrapper(methodNode.instructions.get(i)));
+			AbstractInsnNode insn = methodNode.instructions.get(i);
 			if (MethodInsnNode.class.isAssignableFrom(insn.getClass())) {
 				MethodInsnNode methodCall = (MethodInsnNode) insn;
 				if(methodCall.owner != null){
