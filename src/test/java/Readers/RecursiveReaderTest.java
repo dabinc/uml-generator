@@ -1,4 +1,4 @@
-package Program;
+package Readers;
 
 import static org.junit.Assert.*;
 
@@ -8,8 +8,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import Readers.ASMReader;
-import Readers.RecursiveReader;
 import Wrappers.ClassNodeWrapper;
 
 public class RecursiveReaderTest {
