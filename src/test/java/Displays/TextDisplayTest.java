@@ -16,7 +16,7 @@ public class TextDisplayTest {
 	private final PrintStream defaultOut = System.out;
 	private final PrintStream defaultErr = System.err;
 
-	private TextDisplay toTest;
+	private Display toTest;
 
 	@Before
 	public void setup() {
