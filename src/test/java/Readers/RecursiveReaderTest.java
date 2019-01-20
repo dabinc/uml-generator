@@ -2,61 +2,86 @@ package Readers;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
+import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
+import Wrappers.MethodNodeWrapper;
 
 public class RecursiveReaderTest {
 
 	RecursiveReader reader;
-	ASMReader asmReader;
-	
+	Reader baseReader;
+
 	@Before
-	public void setup(){
-		asmReader = new ASMReader();
-		reader = new RecursiveReader(asmReader);
+	public void setup() {
+		baseReader = EasyMock.mock(Reader.class);
+		reader = new RecursiveReader(baseReader);
 	}
-	
+
+	@After
+	public void teardown() {
+		EasyMock.verify(baseReader);
+	}
+
 	@Test
 	public void testEmptyInput() {
-		assertEquals(0, reader.getClassNodeWrappers(new ArrayList<String>()).size());
+		List<String> classesToTest = new LinkedList<String>();
+		List<ClassNodeWrapper> fromBaseReader = new LinkedList<ClassNodeWrapper>();
+
+		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTest)).andReturn(fromBaseReader);
+
+		EasyMock.replay(baseReader);
+
+		assertEquals(0, reader.getClassNodeWrappers(classesToTest).size());
 	}
 
 	@Test
-	public void testNonExistantClassName() {
-		List<String> invalidNames = new ArrayList<String>();
-		invalidNames.add("java.scooby.doo");
-		assertEquals(0, reader.getClassNodeWrappers(invalidNames).size());
+	public void testRecurseToInheritance() {
+		List<String> classesToTestFirstTime = new LinkedList<String>();
+		classesToTestFirstTime.add("java.lang.String");
+		
+		List<String> classesToTestSecondTime = new LinkedList<String>();
+		classesToTestSecondTime.add("java.lang.Object");
+		
+		List<ClassNodeWrapper> fromBaseReaderFirstTime = new LinkedList<ClassNodeWrapper>();
+		ClassNodeWrapper classNodeWrapperFirstTime = EasyMock.mock(ClassNodeWrapper.class);
+		classNodeWrapperFirstTime.supername = Optional.of("java.lang.Object");
+		classNodeWrapperFirstTime.associations = new LinkedList<CardinalityWrapper>();
+		classNodeWrapperFirstTime.dependencies = new LinkedList<CardinalityWrapper>();
+		classNodeWrapperFirstTime.interfaces = new LinkedList<String>();
+		classNodeWrapperFirstTime.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
+		fromBaseReaderFirstTime.add(classNodeWrapperFirstTime);
+		
+		List<ClassNodeWrapper> fromBaseReaderSecondTime = new LinkedList<ClassNodeWrapper>();
+		
+		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTestFirstTime)).andReturn(fromBaseReaderFirstTime);
+		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTestSecondTime)).andReturn(fromBaseReaderSecondTime);
+		
+		EasyMock.replay(classNodeWrapperFirstTime, baseReader);
+		
+		assertEquals(2, reader.getClassNodeWrappers(classesToTestFirstTime).size());
 	}
-	
-	@Test
-	public void testOneExistantClassName() {
-		List<String> validNames = new ArrayList<String>();
-		validNames.add("java.util.Collection");
-		assertEquals(3, reader.getClassNodeWrappers(validNames).size());
-	}
-	
-	@Test
-	public void testOneValidOneInvalidClassName() {
-		List<String> names = new ArrayList<String>();
-		names.add("java.util.Collection");
-		names.add("java.scooby.doo");
-		assertEquals(3, reader.getClassNodeWrappers(names).size());
-	}
-	
-	@Test
-	public void testQuestionLikeDemoMOne() {
-		List<String> names = new ArrayList<String>();
-		names.add("javax.swing.JComponent");
-		for(ClassNodeWrapper clazz: reader.getClassNodeWrappers(names)){
-			System.out.println(clazz.name);
-		}
-		assertEquals(8, reader.getClassNodeWrappers(names).size());
-	}
-	
 
+	@Test
+	public void testRecurseToImplementation() {
+
+	}
+
+	@Test
+	public void testRecurseToDependence() {
+
+	}
+
+	@Test
+	public void testRecurseToAssociation() {
+
+	}
 }
