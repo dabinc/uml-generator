@@ -7,11 +7,11 @@ import java.io.UnsupportedEncodingException;
 public class FileDisplay implements Display{
 
 	@Override
-	public void display(String plantUMLCode) {
+	public void display(String umlCode) {
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter("temp" + System.getProperty("file.separator") + "plantUML-" + System.currentTimeMillis() + ".txt", "UTF-8");
-			writer.println(plantUMLCode);
+			writer = new PrintWriter("temp" + System.getProperty("file.separator") + "UMLGenerator-" + System.currentTimeMillis() + ".txt", "UTF-8");
+			writer.print(umlCode);
 			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

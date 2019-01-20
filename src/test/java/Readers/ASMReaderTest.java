@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class DefaultReaderTest {
+public class ASMReaderTest {
 	
 	ASMReader reader;
 	

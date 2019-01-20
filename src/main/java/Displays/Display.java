@@ -1,5 +1,5 @@
 package Displays;
 
 public interface Display {
-	public void display(String plantUMLCode);
+	public void display(String umlCode);
 }

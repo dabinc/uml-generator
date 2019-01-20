@@ -14,7 +14,6 @@ public interface Renderer {
 	public String renderAssociationArrowContainer(AssociationArrowContainer associationArrowContainer);
 	public String renderInheritanceArrowContainer(InheritanceArrowContainer inheritanceArrowContainer);
 	public String renderImplementationArrowContainer(ImplementationArrowContainer implementationArrowContainer);
-//	public String modifyToTwoWay(String baseArrow);
 	public String renderDoubleDependencyArrowContainer(DoubleDependencyArrowContainer doubleDependencyARrowContainer);
 	public String renderDoubleAssociationArrowContainer(DoubleAssociationArrowContainer doubleAssociationARrowContainer);
 }
