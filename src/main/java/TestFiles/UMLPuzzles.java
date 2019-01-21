@@ -14,6 +14,7 @@ public class UMLPuzzles {
 	StringArray array;
 	TwoStrings pair;
 	OneTooManyDependencies[] dependencies;
+	ClassWithLambdas classWithLambdas;
 }
 
 class GenericClass<T>{
@@ -49,5 +50,11 @@ class OneTooManyDependencies{
 	}
 	public String[] dependsOnManyStrings() {
 		return null;
+	}
+}
+
+class ClassWithLambdas{
+	public void doSomething(List<String> toPrint){
+		toPrint.forEach(stringToPrint -> System.out.print(stringToPrint));
 	}
 }
