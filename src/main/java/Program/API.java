@@ -16,6 +16,7 @@ import PreRenderTasks.KeepProtectedAndPublicPreRenderTaskFactory;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskFactory;
 import Readers.ASMReader;
+import Readers.LambdaFilterReaderFactory;
 import Readers.PackageFilterReaderFactory;
 import Readers.Reader;
 import Readers.ReaderFactory;
@@ -94,6 +95,7 @@ public class API {
 		this.readerMap.put("-package", new PackageFilterReaderFactory());
 		this.readerFilterMap.put("-package=", new PackageFilterReaderFactory());
 		this.readerFilterMap.put("-list=", new WhitelistBlacklistReaderFactory());
+		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
 		this.displayMap.put("-file", new FileDisplay());
 		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());
