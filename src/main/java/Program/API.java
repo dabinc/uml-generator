@@ -20,7 +20,6 @@ import Readers.PackageFilterReaderFactory;
 import Readers.Reader;
 import Readers.ReaderFactory;
 import Readers.RecursiveReaderFactory;
-import Readers.WhitelistBlacklistReader;
 import Readers.WhitelistBlacklistReaderFactory;
 import Renderers.PlantUMLRenderer;
 import Renderers.Renderer;
