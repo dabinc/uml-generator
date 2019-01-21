@@ -15,6 +15,7 @@ public class UMLPuzzles {
 	TwoStrings pair;
 	OneTooManyDependencies[] dependencies;
 	Singleton singleton;
+	ClassWithLambdas classWithLambdas;
 }
 
 class GenericClass<T>{
@@ -65,5 +66,11 @@ class Singleton{
 			singleton = new Singleton();
 		}
 		return singleton;
+	}
+}
+
+class ClassWithLambdas{
+	public void doSomething(List<String> toPrint){
+		toPrint.forEach(stringToPrint -> System.out.print(stringToPrint));
 	}
 }
