@@ -13,6 +13,7 @@ Pass in any number of the options below to args:
 7. "-package=package1,package2,package3..." limits rendering to the packages specified after =
 8. "-list=white-package/class,white-package/class2,black-package/class3,..." whitelists and blacklists certain classes and packages.
 9. "-singleton" detects singletons and colors them blue
+10. "-removelambdas" removes all lambda methods that may clutter class blocks.
 
 The default options are to not recurse into superclasses and interfacess, private level analysis, text display, and using PlantUML
 
