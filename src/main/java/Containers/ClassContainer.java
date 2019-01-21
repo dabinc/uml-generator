@@ -11,6 +11,7 @@ public class ClassContainer {
 	public List<FieldContainer> fields;
 	public List<MethodContainer> methods;
 	public DisplayContainer displayContainer;
+	public Optional<StereotypeContainer> stereotypeContainer;
 	
 	public Optional<ClassContainer> superclass;
 	public List<ClassContainer> interfaces;

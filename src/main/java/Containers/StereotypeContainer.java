@@ -3,9 +3,9 @@ package Containers;
 import java.util.Optional;
 
 public class StereotypeContainer {
-	Optional<Character> tag;
-	Optional<String> color;
-	Optional<String> label;
+	public Optional<Character> tag;
+	public Optional<String> color;
+	public Optional<String> label;
 	public StereotypeContainer(String label, String color, char tag){
 		this.label = Optional.ofNullable(label);
 		this.color = Optional.ofNullable(color);
