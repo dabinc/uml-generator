@@ -20,6 +20,8 @@ import Readers.PackageFilterReaderFactory;
 import Readers.Reader;
 import Readers.ReaderFactory;
 import Readers.RecursiveReaderFactory;
+import Readers.WhitelistBlacklistReader;
+import Readers.WhitelistBlacklistReaderFactory;
 import Renderers.PlantUMLRenderer;
 import Renderers.Renderer;
 import Wrappers.ClassNodeWrapper;
@@ -92,6 +94,7 @@ public class API {
 		this.readerMap.put("-recursive", new RecursiveReaderFactory());
 		this.readerMap.put("-package", new PackageFilterReaderFactory());
 		this.readerFilterMap.put("-package=", new PackageFilterReaderFactory());
+		this.readerFilterMap.put("-list=", new WhitelistBlacklistReaderFactory());
 		this.displayMap.put("-file", new FileDisplay());
 		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());
