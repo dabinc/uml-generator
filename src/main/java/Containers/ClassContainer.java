@@ -1,4 +1,5 @@
 package Containers;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -12,24 +13,24 @@ public class ClassContainer {
 	public List<MethodContainer> methods;
 	public DisplayContainer displayContainer;
 	public Optional<StereotypeContainer> stereotypeContainer;
-	
+
 	public Optional<ClassContainer> superclass;
 	public List<ClassContainer> interfaces;
 	public List<ClassContainer> dependencies;
 	public List<ClassContainer> associations;
-	
+
 	public ClassNodeWrapper classNodeWrapper;
-	
-	public ClassContainer(ClassNodeWrapper classNodeWrapper){
+
+	public ClassContainer(ClassNodeWrapper classNodeWrapper) {
 		this.classNodeWrapper = classNodeWrapper;
 		this.fields = new LinkedList<FieldContainer>();
 		this.methods = new LinkedList<MethodContainer>();
 		this.displayContainer = new DisplayContainer();
 		this.stereotypeContainer = Optional.empty();
-		for(FieldNodeWrapper wrapper : classNodeWrapper.fieldNodeWrappers){
+		for (FieldNodeWrapper wrapper : classNodeWrapper.fieldNodeWrappers) {
 			this.fields.add(new FieldContainer(wrapper));
 		}
-		for(MethodNodeWrapper wrapper : classNodeWrapper.methodNodeWrappers){
+		for (MethodNodeWrapper wrapper : classNodeWrapper.methodNodeWrappers) {
 			this.methods.add(new MethodContainer(wrapper));
 		}
 		this.superclass = Optional.empty();
