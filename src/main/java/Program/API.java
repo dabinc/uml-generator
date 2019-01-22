@@ -15,6 +15,7 @@ import PreRenderTasks.KeepPrivateAndUpPreRenderTaskFactory;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTaskFactory;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskFactory;
+import PreRenderTasks.SingletonPatternDetectorPreRenderTaskFactory;
 import Readers.ASMReader;
 import Readers.PackageFilterReaderFactory;
 import Readers.Reader;
@@ -98,5 +99,6 @@ public class API {
 		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());
 		this.preRenderMap.put("-protected", new KeepProtectedAndPublicPreRenderTaskFactory());
+		this.preRenderMap.put("-singleton", new SingletonPatternDetectorPreRenderTaskFactory());
 	}
 }

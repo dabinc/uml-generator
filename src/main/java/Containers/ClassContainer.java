@@ -25,6 +25,7 @@ public class ClassContainer {
 		this.fields = new LinkedList<FieldContainer>();
 		this.methods = new LinkedList<MethodContainer>();
 		this.displayContainer = new DisplayContainer();
+		this.stereotypeContainer = Optional.empty();
 		for(FieldNodeWrapper wrapper : classNodeWrapper.fieldNodeWrappers){
 			this.fields.add(new FieldContainer(wrapper));
 		}
