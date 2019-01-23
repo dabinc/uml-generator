@@ -15,6 +15,7 @@ Pass in any number of the options below to args:
 9. "-singleton" detects singletons and colors them blue
 10. "-removelambdas" removes all lambda methods that may clutter class blocks.
 11. "-inheritancecomposition" turns all arrows where inheritance is favored over composition orange
+12. "-prerendertasks=fullyqualifiedclassname,fullyqualifiedclassname2,..." Imports and uses the prerendertasks specified
 
 The default options are to not recurse into superclasses and interfacess, private level analysis, text display, and using PlantUML
 
