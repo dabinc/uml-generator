@@ -14,6 +14,7 @@ public class UMLPuzzles {
 	StringArray array;
 	TwoStrings pair;
 	OneTooManyDependencies[] dependencies;
+	Singleton singleton;
 }
 
 class GenericClass<T>{
@@ -49,5 +50,20 @@ class OneTooManyDependencies{
 	}
 	public String[] dependsOnManyStrings() {
 		return null;
+	}
+}
+
+class Singleton{
+	private static Singleton singleton;
+	
+	private Singleton(){
+		
+	}
+	
+	public static Singleton getInstance(){
+		if(singleton == null){
+			singleton = new Singleton();
+		}
+		return singleton;
 	}
 }
