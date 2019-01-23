@@ -4,12 +4,12 @@ import java.util.Optional;
 
 public class DisplayContainer {
 	public Optional<String> color;
-	
-	public DisplayContainer(){
+
+	public DisplayContainer() {
 		this.color = Optional.empty();
 	}
-	
-	public DisplayContainer(String color){
+
+	public DisplayContainer(String color) {
 		this.color = Optional.ofNullable(color);
 	}
 }

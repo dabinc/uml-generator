@@ -20,8 +20,8 @@ public class WhitelistBlacklistReader extends ReaderDecorator {
 	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
 		List<ClassNodeWrapper> previousClassNodeWrappers = super.getClassNodeWrappers(classNames);
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
-		for(ClassNodeWrapper previousClassNodeWrapper : previousClassNodeWrappers){
-			if(isWhiteListed(previousClassNodeWrapper.name) || !isBlackListed(previousClassNodeWrapper.name)){
+		for (ClassNodeWrapper previousClassNodeWrapper : previousClassNodeWrappers) {
+			if (isWhiteListed(previousClassNodeWrapper.name) || !isBlackListed(previousClassNodeWrapper.name)) {
 				toReturn.add(previousClassNodeWrapper);
 			}
 		}

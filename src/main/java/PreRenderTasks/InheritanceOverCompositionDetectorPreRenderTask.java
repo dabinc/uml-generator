@@ -14,21 +14,22 @@ public class InheritanceOverCompositionDetectorPreRenderTask extends PreRenderTa
 	public InheritanceOverCompositionDetectorPreRenderTask(PreRenderTask preRenderTask) {
 		super(preRenderTask);
 	}
-	
+
 	@Override
 	public ProgramContainer getProgramContainer() {
 		ProgramContainer programContainer = super.getProgramContainer();
-		
-		for(ArrowContainer arrowContainer : programContainer.arrows){
-			if(InheritanceArrowContainer.class.isAssignableFrom(arrowContainer.getClass()) && isConcrete(arrowContainer.to)){
+
+		for (ArrowContainer arrowContainer : programContainer.arrows) {
+			if (InheritanceArrowContainer.class.isAssignableFrom(arrowContainer.getClass())
+					&& isConcrete(arrowContainer.to)) {
 				arrowContainer.displayContainer.color = Optional.of("orange");
 			}
 		}
-		
+
 		return programContainer;
 	}
-	
-	private boolean isConcrete(ClassContainer classContainer){
+
+	private boolean isConcrete(ClassContainer classContainer) {
 		List<Modifier> modifiers = classContainer.classNodeWrapper.modifiers;
 		return !modifiers.contains(Modifier.ABSTRACT) && !modifiers.contains(Modifier.INTERFACE);
 	}

@@ -1,6 +1,6 @@
 package PreRenderTasks;
 
-public class KeepOnlyPublicPreRenderTaskFactory implements PreRenderTaskFactory{
+public class KeepOnlyPublicPreRenderTaskFactory implements PreRenderTaskFactory {
 
 	@Override
 	public PreRenderTask getPreRenderTask(PreRenderTask preRenderTask) {
