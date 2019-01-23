@@ -2,7 +2,7 @@ package Containers;
 
 import Renderers.Renderer;
 
-public class DoubleDependencyArrowContainer extends AbstractArrowContainer {
+public class DoubleDependencyArrowContainer extends ArrowContainer {
 
 	public DoubleDependencyArrowContainer(ClassContainer to, ClassContainer from) {
 		super(to, from, "1", "1");
