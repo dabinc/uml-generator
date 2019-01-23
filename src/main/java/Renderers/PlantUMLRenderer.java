@@ -29,7 +29,7 @@ public class PlantUMLRenderer implements Renderer {
 		for (ArrowContainer arrowContainer : programContainer.arrows) {
 			toReturn.append(renderArrowContainer(arrowContainer));
 		}
-		for(SkinParamContainer skinParamContainer : programContainer.skinParams){
+		for (SkinParamContainer skinParamContainer : programContainer.skinParams) {
 			toReturn.append(renderSkinParamContainer(skinParamContainer));
 		}
 		toReturn.append("@enduml" + System.lineSeparator());
@@ -192,21 +192,21 @@ public class PlantUMLRenderer implements Renderer {
 			String stereotype = skinParamContainer.stereotype.isPresent()
 					&& skinParamContainer.stereotype.get().label.isPresent()
 							? "<<" + skinParamContainer.stereotype.get().label.get() + ">>" : "";
-			if(skinParamContainer.arrowColor.isPresent()){
+			if (skinParamContainer.arrowColor.isPresent()) {
 				toReturn.append("ArrowColor");
 				toReturn.append(stereotype);
 				toReturn.append(" ");
 				toReturn.append(skinParamContainer.arrowColor.get());
 				toReturn.append(System.lineSeparator());
 			}
-			if(skinParamContainer.backgroundColor.isPresent()){
+			if (skinParamContainer.backgroundColor.isPresent()) {
 				toReturn.append("BackgroundColor");
 				toReturn.append(stereotype);
 				toReturn.append(" ");
 				toReturn.append(skinParamContainer.backgroundColor.get());
 				toReturn.append(System.lineSeparator());
 			}
-			if(skinParamContainer.borderColor.isPresent()){
+			if (skinParamContainer.borderColor.isPresent()) {
 				toReturn.append("BorderColor");
 				toReturn.append(stereotype);
 				toReturn.append(" ");
