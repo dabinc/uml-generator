@@ -13,6 +13,7 @@ import Containers.InheritanceArrowContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
+import Containers.SkinParamContainer;
 import Containers.StereotypeContainer;
 import Enums.Modifier;
 
@@ -27,6 +28,9 @@ public class PlantUMLRenderer implements Renderer {
 		}
 		for (ArrowContainer arrowContainer : programContainer.arrows) {
 			toReturn.append(renderArrowContainer(arrowContainer));
+		}
+		for(SkinParamContainer skinParamContainer : programContainer.skinParams){
+			toReturn.append(renderSkinParamContainer(skinParamContainer));
 		}
 		toReturn.append("@enduml" + System.lineSeparator());
 		return toReturn.toString();
@@ -179,6 +183,43 @@ public class PlantUMLRenderer implements Renderer {
 	}
 
 	@Override
+	public String renderSkinParamContainer(SkinParamContainer skinParamContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		if (skinParamContainer.arrowColor.isPresent() || skinParamContainer.backgroundColor.isPresent()
+				|| skinParamContainer.borderColor.isPresent()) {
+			toReturn.append("skinparam class {");
+			toReturn.append(System.lineSeparator());
+			String stereotype = skinParamContainer.stereotype.isPresent()
+					&& skinParamContainer.stereotype.get().label.isPresent()
+							? "<<" + skinParamContainer.stereotype.get().label.get() + ">>" : "";
+			if(skinParamContainer.arrowColor.isPresent()){
+				toReturn.append("ArrowColor");
+				toReturn.append(stereotype);
+				toReturn.append(" ");
+				toReturn.append(skinParamContainer.arrowColor.get());
+				toReturn.append(System.lineSeparator());
+			}
+			if(skinParamContainer.backgroundColor.isPresent()){
+				toReturn.append("BackgroundColor");
+				toReturn.append(stereotype);
+				toReturn.append(" ");
+				toReturn.append(skinParamContainer.backgroundColor.get());
+				toReturn.append(System.lineSeparator());
+			}
+			if(skinParamContainer.borderColor.isPresent()){
+				toReturn.append("BorderColor");
+				toReturn.append(stereotype);
+				toReturn.append(" ");
+				toReturn.append(skinParamContainer.borderColor.get());
+				toReturn.append(System.lineSeparator());
+			}
+			toReturn.append("}");
+			toReturn.append(System.lineSeparator());
+		}
+		return toReturn.toString();
+	}
+
+	@Override
 	public String renderDependencyArrowContainer(DependencyArrowContainer dependencyArrowContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(dependencyArrowContainer.to.classNodeWrapper.name);
@@ -274,4 +315,5 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
+
 }

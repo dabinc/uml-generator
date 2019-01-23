@@ -8,6 +8,7 @@ import Wrappers.ClassNodeWrapper;
 public class ProgramContainer {
 	public List<ClassContainer> classes;
 	public List<ArrowContainer> arrows;
+	public List<SkinParamContainer> skinParams;
 
 	public ProgramContainer(List<ClassNodeWrapper> classesList) {
 		this.classes = new LinkedList<ClassContainer>();
@@ -15,6 +16,7 @@ public class ProgramContainer {
 			this.classes.add(new ClassContainer(wrapper));
 		}
 		this.arrows = new LinkedList<ArrowContainer>();
+		this.skinParams = new LinkedList<SkinParamContainer>();
 	}
 
 }

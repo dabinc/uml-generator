@@ -8,6 +8,7 @@ import Containers.ClassContainer;
 import Containers.FieldContainer;
 import Containers.MethodContainer;
 import Containers.ProgramContainer;
+import Containers.SkinParamContainer;
 import Containers.StereotypeContainer;
 import Enums.Modifier;
 import Wrappers.MethodNodeWrapper;
@@ -23,7 +24,6 @@ public class SingletonPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 		ProgramContainer toReturn = super.getProgramContainer();
 		for (ClassContainer classContainer : toReturn.classes) {
 			if (isSingleton(classContainer)) {
-				classContainer.displayContainer.color = Optional.of("blue");
 				if (classContainer.stereotypeContainer.isPresent()) {
 					StereotypeContainer stereotypeContainer = classContainer.stereotypeContainer.get();
 					stereotypeContainer.label = Optional.of("Singleton");
@@ -31,6 +31,9 @@ public class SingletonPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 				} else {
 					classContainer.stereotypeContainer = Optional.of(new StereotypeContainer("Singleton"));
 				}
+				SkinParamContainer toAdd = new SkinParamContainer(classContainer.stereotypeContainer.get());
+				toAdd.borderColor = Optional.of("blue");
+				toReturn.skinParams.add(toAdd);
 			}
 		}
 		return toReturn;
