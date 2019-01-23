@@ -14,6 +14,7 @@ Pass in any number of the options below to args:
 8. "-list=white-package/class,white-package/class2,black-package/class3,..." whitelists and blacklists certain classes and packages.
 9. "-singleton" detects singletons and colors them blue
 10. "-removelambdas" removes all lambda methods that may clutter class blocks.
+11. "-inheritancecomposition" turns all arrows where inheritance is favored over composition orange
 
 The default options are to not recurse into superclasses and interfacess, private level analysis, text display, and using PlantUML
 
