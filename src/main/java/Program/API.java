@@ -1,5 +1,6 @@
 package Program;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -85,6 +86,26 @@ public class API {
 		for (String option : options) {
 			if (this.preRenderMap.containsKey(option)) {
 				preRenderTask = this.preRenderMap.get(option).getPreRenderTask(preRenderTask);
+			}
+		}
+
+		for (String option : options) {
+			String toCheck = "-prerendertasks=";
+			if (option.startsWith(toCheck)) {
+				String[] preRenderTaskClassNames = option.substring(toCheck.length()).split(",");
+				for (String preRenderTaskClassName : preRenderTaskClassNames) {
+					try {
+						Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
+						if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
+							preRenderTask = (PreRenderTask) preRenderTaskClass.getConstructor(PreRenderTask.class)
+									.newInstance(preRenderTask);
+						}
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | SecurityException | NoSuchMethodException
+							| InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 
