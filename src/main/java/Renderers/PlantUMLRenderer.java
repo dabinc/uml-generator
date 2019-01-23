@@ -21,12 +21,6 @@ public class PlantUMLRenderer implements Renderer {
 	@Override
 	public String render(ProgramContainer programContainer) {
 		StringBuilder toReturn = new StringBuilder();
-		toReturn.append(renderProgramContainer(programContainer));
-		return toReturn.toString();
-	}
-
-	public String renderProgramContainer(ProgramContainer programContainer) {
-		StringBuilder toReturn = new StringBuilder();
 		toReturn.append("@startuml" + System.lineSeparator());
 		for (ClassContainer classContainer : programContainer.classes) {
 			toReturn.append(renderClassContainer(classContainer));
@@ -38,6 +32,7 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderClassContainer(ClassContainer classContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		for (Modifier modifier : classContainer.classNodeWrapper.modifiers) {
@@ -71,6 +66,7 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderFieldContainer(FieldContainer fieldContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		for (Modifier modifier : fieldContainer.fieldNodeWrapper.modifiers) {
@@ -85,6 +81,7 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderMethodContainer(MethodContainer methodContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		for (Modifier modifier : methodContainer.methodNodeWrapper.modifiers) {
@@ -108,12 +105,14 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderParameterContainer(ParameterContainer parameterContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(parameterContainer.parameterNodeWrapper.type);
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderArrowContainer(ArrowContainer arrowContainer) {
 		return arrowContainer.render(this);
 	}
@@ -157,6 +156,7 @@ public class PlantUMLRenderer implements Renderer {
 		return "";
 	}
 
+	@Override
 	public String renderStereotypeContainer(StereotypeContainer stereotypeContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		if (stereotypeContainer.color.isPresent() || stereotypeContainer.label.isPresent()
