@@ -16,6 +16,7 @@ public class UMLPuzzles {
 	OneTooManyDependencies[] dependencies;
 	Singleton singleton;
 	ClassWithLambdas classWithLambdas;
+	ClassExtendingConcreteClass classExtendingConcreteClass;
 }
 
 class GenericClass<T>{
@@ -73,4 +74,8 @@ class ClassWithLambdas{
 	public void doSomething(List<String> toPrint){
 		toPrint.forEach(stringToPrint -> System.out.print(stringToPrint));
 	}
+}
+
+class ClassExtendingConcreteClass extends TwoStrings{
+	
 }
