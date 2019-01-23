@@ -13,6 +13,7 @@ import Containers.InheritanceArrowContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
+import Containers.StereotypeContainer;
 import Enums.Modifier;
 
 public class PlantUMLRenderer implements Renderer {
@@ -51,6 +52,10 @@ public class PlantUMLRenderer implements Renderer {
 		}
 		toReturn.append(classContainer.classNodeWrapper.name);
 		toReturn.append(" ");
+		if (classContainer.stereotypeContainer.isPresent()) {
+			toReturn.append(renderStereotypeContainer(classContainer.stereotypeContainer.get()));
+			toReturn.append(" ");
+		}
 		toReturn.append(renderDisplayContainerHashTag(classContainer.displayContainer));
 		toReturn.append(" ");
 		toReturn.append("{" + System.lineSeparator());
@@ -150,6 +155,27 @@ public class PlantUMLRenderer implements Renderer {
 			return "{static}";
 		}
 		return "";
+	}
+
+	public String renderStereotypeContainer(StereotypeContainer stereotypeContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		if (stereotypeContainer.color.isPresent() || stereotypeContainer.label.isPresent()
+				|| stereotypeContainer.tag.isPresent()) {
+			toReturn.append("<< ");
+			if (stereotypeContainer.color.isPresent() && stereotypeContainer.tag.isPresent()) {
+				toReturn.append("(");
+				toReturn.append(stereotypeContainer.tag.get());
+				toReturn.append(",");
+				toReturn.append(stereotypeContainer.color.get());
+				toReturn.append(") ");
+			}
+			if (stereotypeContainer.label.isPresent()) {
+				toReturn.append(stereotypeContainer.label.get());
+				toReturn.append(" ");
+			}
+			toReturn.append(">>");
+		}
+		return toReturn.toString();
 	}
 
 	@Override

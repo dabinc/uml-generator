@@ -26,11 +26,7 @@ public class SingletonPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 				classContainer.displayContainer.color = Optional.of("blue");
 				if (classContainer.stereotypeContainer.isPresent()) {
 					StereotypeContainer stereotypeContainer = classContainer.stereotypeContainer.get();
-					if (stereotypeContainer.label.isPresent()) {
-						stereotypeContainer.label = Optional.of(stereotypeContainer.label.get() + "," + "Singleton");
-					} else {
-						stereotypeContainer.label = Optional.of("Singleton");
-					}
+					stereotypeContainer.label = Optional.of("Singleton");
 
 				} else {
 					classContainer.stereotypeContainer = Optional.of(new StereotypeContainer("Singleton"));
