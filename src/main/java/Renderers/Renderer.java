@@ -10,10 +10,17 @@ import Containers.ProgramContainer;
 
 public interface Renderer {
 	public String render(ProgramContainer programContainer);
+
 	public String renderDependencyArrowContainer(DependencyArrowContainer dependencyArrowContainer);
+
 	public String renderAssociationArrowContainer(AssociationArrowContainer associationArrowContainer);
+
 	public String renderInheritanceArrowContainer(InheritanceArrowContainer inheritanceArrowContainer);
+
 	public String renderImplementationArrowContainer(ImplementationArrowContainer implementationArrowContainer);
+
 	public String renderDoubleDependencyArrowContainer(DoubleDependencyArrowContainer doubleDependencyARrowContainer);
-	public String renderDoubleAssociationArrowContainer(DoubleAssociationArrowContainer doubleAssociationARrowContainer);
+
+	public String renderDoubleAssociationArrowContainer(
+			DoubleAssociationArrowContainer doubleAssociationARrowContainer);
 }

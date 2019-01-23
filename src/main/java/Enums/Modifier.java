@@ -1,80 +1,71 @@
 package Enums;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
 
 public enum Modifier {
-	PUBLIC,
-	PRIVATE,
-	INTERFACE,
-	PROTECTED,
-	PACKAGE_PROTECTED,
-	ABSTRACT,
-	STATIC,
-	FINAL,
-	SYNCHRONIZED,
-	VOLATILE;
-	
+	PUBLIC, PRIVATE, INTERFACE, PROTECTED, PACKAGE_PROTECTED, ABSTRACT, STATIC, FINAL, SYNCHRONIZED, VOLATILE;
+
 	private static Map<Integer, Modifier> pairings;
-	
-	public boolean isPublic(){
+
+	public boolean isPublic() {
 		return this == PUBLIC;
 	}
-	
-	public boolean isPrivate(){
+
+	public boolean isPrivate() {
 		return this == PRIVATE;
 	}
-	
-	public boolean isProtected(){
+
+	public boolean isProtected() {
 		return this == PROTECTED;
 	}
-	
-	public boolean isPackageProtected(){
+
+	public boolean isPackageProtected() {
 		return this == PACKAGE_PROTECTED;
 	}
-	
-	public boolean isAbstract(){
+
+	public boolean isAbstract() {
 		return this == ABSTRACT;
 	}
-	
-	public boolean isStatic(){
+
+	public boolean isStatic() {
 		return this == STATIC;
 	}
-	
-	public boolean isFinal(){
+
+	public boolean isFinal() {
 		return this == FINAL;
 	}
-	
-	public boolean isSynchronized(){
+
+	public boolean isSynchronized() {
 		return this == SYNCHRONIZED;
 	}
-	
-	public boolean isVolatile(){
+
+	public boolean isVolatile() {
 		return this == VOLATILE;
 	}
-	
-	public boolean isInterface(){
+
+	public boolean isInterface() {
 		return this == INTERFACE;
 	}
-	
-	public static List<Modifier> getModifiers(int accessCodeASM){
-		List<Modifier> toReturn = new ArrayList<Modifier>();
+
+	public static List<Modifier> getModifiers(int accessCodeASM) {
+		List<Modifier> toReturn = new LinkedList<Modifier>();
 		populatePairings();
-		
-		for(Integer opcode : pairings.keySet()){
-			if((accessCodeASM & opcode) != 0){
+
+		for (Integer opcode : pairings.keySet()) {
+			if ((accessCodeASM & opcode) != 0) {
 				toReturn.add(pairings.get(opcode));
 			}
 		}
-		
+
 		return toReturn;
 	}
-	
-	private static void populatePairings(){
+
+	private static void populatePairings() {
 		pairings = new HashMap<Integer, Modifier>();
 		pairings.put(Opcodes.ACC_PUBLIC, PUBLIC);
 		pairings.put(Opcodes.ACC_PRIVATE, PRIVATE);
@@ -88,13 +79,11 @@ public enum Modifier {
 	}
 
 	public boolean listContains(List<Enums.Modifier> modifiers) {
-		for(Modifier modifier : modifiers){
-			if(modifier == this){
+		for (Modifier modifier : modifiers) {
+			if (modifier == this) {
 				return true;
 			}
 		}
 		return false;
 	}
 }
-
-

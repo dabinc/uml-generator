@@ -1,6 +1,6 @@
 package Displays;
 
-public class TextDisplay implements Display{
+public class TextDisplay implements Display {
 
 	@Override
 	public void display(String umlCode) {

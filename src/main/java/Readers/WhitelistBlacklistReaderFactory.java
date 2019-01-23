@@ -14,11 +14,10 @@ public class WhitelistBlacklistReaderFactory implements ReaderFactory {
 	public Reader getReader(Reader reader, List<String> options) {
 		List<String> whitelist = new LinkedList<String>();
 		List<String> blacklist = new LinkedList<String>();
-		for(String option : options){
-			if(option.startsWith("black-")){
+		for (String option : options) {
+			if (option.startsWith("black-")) {
 				blacklist.add(option.substring(6));
-			}
-			else if(option.startsWith("white-")){
+			} else if (option.startsWith("white-")) {
 				whitelist.add(option.substring(6));
 			}
 		}
