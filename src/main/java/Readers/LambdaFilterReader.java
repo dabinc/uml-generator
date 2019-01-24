@@ -20,7 +20,7 @@ public class LambdaFilterReader extends ReaderDecorator {
 		for (ClassNodeWrapper classNodeWrapper : toReturn) {
 			List<MethodNodeWrapper> toRemove = new LinkedList<MethodNodeWrapper>();
 			for (MethodNodeWrapper methodNodeWrapper : classNodeWrapper.methodNodeWrappers) {
-				if (methodNodeWrapper.name.contains("$")) {
+				if (methodNodeWrapper.modifiers.contains(Modifier.SYNTHETIC)) {
 					toRemove.add(methodNodeWrapper);
 				}
 			}

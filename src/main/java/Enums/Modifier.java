@@ -8,7 +8,7 @@ import java.util.Map;
 import org.objectweb.asm.Opcodes;
 
 public enum Modifier {
-	PUBLIC, PRIVATE, INTERFACE, PROTECTED, PACKAGE_PROTECTED, ABSTRACT, STATIC, FINAL, SYNCHRONIZED, VOLATILE;
+	PUBLIC, PRIVATE, INTERFACE, PROTECTED, PACKAGE_PROTECTED, ABSTRACT, STATIC, FINAL, SYNCHRONIZED, VOLATILE, SYNTHETIC;
 
 	private static Map<Integer, Modifier> pairings;
 
@@ -52,6 +52,9 @@ public enum Modifier {
 		return this == INTERFACE;
 	}
 
+	public boolean isSynthetic() {
+		return this == SYNTHETIC;
+	}
 	public static List<Modifier> getModifiers(int accessCodeASM) {
 		List<Modifier> toReturn = new LinkedList<Modifier>();
 		populatePairings();
@@ -76,6 +79,7 @@ public enum Modifier {
 		pairings.put(Opcodes.ACC_FINAL, FINAL);
 		pairings.put(Opcodes.ACC_SYNCHRONIZED, SYNCHRONIZED);
 		pairings.put(Opcodes.ACC_VOLATILE, VOLATILE);
+		pairings.put(Opcodes.ACC_SYNTHETIC, SYNTHETIC);
 	}
 
 	public boolean listContains(List<Enums.Modifier> modifiers) {

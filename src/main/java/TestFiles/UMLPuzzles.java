@@ -49,7 +49,7 @@ class OneTooManyDependencies {
 	String[] hasManyStrings;
 	List<UMLPuzzles> puzzles;
 
-	public Frame[] dependsOnMuchSwing(JComponent[] components) {
+	public Frame[] depends$$OnMuchSwing(JComponent[] components) {
 		return new JFrame[0];
 	}
 
