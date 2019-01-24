@@ -16,6 +16,8 @@ Pass in any number of the options below to args:
 10. "-removelambdas" removes all lambda methods that may clutter class blocks.
 11. "-inheritancecomposition" turns all arrows where inheritance is favored over composition orange
 12. "-prerendertasks=fullyqualifiedclassname,fullyqualifiedclassname2,..." Imports and uses the prerendertasks specified
+13. "-importdirectories=fullclasspath1,fullclasspath2,..." Adds classpaths to the project classpath at runtime NOTE: fullclasspath must be to the bin directory of a project.
+14. "-runfordirectories=fullclasspath1,fullclasspath2,..." Adds any java classes in or beneath the directories to the classes to run on
 
 The default options are to not recurse into superclasses and interfacess, private level analysis, text display, and using PlantUML
 

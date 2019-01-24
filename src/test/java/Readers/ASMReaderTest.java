@@ -2,6 +2,7 @@ package Readers;
 
 import static org.junit.Assert.*;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class ASMReaderTest {
 	@Test
 	public void testEmptyInput() {
 		reader = new ASMReader();
-		assertEquals(0, reader.getClassNodeWrappers(new LinkedList<String>()).size());
+		assertEquals(0, reader.getClassNodeWrappers(new LinkedList<String>(), new LinkedList<InputStream>()).size());
 	}
 
 	@Test
@@ -22,7 +23,7 @@ public class ASMReaderTest {
 		List<String> invalidNames = new LinkedList<String>();
 		invalidNames.add("java.scooby.doo");
 		reader = new ASMReader();
-		assertEquals(0, reader.getClassNodeWrappers(invalidNames).size());
+		assertEquals(0, reader.getClassNodeWrappers(invalidNames, new LinkedList<InputStream>()).size());
 	}
 
 	@Test
@@ -30,7 +31,7 @@ public class ASMReaderTest {
 		List<String> validNames = new LinkedList<String>();
 		validNames.add("java.lang.Iterable");
 		reader = new ASMReader();
-		assertEquals(1, reader.getClassNodeWrappers(validNames).size());
+		assertEquals(1, reader.getClassNodeWrappers(validNames, new LinkedList<InputStream>()).size());
 	}
 
 	@Test
@@ -39,6 +40,6 @@ public class ASMReaderTest {
 		names.add("java.lang.Iterable");
 		names.add("java.scooby.doo");
 		reader = new ASMReader();
-		assertEquals(1, reader.getClassNodeWrappers(names).size());
+		assertEquals(1, reader.getClassNodeWrappers(names, new LinkedList<InputStream>()).size());
 	}
 }
