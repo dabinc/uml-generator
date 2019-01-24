@@ -1,5 +1,7 @@
 package Program;
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -78,8 +80,20 @@ public class API {
 		for (String className : classNames) {
 			classNameList.add(className);
 		}
+		
+		List<InputStream> classInputStreamList = new LinkedList<InputStream>();
+		for(String option : options){
+			String toCheck = "-runfordirectories=";
+			if(option.startsWith(toCheck)){
+				String[] directories = option.substring(toCheck.length()).split(",");
+				DirectoryParser directoryParser = DirectoryParser.getInstance();
+				for(String directory : directories){
+					classInputStreamList.addAll(directoryParser.getJavaFileData(new File(directory)));
+				}
+			}
+		}
 
-		List<ClassNodeWrapper> classNodeWrappers = reader.getClassNodeWrappers(classNameList);
+		List<ClassNodeWrapper> classNodeWrappers = reader.getClassNodeWrappers(classNameList, classInputStreamList);
 
 		PreRenderTask preRenderTask = new DefaultPreRenderTask(classNodeWrappers);
 

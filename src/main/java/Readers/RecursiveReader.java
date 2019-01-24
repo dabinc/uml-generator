@@ -1,5 +1,6 @@
 package Readers;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,8 +15,13 @@ public class RecursiveReader extends ReaderDecorator {
 	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
-		return recursiveGetClassNodeWrappers(super.getClassNodeWrappers(classNames), classNames);
+	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
+		List<ClassNodeWrapper> previous = super.getClassNodeWrappers(classNames, inputStreams);
+		List<String> previouslyVisited = new LinkedList<String>();
+		for(ClassNodeWrapper classNodeWrapper : previous){
+			previouslyVisited.add(classNodeWrapper.name);
+		}
+		return recursiveGetClassNodeWrappers(previous, previouslyVisited);
 	}
 
 	private List<ClassNodeWrapper> recursiveGetClassNodeWrappers(List<ClassNodeWrapper> classNodeWrappers,
@@ -59,7 +65,7 @@ public class RecursiveReader extends ReaderDecorator {
 		visitedClassNames.addAll(classesToVisit);
 
 		toReturn.addAll(classNodeWrappers);
-		toReturn.addAll(recursiveGetClassNodeWrappers(super.getClassNodeWrappers(classesToVisit), visitedClassNames));
+		toReturn.addAll(recursiveGetClassNodeWrappers(super.getClassNodeWrappers(classesToVisit, new LinkedList<InputStream>()), visitedClassNames));
 		return toReturn;
 	}
 

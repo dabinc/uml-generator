@@ -1,5 +1,6 @@
 package Readers;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,8 +18,8 @@ public class WhitelistBlacklistReader extends ReaderDecorator {
 	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
-		List<ClassNodeWrapper> previousClassNodeWrappers = super.getClassNodeWrappers(classNames);
+	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
+		List<ClassNodeWrapper> previousClassNodeWrappers = super.getClassNodeWrappers(classNames, inputStreams);
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
 		for (ClassNodeWrapper previousClassNodeWrapper : previousClassNodeWrappers) {
 			if (isWhiteListed(previousClassNodeWrapper.name) || !isBlackListed(previousClassNodeWrapper.name)) {
