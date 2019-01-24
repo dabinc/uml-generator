@@ -18,6 +18,7 @@ public class UMLPuzzles {
 	Singleton singleton;
 	ClassWithLambdas classWithLambdas;
 	ClassExtendingConcreteClass classExtendingConcreteClass;
+	ConcreteClass concreteClass;
 }
 
 class GenericClass<T> {
@@ -81,4 +82,16 @@ class ClassWithLambdas {
 
 class ClassExtendingConcreteClass extends TwoStrings {
 
+}
+
+abstract class AbstractClass{
+	public void method(String param1, Integer param2){
+		
+	}
+}
+
+class ConcreteClass extends AbstractClass{
+	public void method(String param1, Integer param2){
+		
+	}
 }
