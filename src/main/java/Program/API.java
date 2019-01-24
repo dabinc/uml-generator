@@ -96,14 +96,19 @@ public class API {
 						continue;
 					} else if (properties.getProperty(ob.toString()).equals("true")) {
 						if (this.displayMap.containsKey(name)) {
+							System.out.println("display: " + name);
 							display = this.displayMap.get(name);
 						} else if (this.rendererMap.containsKey(name)) {
+							System.out.println("renderer: " + name);
 							renderer = this.rendererMap.get(name);
 						} else if (this.readerMap.containsKey(name)) {
+							System.out.println("reader: " + name);
 							reader = this.readerMap.get(name).getReader(reader);
 						} else if (this.readerFilterMap.containsKey(name)) {
+							System.out.println("readerFilterMap: " + name);
 							reader = this.readerFilterMap.get(name).getReader(reader, Arrays.asList(""));
 						} else if (this.preRenderMap.containsKey(name)) {
+							System.out.println("adding to prerender Task: " + name);
 							configPreRenderTasks.add(name);
 						}
 					} else {
@@ -115,8 +120,12 @@ public class API {
 							for (String individualName : properties.getProperty(ob.toString()).split(",")) {
 								configReaderListFilter.add(individualName);
 							}
+						} else if (name.contains("prerendertasks")) {
+							for (String individualName : properties.getProperty(ob.toString()).split(",")) {
+								configPreRenderTasksToAdd.add(individualName);
+							}
 						} 
-					}
+					} 
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -129,18 +138,10 @@ public class API {
 				display = this.displayMap.get(option);
 			} else if (this.rendererMap.containsKey(option)) {
 				renderer = this.rendererMap.get(option);
-			} 
-			else if (this.readerMap.containsKey(option)) {
+			} else if (this.readerMap.containsKey(option)) {
 				reader = this.readerMap.get(option).getReader(reader);
 			}
 		}
-
-//		 for (String option : options) {
-//			 if (this.readerMap.containsKey(option)) {
-//				 reader = this.readerMap.get(option).getReader(reader);
-//			 }
-//		 }
-
 
 		for (String option : options) {
 			for (String key : this.readerFilterMap.keySet()) {
@@ -148,6 +149,7 @@ public class API {
 					String[] args = option.substring(key.length()).split(",");
 //					List<String> argsList = new ArrayList<String>();
 					if(key.contains("list")){
+						System.out.println("hello ?? ");
 						for(String arg : args){
 							if(!configReaderListFilter.contains(arg)){
 								configReaderListFilter.add(arg);
@@ -158,7 +160,10 @@ public class API {
 //								argsList.add(arg);
 //							}
 //						}
+//						reader = this.readerFilterMap.get("-list=").getReader(reader,configReaderListFilter);
+//						System.out.println("reader is 1 " + reader);
 					} else if(key.contains("packages")){
+						System.out.println("hello again?? ");
 						for(String arg : args){
 							if(!configReaderPackagesFilter.contains(arg)){
 								configReaderPackagesFilter.add(arg);
@@ -169,15 +174,23 @@ public class API {
 //								argsList.add(arg);
 //							}
 //						}
+//						reader = this.readerFilterMap.get("-packages=").getReader(reader,configReaderPackagesFilter);
+//						System.out.println("reader is 2 " + reader);
 					}
-//					reader = this.readerFilterMap.get(key).getReader(reader, argsList);
+//					reader = this.readerFilterMap.get(key).getReader(reader, Arrays.asList(args));
 				}
 			}
 		}
 		
-		
-		reader = this.readerFilterMap.get("-packages=").getReader(reader,configReaderPackagesFilter);
-		reader = this.readerFilterMap.get("-list=").getReader(reader,configReaderListFilter);
+		System.out.println("name is " + configReaderPackagesFilter.toString());
+		System.out.println("name is " + configReaderListFilter.toString());
+		if(!configReaderPackagesFilter.isEmpty()){
+			reader = this.readerFilterMap.get("-packages=").getReader(reader,configReaderPackagesFilter);
+		}	
+		if(!configReaderListFilter.isEmpty()){
+			reader = this.readerFilterMap.get("-list=").getReader(reader,configReaderListFilter);
+		}
+		System.out.println("reader is " + reader);
 
 		List<String> classNameList = new LinkedList<String>();
 		for (String className : classNames) {
@@ -205,22 +218,29 @@ public class API {
 			String toCheck = "-prerendertasks=";
 			if (option.startsWith(toCheck)) {
 				String[] preRenderTaskClassNames = option.substring(toCheck.length()).split(",");
-				for (String preRenderTaskClassName : preRenderTaskClassNames) {
-					try {
-						Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
-						if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
-							preRenderTask = (PreRenderTask) preRenderTaskClass.getConstructor(PreRenderTask.class)
-									.newInstance(preRenderTask);
-						}
-					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-							| IllegalArgumentException | SecurityException | NoSuchMethodException
-							| InvocationTargetException e) {
-						e.printStackTrace();
+				for (String str : preRenderTaskClassNames) {
+					if(!configPreRenderTasksToAdd.contains(str)){
+						configPreRenderTasksToAdd.add(str);
 					}
 				}
+				
 			}
 		}
-
+		
+		for (String preRenderTaskClassName : configPreRenderTasksToAdd) {
+			try {
+				Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
+				if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
+					preRenderTask = (PreRenderTask) preRenderTaskClass.getConstructor(PreRenderTask.class)
+							.newInstance(preRenderTask);
+				}
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+					| IllegalArgumentException | SecurityException | NoSuchMethodException
+					| InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		ProgramContainer programContainer = preRenderTask.getProgramContainer();
 
 		display.display(renderer.render(programContainer));
@@ -228,7 +248,6 @@ public class API {
 
 	private void initializeHashMaps() {
 		this.readerMap.put("-recursive", new RecursiveReaderFactory());
-		// this.readerMap.put("-package", new PackageFilterReaderFactory());
 		this.readerFilterMap.put("-packages=", new PackageFilterReaderFactory());
 		this.readerFilterMap.put("-list=", new WhitelistBlacklistReaderFactory());
 		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
