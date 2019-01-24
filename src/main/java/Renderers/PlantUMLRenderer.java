@@ -13,18 +13,14 @@ import Containers.InheritanceArrowContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
+import Containers.SkinParamContainer;
+import Containers.StereotypeContainer;
 import Enums.Modifier;
 
 public class PlantUMLRenderer implements Renderer {
 
 	@Override
 	public String render(ProgramContainer programContainer) {
-		StringBuilder toReturn = new StringBuilder();
-		toReturn.append(renderProgramContainer(programContainer));
-		return toReturn.toString();
-	}
-
-	public String renderProgramContainer(ProgramContainer programContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append("@startuml" + System.lineSeparator());
 		for (ClassContainer classContainer : programContainer.classes) {
@@ -33,10 +29,14 @@ public class PlantUMLRenderer implements Renderer {
 		for (ArrowContainer arrowContainer : programContainer.arrows) {
 			toReturn.append(renderArrowContainer(arrowContainer));
 		}
+		for (SkinParamContainer skinParamContainer : programContainer.skinParams) {
+			toReturn.append(renderSkinParamContainer(skinParamContainer));
+		}
 		toReturn.append("@enduml" + System.lineSeparator());
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderClassContainer(ClassContainer classContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		for (Modifier modifier : classContainer.classNodeWrapper.modifiers) {
@@ -51,6 +51,10 @@ public class PlantUMLRenderer implements Renderer {
 		}
 		toReturn.append(classContainer.classNodeWrapper.name);
 		toReturn.append(" ");
+		if (classContainer.stereotypeContainer.isPresent()) {
+			toReturn.append(renderStereotypeContainer(classContainer.stereotypeContainer.get()));
+			toReturn.append(" ");
+		}
 		toReturn.append(renderDisplayContainerHashTag(classContainer.displayContainer));
 		toReturn.append(" ");
 		toReturn.append("{" + System.lineSeparator());
@@ -66,6 +70,7 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderFieldContainer(FieldContainer fieldContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		for (Modifier modifier : fieldContainer.fieldNodeWrapper.modifiers) {
@@ -80,6 +85,7 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderMethodContainer(MethodContainer methodContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		for (Modifier modifier : methodContainer.methodNodeWrapper.modifiers) {
@@ -103,12 +109,14 @@ public class PlantUMLRenderer implements Renderer {
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderParameterContainer(ParameterContainer parameterContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(parameterContainer.parameterNodeWrapper.type);
 		return toReturn.toString();
 	}
 
+	@Override
 	public String renderArrowContainer(ArrowContainer arrowContainer) {
 		return arrowContainer.render(this);
 	}
@@ -150,6 +158,65 @@ public class PlantUMLRenderer implements Renderer {
 			return "{static}";
 		}
 		return "";
+	}
+
+	@Override
+	public String renderStereotypeContainer(StereotypeContainer stereotypeContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		if (stereotypeContainer.color.isPresent() || stereotypeContainer.label.isPresent()
+				|| stereotypeContainer.tag.isPresent()) {
+			toReturn.append("<< ");
+			if (stereotypeContainer.color.isPresent() && stereotypeContainer.tag.isPresent()) {
+				toReturn.append("(");
+				toReturn.append(stereotypeContainer.tag.get());
+				toReturn.append(",");
+				toReturn.append(stereotypeContainer.color.get());
+				toReturn.append(") ");
+			}
+			if (stereotypeContainer.label.isPresent()) {
+				toReturn.append(stereotypeContainer.label.get());
+				toReturn.append(" ");
+			}
+			toReturn.append(">>");
+		}
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderSkinParamContainer(SkinParamContainer skinParamContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		if (skinParamContainer.arrowColor.isPresent() || skinParamContainer.backgroundColor.isPresent()
+				|| skinParamContainer.borderColor.isPresent()) {
+			toReturn.append("skinparam class {");
+			toReturn.append(System.lineSeparator());
+			String stereotype = skinParamContainer.stereotype.isPresent()
+					&& skinParamContainer.stereotype.get().label.isPresent()
+							? "<<" + skinParamContainer.stereotype.get().label.get() + ">>" : "";
+			if (skinParamContainer.arrowColor.isPresent()) {
+				toReturn.append("ArrowColor");
+				toReturn.append(stereotype);
+				toReturn.append(" ");
+				toReturn.append(skinParamContainer.arrowColor.get());
+				toReturn.append(System.lineSeparator());
+			}
+			if (skinParamContainer.backgroundColor.isPresent()) {
+				toReturn.append("BackgroundColor");
+				toReturn.append(stereotype);
+				toReturn.append(" ");
+				toReturn.append(skinParamContainer.backgroundColor.get());
+				toReturn.append(System.lineSeparator());
+			}
+			if (skinParamContainer.borderColor.isPresent()) {
+				toReturn.append("BorderColor");
+				toReturn.append(stereotype);
+				toReturn.append(" ");
+				toReturn.append(skinParamContainer.borderColor.get());
+				toReturn.append(System.lineSeparator());
+			}
+			toReturn.append("}");
+			toReturn.append(System.lineSeparator());
+		}
+		return toReturn.toString();
 	}
 
 	@Override
@@ -248,4 +315,5 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
+
 }
