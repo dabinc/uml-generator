@@ -1,5 +1,6 @@
 package Readers;
 
+import java.io.InputStream;
 import java.util.List;
 
 import Wrappers.ClassNodeWrapper;
@@ -13,8 +14,8 @@ public abstract class ReaderDecorator implements Reader {
 	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
-		return this.reader.getClassNodeWrappers(classNames);
+	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
+		return this.reader.getClassNodeWrappers(classNames, inputStreams);
 	}
 
 }

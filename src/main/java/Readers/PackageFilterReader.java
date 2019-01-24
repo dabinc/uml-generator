@@ -1,5 +1,6 @@
 package Readers;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,12 +21,12 @@ public class PackageFilterReader extends ReaderDecorator {
 	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
+	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
 		if (validPackages.isEmpty()) {
 			populateValidPackages(classNames);
 		}
-		for (ClassNodeWrapper classNodeWrapper : super.getClassNodeWrappers(classNames)) {
+		for (ClassNodeWrapper classNodeWrapper : super.getClassNodeWrappers(classNames, inputStreams)) {
 			for (String validPackage : validPackages) {
 				if (classNodeWrapper.name.startsWith(validPackage)) {
 					toReturn.add(classNodeWrapper);

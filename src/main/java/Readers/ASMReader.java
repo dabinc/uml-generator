@@ -1,11 +1,9 @@
 package Readers;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -14,7 +12,7 @@ import Wrappers.ClassNodeWrapper;
 public class ASMReader implements Reader {
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames) {
+	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
 		List<ClassReader> classReaderList = new LinkedList<ClassReader>();
 		for (int i = 0; i < classNames.size(); i++) {
 			String name = removeArrayFromName(Type.getObjectType(classNames.get(i)).getClassName());
@@ -27,14 +25,27 @@ public class ASMReader implements Reader {
 				}
 			}
 		}
+		for(InputStream inputStream : inputStreams){
+			try {
+				classReaderList.add(new ClassReader(inputStream));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
-		Set<String> passed = new HashSet<>();
 		for (ClassReader reader : classReaderList) {
 			ClassNode classNode = new ClassNode();
 			reader.accept(classNode, ClassReader.EXPAND_FRAMES);
 			ClassNodeWrapper toAdd = new ClassNodeWrapper(classNode);
-			toReturn.add(toAdd);
-			passed.add(toAdd.name);
+			boolean shouldAdd = true;
+			for(ClassNodeWrapper classNodeWrapper : toReturn){
+				if(classNodeWrapper.name.equals(toAdd.name)){
+					shouldAdd = false;
+				}
+			}
+			if(shouldAdd){
+				toReturn.add(toAdd);
+			}
 		}
 		return toReturn;
 	}

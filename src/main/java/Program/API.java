@@ -112,7 +112,15 @@ public class API {
 			}
 		}
 		
-		System.out.println(map.toString());
+		for(String option : map.keySet()){
+			String toCheck = "-importdirectories";
+			if(option.equals(toCheck)){
+				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
+				for(String directory : map.get(option)){
+					directoryParser.addFileToClassPath(new File(directory));
+				}
+			}
+		}
 
 		for (String option : map.keySet()) {
 			if (this.displayMap.containsKey(option)) {
@@ -137,8 +145,19 @@ public class API {
 		for (String className : classNames) {
 			classNameList.add(className);
 		}
+		
+		List<InputStream> classInputStreamList = new LinkedList<InputStream>();
+		for(String option : map.keySet()){
+			String toCheck = "-runfordirectories";
+			if(option.equals(toCheck)){
+				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
+				for(String directory : map.get(option)){
+					classInputStreamList.addAll(directoryParser.getJavaFileData(new File(directory)));
+				}
+			}
+		}
 
-		List<ClassNodeWrapper> classNodeWrappers = reader.getClassNodeWrappers(classNameList);
+		List<ClassNodeWrapper> classNodeWrappers = reader.getClassNodeWrappers(classNameList, classInputStreamList);
 
 		PreRenderTask preRenderTask = new DefaultPreRenderTask(classNodeWrappers);
 
