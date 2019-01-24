@@ -1,18 +1,23 @@
 package Program;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import Containers.ProgramContainer;
 import Displays.Display;
-import Displays.TextDisplay;
 import Displays.FileDisplay;
+import Displays.TextDisplay;
 import PreRenderTasks.DefaultPreRenderTask;
 import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTaskFactory;
 import PreRenderTasks.KeepOnlyPublicPreRenderTaskFactory;
@@ -38,51 +43,100 @@ public class API {
 	private Map<String, PreRenderTaskFactory> preRenderMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
+	private static final String DEFAULT_CONFIG_FILE = "config.properties";
 
 	public API() {
-		this.readerMap = new HashMap<>();
-		this.readerFilterMap = new HashMap<>();
-		this.preRenderMap = new HashMap<>();
-		this.displayMap = new HashMap<>();
-		this.rendererMap = new HashMap<>();
+		this.readerMap = new HashMap<String, ReaderFactory>();
+		this.readerFilterMap = new HashMap<String, ReaderFactory>();
+		this.preRenderMap = new HashMap<String, PreRenderTaskFactory>();
+		this.displayMap = new HashMap<String, Display>();
+		this.rendererMap = new HashMap<String, Renderer>();
 		initializeHashMaps();
 	}
 
 	public void use(String[] classNames, String[] options) {
+		Properties properties = new Properties();
+		InputStream input = null;
+		boolean hasConfig = false;
+		String fileName = "";
 		Reader reader = new ASMReader();
 		Display display = new TextDisplay();
 		Renderer renderer = new PlantUMLRenderer();
+		List<String> configFileArguments = new LinkedList<>();
+
+		for (String option : options) {
+			if (option.startsWith("-config=")) {
+				fileName = option.substring("-config=".length());
+				hasConfig = true;
+			} else if (option.startsWith("-config") && !hasConfig) {
+				hasConfig = true;
+			}
+		}
+
+		if (hasConfig) {
+			try {
+				File f = new File(fileName);
+				if (f.exists()) {
+					input = new FileInputStream(fileName);
+				} else {
+					input = new FileInputStream(DEFAULT_CONFIG_FILE);
+				}
+				properties.load(input);
+				for (Object ob : properties.keySet()) {
+					String name = "-" + ob.toString();
+					if (properties.getProperty(ob.toString()).equals("true")) {
+						configFileArguments.add(name);
+					} else {
+						configFileArguments.add(name + "=" + properties.getProperty(ob.toString()));
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+
+		for (String option : options) {
+			String[] tuple = option.split("=");
+			List<String> args = tuple.length < 2 ? new LinkedList<String>() : Arrays.asList(tuple[1].split(","));
+			map.put(tuple[0], args);
+		}
+		for (String arg : configFileArguments) {
+			String[] tuple = arg.split("=");
+			List<String> args = tuple.length < 2 ? new LinkedList<String>() : Arrays.asList(tuple[1].split(","));
+			if (map.containsKey(tuple[0])) {
+				map.put(tuple[0], union(args, map.get(tuple[0])));
+			} else {
+				map.put(tuple[0], args);
+			}
+		}
 		
-		for(String option : options){
-			String toCheck = "-importdirectories=";
-			if(option.startsWith(toCheck)){
-				String[] directories = option.substring(toCheck.length()).split(",");
+		for(String option : map.keySet()){
+			String toCheck = "-importdirectories";
+			if(option.equals(toCheck)){
 				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
-				for(String directory : directories){
+				for(String directory : map.get(option)){
 					directoryParser.addFileToClassPath(new File(directory));
 				}
 			}
 		}
 
-		for (String option : options) {
+		for (String option : map.keySet()) {
 			if (this.displayMap.containsKey(option)) {
 				display = this.displayMap.get(option);
 			} else if (this.rendererMap.containsKey(option)) {
 				renderer = this.rendererMap.get(option);
-			}
-		}
-
-		for (String option : options) {
-			if (this.readerMap.containsKey(option)) {
+			} else if (this.readerMap.containsKey(option)) {
 				reader = this.readerMap.get(option).getReader(reader);
 			}
 		}
 
-		for (String option : options) {
+		for (String option : map.keySet()) {
 			for (String key : this.readerFilterMap.keySet()) {
-				if (option.startsWith(key)) {
-					String[] args = option.substring(key.length()).split(",");
-					reader = this.readerFilterMap.get(key).getReader(reader, Arrays.asList(args));
+				if (key.startsWith(option)) {
+					List<String> args = map.get(option);
+					reader = this.readerFilterMap.get(key).getReader(reader, args);
 				}
 			}
 		}
@@ -93,12 +147,11 @@ public class API {
 		}
 		
 		List<InputStream> classInputStreamList = new LinkedList<InputStream>();
-		for(String option : options){
-			String toCheck = "-runfordirectories=";
-			if(option.startsWith(toCheck)){
-				String[] directories = option.substring(toCheck.length()).split(",");
+		for(String option : map.keySet()){
+			String toCheck = "-runfordirectories";
+			if(option.equals(toCheck)){
 				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
-				for(String directory : directories){
+				for(String directory : map.get(option)){
 					classInputStreamList.addAll(directoryParser.getJavaFileData(new File(directory)));
 				}
 			}
@@ -108,17 +161,16 @@ public class API {
 
 		PreRenderTask preRenderTask = new DefaultPreRenderTask(classNodeWrappers);
 
-		for (String option : options) {
+		for (String option : map.keySet()) {
 			if (this.preRenderMap.containsKey(option)) {
 				preRenderTask = this.preRenderMap.get(option).getPreRenderTask(preRenderTask);
 			}
 		}
 
-		for (String option : options) {
-			String toCheck = "-prerendertasks=";
-			if (option.startsWith(toCheck)) {
-				String[] preRenderTaskClassNames = option.substring(toCheck.length()).split(",");
-				for (String preRenderTaskClassName : preRenderTaskClassNames) {
+		for (String option : map.keySet()) {
+			String toCheck = "-prerendertasks";
+			if (option.equals(toCheck)) {
+				for (String preRenderTaskClassName : map.get(option)) {
 					try {
 						Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
 						if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
@@ -139,10 +191,16 @@ public class API {
 		display.display(renderer.render(programContainer));
 	}
 
+	private <T> List<T> union(List<T> args, List<T> list) {
+		Set<T> set = new HashSet<T>();
+		set.addAll(args);
+		set.addAll(list);
+		return new LinkedList<T>(set);
+	}
+
 	private void initializeHashMaps() {
 		this.readerMap.put("-recursive", new RecursiveReaderFactory());
-		this.readerMap.put("-package", new PackageFilterReaderFactory());
-		this.readerFilterMap.put("-package=", new PackageFilterReaderFactory());
+		this.readerFilterMap.put("-packages=", new PackageFilterReaderFactory());
 		this.readerFilterMap.put("-list=", new WhitelistBlacklistReaderFactory());
 		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
 		this.displayMap.put("-file", new FileDisplay());
