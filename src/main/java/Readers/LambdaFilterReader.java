@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import Enums.Modifier;
 import Wrappers.ClassNodeWrapper;
 import Wrappers.MethodNodeWrapper;
 
