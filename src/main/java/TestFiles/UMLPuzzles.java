@@ -1,4 +1,5 @@
 package TestFiles;
+
 import java.awt.Frame;
 import java.util.List;
 import java.util.Map;
@@ -18,59 +19,61 @@ public class UMLPuzzles {
 	ClassWithLambdas classWithLambdas;
 }
 
-class GenericClass<T>{
+class GenericClass<T> {
 	GenericClass<String> clazz;
 }
 
-class ListListListString{
+class ListListListString {
 	List<List<List<String>>> list;
 }
 
-class ListListListNinjaString<String>{
+class ListListListNinjaString<String> {
 	List<List<List<String>>> list;
 }
 
-class StringMap{
+class StringMap {
 	Map<Integer, String> map;
 }
 
-class StringArray{
+class StringArray {
 	String[] strings;
 }
 
-class TwoStrings{
+class TwoStrings {
 	String string1;
 	String string2;
 }
 
-class OneTooManyDependencies{
+class OneTooManyDependencies {
 	String[] hasManyStrings;
 	List<UMLPuzzles> puzzles;
-	public Frame[] dependsOnMuchSwing(JComponent[] components) {
+
+	public Frame[] depends$$OnMuchSwing(JComponent[] components) {
 		return new JFrame[0];
 	}
+
 	public String[] dependsOnManyStrings() {
 		return null;
 	}
 }
 
-class Singleton{
+class Singleton {
 	private static Singleton singleton;
-	
-	private Singleton(){
-		
+
+	private Singleton() {
+
 	}
-	
-	public static Singleton getInstance(){
-		if(singleton == null){
+
+	public static Singleton getInstance() {
+		if (singleton == null) {
 			singleton = new Singleton();
 		}
 		return singleton;
 	}
 }
 
-class ClassWithLambdas{
-	public void doSomething(List<String> toPrint){
+class ClassWithLambdas {
+	public void doSomething(List<String> toPrint) {
 		toPrint.forEach(stringToPrint -> System.out.print(stringToPrint));
 	}
 }
