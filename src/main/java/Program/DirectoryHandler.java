@@ -48,13 +48,13 @@ public class DirectoryHandler {
 	/*
 	 * Inspired by Walery Strauch's code at:
 	 * "https://stackoverflow.com/questions/1010919/adding-files-to-java-classpath-at-runtime"
+	 * It is incredibly hacky
 	 */
 	public void addFileToClassPath(File filepath) {
 		URLClassLoader systemLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
-		Method method;
 		try {
-			method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+			Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
 			method.setAccessible(true);
 			method.invoke(systemLoader, new Object[] { filepath.toURI().toURL() });
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
