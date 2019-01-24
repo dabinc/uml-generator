@@ -52,6 +52,17 @@ public class API {
 		Reader reader = new ASMReader();
 		Display display = new TextDisplay();
 		Renderer renderer = new PlantUMLRenderer();
+		
+		for(String option : options){
+			String toCheck = "-importdirectories=";
+			if(option.startsWith(toCheck)){
+				String[] directories = option.substring(toCheck.length()).split(",");
+				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
+				for(String directory : directories){
+					directoryParser.addFileToClassPath(new File(directory));
+				}
+			}
+		}
 
 		for (String option : options) {
 			if (this.displayMap.containsKey(option)) {
@@ -86,7 +97,7 @@ public class API {
 			String toCheck = "-runfordirectories=";
 			if(option.startsWith(toCheck)){
 				String[] directories = option.substring(toCheck.length()).split(",");
-				DirectoryParser directoryParser = DirectoryParser.getInstance();
+				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
 				for(String directory : directories){
 					classInputStreamList.addAll(directoryParser.getJavaFileData(new File(directory)));
 				}
