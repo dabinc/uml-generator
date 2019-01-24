@@ -39,10 +39,12 @@ public class InheritanceOverCompositionDetectorPreRenderTask extends PreRenderTa
 				for (MethodNodeWrapper fromMethodNodeWrapper : fromMethodNodeWrappers) {
 					if (!fromMethodNodeWrapper.modifiers.contains(Modifier.ABSTRACT)) {
 						if (fromMethodNodeWrapper.name.equals(toMethodNodeWrapper.name)
+								&& !fromMethodNodeWrapper.name.equals("<init>")
 								&& fromMethodNodeWrapper.parameterNodeWrappers
 										.size() == toMethodNodeWrapper.parameterNodeWrappers.size()) {
-							for(int i = 0; i < fromMethodNodeWrapper.parameterNodeWrappers.size(); i++){
-								if(!fromMethodNodeWrapper.parameterNodeWrappers.get(i).type.equals(toMethodNodeWrapper.parameterNodeWrappers.get(i).type)){
+							for (int i = 0; i < fromMethodNodeWrapper.parameterNodeWrappers.size(); i++) {
+								if (!fromMethodNodeWrapper.parameterNodeWrappers.get(i).type
+										.equals(toMethodNodeWrapper.parameterNodeWrappers.get(i).type)) {
 									return false;
 								}
 							}
