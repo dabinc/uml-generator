@@ -9,11 +9,10 @@ public class Main {
 		API api = new API();
 		List<String> classes = new LinkedList<String>();
 		List<String> options = new LinkedList<String>();
-		for(int i = 0; i < args.length; i++){
-			if(args[i].startsWith("-")){
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].startsWith("-")) {
 				options.add(args[i]);
-			}
-			else{
+			} else {
 				classes.add(args[i]);
 			}
 		}

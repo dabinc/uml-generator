@@ -1,7 +1,7 @@
 package Enums;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,9 +55,8 @@ public enum Modifier {
 	public boolean isSynthetic() {
 		return this == SYNTHETIC;
 	}
-
 	public static List<Modifier> getModifiers(int accessCodeASM) {
-		List<Modifier> toReturn = new ArrayList<Modifier>();
+		List<Modifier> toReturn = new LinkedList<Modifier>();
 		populatePairings();
 
 		for (Integer opcode : pairings.keySet()) {

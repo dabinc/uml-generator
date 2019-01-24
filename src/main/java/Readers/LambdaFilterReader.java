@@ -20,7 +20,11 @@ public class LambdaFilterReader extends ReaderDecorator {
 		for (ClassNodeWrapper classNodeWrapper : toReturn) {
 			List<MethodNodeWrapper> toRemove = new LinkedList<MethodNodeWrapper>();
 			for (MethodNodeWrapper methodNodeWrapper : classNodeWrapper.methodNodeWrappers) {
+<<<<<<< src/main/java/Readers/LambdaFilterReader.java
 				if (methodNodeWrapper.modifiers.contains(Modifier.SYNTHETIC)) {
+=======
+				if (methodNodeWrapper.name.contains("$")) {
+>>>>>>> src/main/java/Readers/LambdaFilterReader.java
 					toRemove.add(methodNodeWrapper);
 				}
 			}

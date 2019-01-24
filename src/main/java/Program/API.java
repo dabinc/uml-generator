@@ -1,5 +1,6 @@
 package Program;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import Displays.Display;
 import Displays.TextDisplay;
 import Displays.FileDisplay;
 import PreRenderTasks.DefaultPreRenderTask;
+import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTaskFactory;
 import PreRenderTasks.KeepOnlyPublicPreRenderTaskFactory;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTaskFactory;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTaskFactory;
@@ -87,6 +89,26 @@ public class API {
 			}
 		}
 
+		for (String option : options) {
+			String toCheck = "-prerendertasks=";
+			if (option.startsWith(toCheck)) {
+				String[] preRenderTaskClassNames = option.substring(toCheck.length()).split(",");
+				for (String preRenderTaskClassName : preRenderTaskClassNames) {
+					try {
+						Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
+						if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
+							preRenderTask = (PreRenderTask) preRenderTaskClass.getConstructor(PreRenderTask.class)
+									.newInstance(preRenderTask);
+						}
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | SecurityException | NoSuchMethodException
+							| InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
 		ProgramContainer programContainer = preRenderTask.getProgramContainer();
 
 		display.display(renderer.render(programContainer));
@@ -103,5 +125,6 @@ public class API {
 		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());
 		this.preRenderMap.put("-protected", new KeepProtectedAndPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-singleton", new SingletonPatternDetectorPreRenderTaskFactory());
+		this.preRenderMap.put("-inheritancecomposition", new InheritanceOverCompositionDetectorPreRenderTaskFactory());
 	}
 }
