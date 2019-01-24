@@ -5,13 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import Containers.ProgramContainer;
 import Displays.Display;
@@ -42,13 +43,14 @@ public class API {
 	private Map<String, PreRenderTaskFactory> preRenderMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
+	private static final String DEFAULT_CONFIG_FILE = "config.properties";
 
 	public API() {
-		this.readerMap = new HashMap<>();
-		this.readerFilterMap = new HashMap<>();
-		this.preRenderMap = new HashMap<>();
-		this.displayMap = new HashMap<>();
-		this.rendererMap = new HashMap<>();
+		this.readerMap = new HashMap<String, ReaderFactory>();
+		this.readerFilterMap = new HashMap<String, ReaderFactory>();
+		this.preRenderMap = new HashMap<String, PreRenderTaskFactory>();
+		this.displayMap = new HashMap<String, Display>();
+		this.rendererMap = new HashMap<String, Renderer>();
 		initializeHashMaps();
 	}
 
@@ -60,20 +62,10 @@ public class API {
 		Reader reader = new ASMReader();
 		Display display = new TextDisplay();
 		Renderer renderer = new PlantUMLRenderer();
-		List<String> commandLineOptions = new LinkedList<String>();
-		List<String> configPreRenderTasks = new LinkedList<String>();
-		List<String> configReaderListFilter = new LinkedList<String>();
-		List<String> configReaderPackagesFilter = new LinkedList<String>();
-		List<String> configPreRenderTasksToAdd = new LinkedList<String>();
+		List<String> configFileArguments = new LinkedList<>();
 
 		for (String option : options) {
-			if (!option.contains("=")) {
-				if (this.displayMap.containsKey(option) || this.readerMap.containsKey(option)
-						|| this.rendererMap.containsKey(option) || this.preRenderMap.containsKey(option)) {
-					commandLineOptions.add(option);
-				}
-			}
-			if (option.startsWith("-config=") && !hasConfig) {
+			if (option.startsWith("-config=")) {
 				fileName = option.substring("-config=".length());
 				hasConfig = true;
 			} else if (option.startsWith("-config") && !hasConfig) {
@@ -87,53 +79,42 @@ public class API {
 				if (f.exists()) {
 					input = new FileInputStream(fileName);
 				} else {
-					input = new FileInputStream("config.properties");
+					input = new FileInputStream(DEFAULT_CONFIG_FILE);
 				}
 				properties.load(input);
 				for (Object ob : properties.keySet()) {
 					String name = "-" + ob.toString();
-					if (commandLineOptions.contains(name)) {
-						continue;
-					} else if (properties.getProperty(ob.toString()).equals("true")) {
-						if (this.displayMap.containsKey(name)) {
-							System.out.println("display: " + name);
-							display = this.displayMap.get(name);
-						} else if (this.rendererMap.containsKey(name)) {
-							System.out.println("renderer: " + name);
-							renderer = this.rendererMap.get(name);
-						} else if (this.readerMap.containsKey(name)) {
-							System.out.println("reader: " + name);
-							reader = this.readerMap.get(name).getReader(reader);
-						} else if (this.readerFilterMap.containsKey(name)) {
-							System.out.println("readerFilterMap: " + name);
-							reader = this.readerFilterMap.get(name).getReader(reader, Arrays.asList(""));
-						} else if (this.preRenderMap.containsKey(name)) {
-							System.out.println("adding to prerender Task: " + name);
-							configPreRenderTasks.add(name);
-						}
+					if (properties.getProperty(ob.toString()).equals("true")) {
+						configFileArguments.add(name);
 					} else {
-						if (this.readerFilterMap.containsKey(name+"=") && name.contains("packages")) {
-							for (String individualName : properties.getProperty(ob.toString()).split(",")) {
-								configReaderPackagesFilter.add(individualName);
-							}
-						} else if (this.readerFilterMap.containsKey(name+"=") && name.contains("list")) {
-							for (String individualName : properties.getProperty(ob.toString()).split(",")) {
-								configReaderListFilter.add(individualName);
-							}
-						} else if (name.contains("prerendertasks")) {
-							for (String individualName : properties.getProperty(ob.toString()).split(",")) {
-								configPreRenderTasksToAdd.add(individualName);
-							}
-						} 
-					} 
+						configFileArguments.add(name + "=" + properties.getProperty(ob.toString()));
+					}
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+
 		for (String option : options) {
+			String[] tuple = option.split("=");
+			List<String> args = tuple.length < 2 ? new LinkedList<String>() : Arrays.asList(tuple[1].split(","));
+			map.put(tuple[0], args);
+		}
+		for (String arg : configFileArguments) {
+			String[] tuple = arg.split("=");
+			List<String> args = tuple.length < 2 ? new LinkedList<String>() : Arrays.asList(tuple[1].split(","));
+			if (map.containsKey(tuple[0])) {
+				map.put(tuple[0], union(args, map.get(tuple[0])));
+			} else {
+				map.put(tuple[0], args);
+			}
+		}
+		
+		System.out.println(map.toString());
+
+		for (String option : map.keySet()) {
 			if (this.displayMap.containsKey(option)) {
 				display = this.displayMap.get(option);
 			} else if (this.rendererMap.containsKey(option)) {
@@ -143,54 +124,14 @@ public class API {
 			}
 		}
 
-		for (String option : options) {
+		for (String option : map.keySet()) {
 			for (String key : this.readerFilterMap.keySet()) {
-				if (option.startsWith(key)) {
-					String[] args = option.substring(key.length()).split(",");
-//					List<String> argsList = new ArrayList<String>();
-					if(key.contains("list")){
-						System.out.println("hello ?? ");
-						for(String arg : args){
-							if(!configReaderListFilter.contains(arg)){
-								configReaderListFilter.add(arg);
-							}
-						}
-//						for (String arg : configReaderListFilter) {
-//							if (!argsList.contains(arg)) {
-//								argsList.add(arg);
-//							}
-//						}
-//						reader = this.readerFilterMap.get("-list=").getReader(reader,configReaderListFilter);
-//						System.out.println("reader is 1 " + reader);
-					} else if(key.contains("packages")){
-						System.out.println("hello again?? ");
-						for(String arg : args){
-							if(!configReaderPackagesFilter.contains(arg)){
-								configReaderPackagesFilter.add(arg);
-							}
-						}
-//						for (String arg : configReaderPackagesFilter) {
-//							if (!argsList.contains(arg)) {
-//								argsList.add(arg);
-//							}
-//						}
-//						reader = this.readerFilterMap.get("-packages=").getReader(reader,configReaderPackagesFilter);
-//						System.out.println("reader is 2 " + reader);
-					}
-//					reader = this.readerFilterMap.get(key).getReader(reader, Arrays.asList(args));
+				if (key.startsWith(option)) {
+					List<String> args = map.get(option);
+					reader = this.readerFilterMap.get(key).getReader(reader, args);
 				}
 			}
 		}
-		
-		System.out.println("name is " + configReaderPackagesFilter.toString());
-		System.out.println("name is " + configReaderListFilter.toString());
-		if(!configReaderPackagesFilter.isEmpty()){
-			reader = this.readerFilterMap.get("-packages=").getReader(reader,configReaderPackagesFilter);
-		}	
-		if(!configReaderListFilter.isEmpty()){
-			reader = this.readerFilterMap.get("-list=").getReader(reader,configReaderListFilter);
-		}
-		System.out.println("reader is " + reader);
 
 		List<String> classNameList = new LinkedList<String>();
 		for (String className : classNames) {
@@ -201,49 +142,41 @@ public class API {
 
 		PreRenderTask preRenderTask = new DefaultPreRenderTask(classNodeWrappers);
 
-		for (String option : options) {
-			if (this.preRenderMap.containsKey(option) && !configPreRenderTasks.contains(option)) {
-				configPreRenderTasks.add(option);
-			}
-		}
-
-		for (String option : configPreRenderTasks) {
-			System.out.println(option);
+		for (String option : map.keySet()) {
 			if (this.preRenderMap.containsKey(option)) {
 				preRenderTask = this.preRenderMap.get(option).getPreRenderTask(preRenderTask);
 			}
 		}
 
-		for (String option : options) {
-			String toCheck = "-prerendertasks=";
-			if (option.startsWith(toCheck)) {
-				String[] preRenderTaskClassNames = option.substring(toCheck.length()).split(",");
-				for (String str : preRenderTaskClassNames) {
-					if(!configPreRenderTasksToAdd.contains(str)){
-						configPreRenderTasksToAdd.add(str);
+		for (String option : map.keySet()) {
+			String toCheck = "-prerendertasks";
+			if (option.equals(toCheck)) {
+				for (String preRenderTaskClassName : map.get(option)) {
+					try {
+						Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
+						if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
+							preRenderTask = (PreRenderTask) preRenderTaskClass.getConstructor(PreRenderTask.class)
+									.newInstance(preRenderTask);
+						}
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+							| IllegalArgumentException | SecurityException | NoSuchMethodException
+							| InvocationTargetException e) {
+						e.printStackTrace();
 					}
 				}
-				
 			}
 		}
-		
-		for (String preRenderTaskClassName : configPreRenderTasksToAdd) {
-			try {
-				Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
-				if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
-					preRenderTask = (PreRenderTask) preRenderTaskClass.getConstructor(PreRenderTask.class)
-							.newInstance(preRenderTask);
-				}
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-					| IllegalArgumentException | SecurityException | NoSuchMethodException
-					| InvocationTargetException e) {
-				e.printStackTrace();
-			}
-		}
-		
+
 		ProgramContainer programContainer = preRenderTask.getProgramContainer();
 
 		display.display(renderer.render(programContainer));
+	}
+
+	private <T> List<T> union(List<T> args, List<T> list) {
+		Set<T> set = new HashSet<T>();
+		set.addAll(args);
+		set.addAll(list);
+		return new LinkedList<T>(set);
 	}
 
 	private void initializeHashMaps() {
