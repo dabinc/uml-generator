@@ -18,6 +18,7 @@ import Containers.ProgramContainer;
 import Displays.Display;
 import Displays.FileDisplay;
 import Displays.TextDisplay;
+import PreRenderTasks.AdapterPatternDetectorPreRenderTaskFactory;
 import PreRenderTasks.DefaultPreRenderTask;
 import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTaskFactory;
 import PreRenderTasks.KeepOnlyPublicPreRenderTaskFactory;
@@ -209,5 +210,6 @@ public class API {
 		this.preRenderMap.put("-protected", new KeepProtectedAndPublicPreRenderTaskFactory());
 		this.preRenderMap.put("-singleton", new SingletonPatternDetectorPreRenderTaskFactory());
 		this.preRenderMap.put("-inheritancecomposition", new InheritanceOverCompositionDetectorPreRenderTaskFactory());
+		this.preRenderMap.put("-adapter", new AdapterPatternDetectorPreRenderTaskFactory());
 	}
 }

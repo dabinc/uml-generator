@@ -21,8 +21,8 @@ public class InheritanceOverCompositionDetectorPreRenderTask extends PreRenderTa
 		ProgramContainer programContainer = super.getProgramContainer();
 
 		for (ArrowContainer arrowContainer : programContainer.arrows) {
-			if (InheritanceArrowContainer.class.isAssignableFrom(arrowContainer.getClass())
-					&& (isConcrete(arrowContainer.to) || overridesMethods(arrowContainer))) {
+			if (arrowContainer instanceof InheritanceArrowContainer
+					&& (isConcrete(arrowContainer.to) || overridesConcreteMethods(arrowContainer))) {
 				arrowContainer.displayContainer.color = Optional.of("orange");
 				arrowContainer.from.displayContainer.color = Optional.of("orange");
 			}
@@ -31,7 +31,7 @@ public class InheritanceOverCompositionDetectorPreRenderTask extends PreRenderTa
 		return programContainer;
 	}
 
-	private boolean overridesMethods(ArrowContainer arrowContainer) {
+	private boolean overridesConcreteMethods(ArrowContainer arrowContainer) {
 		List<MethodNodeWrapper> toMethodNodeWrappers = arrowContainer.to.classNodeWrapper.methodNodeWrappers;
 		List<MethodNodeWrapper> fromMethodNodeWrappers = arrowContainer.from.classNodeWrapper.methodNodeWrappers;
 		for (MethodNodeWrapper toMethodNodeWrapper : toMethodNodeWrappers) {
