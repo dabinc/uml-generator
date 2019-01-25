@@ -40,11 +40,22 @@ public class SingletonPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 	}
 
 	private boolean isSingleton(ClassContainer classContainer) {
-		return hasGetInstanceMethod(classContainer) && hasStaticFieldOfSelf(classContainer)
-				&& hasPrivateConstructor(classContainer);
+		return ((hasGetInstanceMethod(classContainer) && hasPrivateStaticFieldOfSelf(classContainer))
+				|| hasPublicStaticFieldOfSelf(classContainer)) && hasPrivateConstructor(classContainer);
 	}
 
-	private boolean hasStaticFieldOfSelf(ClassContainer classContainer) {
+	private boolean hasPublicStaticFieldOfSelf(ClassContainer classContainer) {
+		for (FieldContainer fieldContainer : classContainer.fields) {
+			if (fieldContainer.fieldNodeWrapper.modifiers.contains(Modifier.STATIC)
+					&& fieldContainer.fieldNodeWrapper.modifiers.contains(Modifier.PUBLIC)
+					&& fieldContainer.fieldNodeWrapper.type.equals(classContainer.classNodeWrapper.name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean hasPrivateStaticFieldOfSelf(ClassContainer classContainer) {
 		for (FieldContainer fieldContainer : classContainer.fields) {
 			if (fieldContainer.fieldNodeWrapper.modifiers.contains(Modifier.STATIC)
 					&& fieldContainer.fieldNodeWrapper.modifiers.contains(Modifier.PRIVATE)
