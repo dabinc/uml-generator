@@ -10,6 +10,7 @@ public abstract class ArrowContainer {
 	public Optional<String> toCardinality;
 	public Optional<String> fromCardinality;
 	public DisplayContainer displayContainer;
+	public Optional<StereotypeContainer> stereotypeContainer;
 
 	public ArrowContainer(ClassContainer to, ClassContainer from, String toCardinality, String fromCardinality) {
 		this.to = to;
@@ -17,6 +18,7 @@ public abstract class ArrowContainer {
 		this.toCardinality = Optional.ofNullable(toCardinality);
 		this.fromCardinality = Optional.ofNullable(fromCardinality);
 		this.displayContainer = new DisplayContainer();
+		this.stereotypeContainer = Optional.empty();
 	}
 
 	public abstract String render(Renderer renderer);

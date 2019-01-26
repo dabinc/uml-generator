@@ -52,7 +52,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(classContainer.classNodeWrapper.name);
 		toReturn.append(" ");
 		if (classContainer.stereotypeContainer.isPresent()) {
-			toReturn.append(renderStereotypeContainer(classContainer.stereotypeContainer.get()));
+			toReturn.append(renderClassStereotypeContainer(classContainer.stereotypeContainer.get()));
 			toReturn.append(" ");
 		}
 		toReturn.append(renderDisplayContainerHashTag(classContainer.displayContainer));
@@ -160,8 +160,7 @@ public class PlantUMLRenderer implements Renderer {
 		return "";
 	}
 
-	@Override
-	public String renderStereotypeContainer(StereotypeContainer stereotypeContainer) {
+	public String renderClassStereotypeContainer(StereotypeContainer stereotypeContainer) {
 		StringBuilder toReturn = new StringBuilder();
 		if (stereotypeContainer.color.isPresent() || stereotypeContainer.label.isPresent()
 				|| stereotypeContainer.tag.isPresent()) {
@@ -177,6 +176,16 @@ public class PlantUMLRenderer implements Renderer {
 				toReturn.append(stereotypeContainer.label.get());
 				toReturn.append(" ");
 			}
+			toReturn.append(">>");
+		}
+		return toReturn.toString();
+	}
+	
+	public String renderArrowStereotypeContainer(StereotypeContainer stereotypeContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		if(stereotypeContainer.label.isPresent()){
+			toReturn.append(" : <<");
+			toReturn.append(stereotypeContainer.label.get());
 			toReturn.append(">>");
 		}
 		return toReturn.toString();
@@ -231,6 +240,9 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(dependencyArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(dependencyArrowContainer.displayContainer));
+		if(dependencyArrowContainer.stereotypeContainer.isPresent()){
+			toReturn.append(renderArrowStereotypeContainer(dependencyArrowContainer.stereotypeContainer.get()));
+		}
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
@@ -247,6 +259,9 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(associationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(associationArrowContainer.displayContainer));
+		if(associationArrowContainer.stereotypeContainer.isPresent()){
+			toReturn.append(renderArrowStereotypeContainer(associationArrowContainer.stereotypeContainer.get()));
+		}
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
@@ -263,6 +278,9 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(inheritanceArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(inheritanceArrowContainer.displayContainer));
+		if(inheritanceArrowContainer.stereotypeContainer.isPresent()){
+			toReturn.append(renderArrowStereotypeContainer(inheritanceArrowContainer.stereotypeContainer.get()));
+		}
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
@@ -279,23 +297,29 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(implementationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(implementationArrowContainer.displayContainer));
+		if(implementationArrowContainer.stereotypeContainer.isPresent()){
+			toReturn.append(renderArrowStereotypeContainer(implementationArrowContainer.stereotypeContainer.get()));
+		}
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
 
 	@Override
 	public String renderDoubleAssociationArrowContainer(
-			DoubleAssociationArrowContainer doubleAssociationARrowContainer) {
+			DoubleAssociationArrowContainer doubleAssociationArrowContainer) {
 		StringBuilder toReturn = new StringBuilder();
-		toReturn.append(doubleAssociationARrowContainer.to.classNodeWrapper.name);
-		toReturn.append(doubleAssociationARrowContainer.toCardinality.isPresent()
-				? " \"" + doubleAssociationARrowContainer.toCardinality.get() + "\"" : "");
+		toReturn.append(doubleAssociationArrowContainer.to.classNodeWrapper.name);
+		toReturn.append(doubleAssociationArrowContainer.toCardinality.isPresent()
+				? " \"" + doubleAssociationArrowContainer.toCardinality.get() + "\"" : "");
 		toReturn.append(" <--> ");
-		toReturn.append(doubleAssociationARrowContainer.fromCardinality.isPresent()
-				? "\"" + doubleAssociationARrowContainer.fromCardinality.get() + "\" " : "");
-		toReturn.append(doubleAssociationARrowContainer.from.classNodeWrapper.name);
+		toReturn.append(doubleAssociationArrowContainer.fromCardinality.isPresent()
+				? "\"" + doubleAssociationArrowContainer.fromCardinality.get() + "\" " : "");
+		toReturn.append(doubleAssociationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
-		toReturn.append(renderDisplayContainerHashTag(doubleAssociationARrowContainer.displayContainer));
+		toReturn.append(renderDisplayContainerHashTag(doubleAssociationArrowContainer.displayContainer));
+		if(doubleAssociationArrowContainer.stereotypeContainer.isPresent()){
+			toReturn.append(renderArrowStereotypeContainer(doubleAssociationArrowContainer.stereotypeContainer.get()));
+		}
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
@@ -312,6 +336,9 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(doubleDependencyArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(doubleDependencyArrowContainer.displayContainer));
+		if(doubleDependencyArrowContainer.stereotypeContainer.isPresent()){
+			toReturn.append(renderArrowStereotypeContainer(doubleDependencyArrowContainer.stereotypeContainer.get()));
+		}
 		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}

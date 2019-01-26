@@ -13,7 +13,6 @@ import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
 import Containers.SkinParamContainer;
-import Containers.StereotypeContainer;
 
 public interface Renderer {
 	public String render(ProgramContainer programContainer);
@@ -28,8 +27,6 @@ public interface Renderer {
 
 	public String renderArrowContainer(ArrowContainer arrowContainer);
 
-	public String renderStereotypeContainer(StereotypeContainer stereotypeContainer);
-	
 	public String renderSkinParamContainer(SkinParamContainer skinParamContainer);
 
 	public String renderDependencyArrowContainer(DependencyArrowContainer dependencyArrowContainer);
