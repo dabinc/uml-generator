@@ -19,7 +19,10 @@ import Displays.Display;
 import Displays.FileDisplay;
 import Displays.TextDisplay;
 import PreRenderTasks.AdapterPatternDetectorPreRenderTaskFactory;
+import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTaskFactory;
+import PreRenderTasks.DecoratorPatternDetectorPreRenderTaskFactory;
 import PreRenderTasks.DefaultPreRenderTask;
+import PreRenderTasks.DependencyInversionPrincipleViolationDetectorPreRenderTaskFactory;
 import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTaskFactory;
 import PreRenderTasks.KeepOnlyPublicPreRenderTaskFactory;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTaskFactory;
@@ -112,12 +115,12 @@ public class API {
 				map.put(tuple[0], args);
 			}
 		}
-		
-		for(String option : map.keySet()){
+
+		for (String option : map.keySet()) {
 			String toCheck = "-importdirectories";
-			if(option.equals(toCheck)){
+			if (option.equals(toCheck)) {
 				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
-				for(String directory : map.get(option)){
+				for (String directory : map.get(option)) {
 					directoryParser.addFileToClassPath(new File(directory));
 				}
 			}
@@ -146,13 +149,13 @@ public class API {
 		for (String className : classNames) {
 			classNameList.add(className);
 		}
-		
+
 		List<InputStream> classInputStreamList = new LinkedList<InputStream>();
-		for(String option : map.keySet()){
+		for (String option : map.keySet()) {
 			String toCheck = "-runfordirectories";
-			if(option.equals(toCheck)){
+			if (option.equals(toCheck)) {
 				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
-				for(String directory : map.get(option)){
+				for (String directory : map.get(option)) {
 					classInputStreamList.addAll(directoryParser.getJavaFileData(new File(directory)));
 				}
 			}
@@ -211,5 +214,9 @@ public class API {
 		this.preRenderMap.put("-singleton", new SingletonPatternDetectorPreRenderTaskFactory());
 		this.preRenderMap.put("-inheritancecomposition", new InheritanceOverCompositionDetectorPreRenderTaskFactory());
 		this.preRenderMap.put("-adapter", new AdapterPatternDetectorPreRenderTaskFactory());
+		this.preRenderMap.put("-decorator", new DecoratorPatternDetectorPreRenderTaskFactory());
+		this.preRenderMap.put("-dependencyinversionviolation",
+				new DependencyInversionPrincipleViolationDetectorPreRenderTaskFactory());
+		this.preRenderMap.put("-baddecorator", new BadDecoratorPatternDetectorPreRenderTaskFactory());
 	}
 }
