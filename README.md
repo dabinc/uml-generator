@@ -20,6 +20,9 @@ Pass in any number of the options below to args:
 14. "-importdirectories=fullclasspath1,fullclasspath2,..." Adds classpaths to the project classpath at runtime NOTE: fullclasspath must be to the bin directory of a project.
 15. "-runfordirectories=fullclasspath1,fullclasspath2,..." Adds any java classes in or beneath the directories to the classes to run on
 16. "-adapter" detects the adapter pattern and properly labels it
+17. "-decorator" detects the decorator pattern and properly labels it
+18. "-dependencyinversionviolation" detects when the dependency inversion principle is violated and properly labels it
+19. "-baddecorator" detects when the decorator abstract class doesn't override all methods and adds them in red
 
 The default options are to not recurse into superclasses and interfacess, private level analysis, text display, and using PlantUML
 
