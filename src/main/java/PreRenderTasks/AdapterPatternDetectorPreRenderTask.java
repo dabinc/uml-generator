@@ -12,9 +12,9 @@ import Containers.ParameterContainer;
 import Containers.ProgramContainer;
 import Containers.StereotypeContainer;
 
-public class AdapterPatternDetectorPreRenderTasks extends PreRenderTaskDecorator {
+public class AdapterPatternDetectorPreRenderTask extends PreRenderTaskDecorator {
 
-	public AdapterPatternDetectorPreRenderTasks(PreRenderTask preRenderTask) {
+	public AdapterPatternDetectorPreRenderTask(PreRenderTask preRenderTask) {
 		super(preRenderTask);
 	}
 
@@ -33,27 +33,10 @@ public class AdapterPatternDetectorPreRenderTasks extends PreRenderTaskDecorator
 								&& doesOverrideAMethod(inheritanceOrImplementation.from, target)
 								&& hasConstructorParameterOfType(adaptsArrow.from, adaptee)) {
 							ClassContainer adapter = inheritanceOrImplementation.from;
-							if (target.stereotypeContainer.isPresent()) {
-								target.stereotypeContainer.get().label = Optional.of("target");
-							} else {
-								target.stereotypeContainer = Optional.of(new StereotypeContainer("target"));
-							}
-							if (adapter.stereotypeContainer.isPresent()) {
-								adapter.stereotypeContainer.get().label = Optional.of("adapter");
-							} else {
-								adapter.stereotypeContainer = Optional.of(new StereotypeContainer("adapter"));
-							}
-							if (adaptee.stereotypeContainer.isPresent()) {
-								adaptee.stereotypeContainer.get().label = Optional.of("adaptee");
-							} else {
-								adaptee.stereotypeContainer = Optional.of(new StereotypeContainer("adaptee"));
-							}
-							if(adaptsArrow.stereotypeContainer.isPresent()){
-								adaptsArrow.stereotypeContainer.get().label = Optional.of("adapts");
-							}
-							else{
-								adaptsArrow.stereotypeContainer = Optional.of(new StereotypeContainer("adapts"));
-							}
+							target.stereotypeContainer.add(new StereotypeContainer("target"));
+							adapter.stereotypeContainer.add(new StereotypeContainer("adapter"));
+							adaptee.stereotypeContainer.add(new StereotypeContainer("adaptee"));
+							adaptsArrow.stereotypeContainer.add(new StereotypeContainer("adapts"));
 							target.displayContainer.color = Optional.of("FireBrick");
 							adapter.displayContainer.color = Optional.of("FireBrick");
 							adaptee.displayContainer.color = Optional.of("FireBrick");

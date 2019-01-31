@@ -4,7 +4,7 @@ public class AdapterPatternDetectorPreRenderTaskFactory implements PreRenderTask
 
 	@Override
 	public PreRenderTask getPreRenderTask(PreRenderTask preRenderTask) {
-		return new AdapterPatternDetectorPreRenderTasks(preRenderTask);
+		return new AdapterPatternDetectorPreRenderTask(preRenderTask);
 	}
 
 }

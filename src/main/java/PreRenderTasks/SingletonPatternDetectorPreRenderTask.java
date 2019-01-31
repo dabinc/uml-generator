@@ -24,14 +24,9 @@ public class SingletonPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 		ProgramContainer toReturn = super.getProgramContainer();
 		for (ClassContainer classContainer : toReturn.classes) {
 			if (isSingleton(classContainer)) {
-				if (classContainer.stereotypeContainer.isPresent()) {
-					StereotypeContainer stereotypeContainer = classContainer.stereotypeContainer.get();
-					stereotypeContainer.label = Optional.of("Singleton");
-
-				} else {
-					classContainer.stereotypeContainer = Optional.of(new StereotypeContainer("Singleton"));
-				}
-				SkinParamContainer toAdd = new SkinParamContainer(classContainer.stereotypeContainer.get());
+				StereotypeContainer singleton = new StereotypeContainer("Singleton");
+				classContainer.stereotypeContainer.add(singleton);
+				SkinParamContainer toAdd = new SkinParamContainer(singleton);
 				toAdd.borderColor = Optional.of("blue");
 				toReturn.skinParams.add(toAdd);
 			}

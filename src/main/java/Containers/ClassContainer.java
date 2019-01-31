@@ -12,7 +12,7 @@ public class ClassContainer {
 	public List<FieldContainer> fields;
 	public List<MethodContainer> methods;
 	public DisplayContainer displayContainer;
-	public Optional<StereotypeContainer> stereotypeContainer;
+	public List<StereotypeContainer> stereotypeContainer;
 
 	public Optional<ClassContainer> superclass;
 	public List<ClassContainer> interfaces;
@@ -26,7 +26,7 @@ public class ClassContainer {
 		this.fields = new LinkedList<FieldContainer>();
 		this.methods = new LinkedList<MethodContainer>();
 		this.displayContainer = new DisplayContainer();
-		this.stereotypeContainer = Optional.empty();
+		this.stereotypeContainer = new LinkedList<StereotypeContainer>();
 		for (FieldNodeWrapper wrapper : classNodeWrapper.fieldNodeWrappers) {
 			this.fields.add(new FieldContainer(wrapper));
 		}
