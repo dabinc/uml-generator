@@ -42,7 +42,8 @@ public class KeepOnlyPublicPreRenderTask extends PreRenderTaskDecorator {
 			}
 		}
 		for (MethodContainer methodContainer : classContainer.methods) {
-			if (!Enums.Modifier.PUBLIC.listContains(methodContainer.methodNodeWrapper.modifiers)) {
+			if (methodContainer.methodNodeWrapper.isPresent()
+					&& !Enums.Modifier.PUBLIC.listContains(methodContainer.methodNodeWrapper.get().modifiers)) {
 				toRemoveMethods.add(methodContainer);
 			}
 		}

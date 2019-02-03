@@ -31,7 +31,7 @@ public class ClassContainer {
 			this.fields.add(new FieldContainer(wrapper));
 		}
 		for (MethodNodeWrapper wrapper : classNodeWrapper.methodNodeWrappers) {
-			this.methods.add(new MethodContainer(wrapper));
+			this.methods.add(new RealMethodContainer(wrapper));
 		}
 		this.superclass = Optional.empty();
 		this.interfaces = new LinkedList<ClassContainer>();

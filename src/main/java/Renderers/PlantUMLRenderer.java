@@ -7,12 +7,14 @@ import Containers.DependencyArrowContainer;
 import Containers.DisplayContainer;
 import Containers.DoubleAssociationArrowContainer;
 import Containers.DoubleDependencyArrowContainer;
+import Containers.FakeMethodContainer;
 import Containers.FieldContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
+import Containers.RealMethodContainer;
 import Containers.SkinParamContainer;
 import Containers.StereotypeContainer;
 import Enums.Modifier;
@@ -87,26 +89,7 @@ public class PlantUMLRenderer implements Renderer {
 
 	@Override
 	public String renderMethodContainer(MethodContainer methodContainer) {
-		StringBuilder toReturn = new StringBuilder();
-		for (Modifier modifier : methodContainer.methodNodeWrapper.modifiers) {
-			toReturn.append(renderModifier(modifier));
-		}
-		toReturn.append(" ");
-		toReturn.append(renderDisplayContainerHTML(methodContainer.displayContainer));
-		toReturn.append(" ");
-		toReturn.append(methodContainer.methodNodeWrapper.name);
-		toReturn.append("(");
-		if (!methodContainer.parameterContainers.isEmpty()) {
-			for (int i = 0; i < methodContainer.parameterContainers.size() - 1; i++) {
-				toReturn.append(renderParameterContainer(methodContainer.parameterContainers.get(i)));
-				toReturn.append(", ");
-			}
-			toReturn.append(renderParameterContainer(
-					methodContainer.parameterContainers.get(methodContainer.parameterContainers.size() - 1)));
-		}
-		toReturn.append("): ");
-		toReturn.append(methodContainer.methodNodeWrapper.type);
-		return toReturn.toString();
+		return methodContainer.render(this);
 	}
 
 	@Override
@@ -340,6 +323,55 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(renderArrowStereotypeContainer(stereotypeContainer));
 		}
 		toReturn.append(System.lineSeparator());
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderRealMethodContainer(RealMethodContainer realMethodContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		if(realMethodContainer.methodNodeWrapper.isPresent()){
+			for (Modifier modifier : realMethodContainer.methodNodeWrapper.get().modifiers) {
+				toReturn.append(renderModifier(modifier));
+			}
+			toReturn.append(" ");
+			toReturn.append(renderDisplayContainerHTML(realMethodContainer.displayContainer));
+			toReturn.append(" ");
+			toReturn.append(realMethodContainer.methodNodeWrapper.get().name);
+			toReturn.append("(");
+			if (!realMethodContainer.parameterContainers.isEmpty()) {
+				for (int i = 0; i < realMethodContainer.parameterContainers.size() - 1; i++) {
+					toReturn.append(renderParameterContainer(realMethodContainer.parameterContainers.get(i)));
+					toReturn.append(", ");
+				}
+				toReturn.append(renderParameterContainer(
+						realMethodContainer.parameterContainers.get(realMethodContainer.parameterContainers.size() - 1)));
+			}
+			toReturn.append("): ");
+			toReturn.append(realMethodContainer.methodNodeWrapper.get().type);
+		}
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderFakeMethodContainer(FakeMethodContainer fakeMethodContainer) {
+		StringBuilder toReturn = new StringBuilder();
+		for(Modifier modifier : fakeMethodContainer.modifiers){
+			toReturn.append(renderModifier(modifier));
+		}
+		toReturn.append(" ");
+		toReturn.append(renderDisplayContainerHTML(fakeMethodContainer.displayContainer));
+		toReturn.append(" ");
+		toReturn.append(fakeMethodContainer.name);
+		toReturn.append("(");
+		if (!fakeMethodContainer.parameters.isEmpty()) {
+			for(int i = 0; i < fakeMethodContainer.parameters.size() - 1; i++){
+				toReturn.append(fakeMethodContainer.parameters.get(i));
+				toReturn.append(", ");
+			}
+			toReturn.append(fakeMethodContainer.parameters.get(fakeMethodContainer.parameters.size() - 1));
+		}
+		toReturn.append("): ");
+		toReturn.append(fakeMethodContainer.returnType);
 		return toReturn.toString();
 	}
 
