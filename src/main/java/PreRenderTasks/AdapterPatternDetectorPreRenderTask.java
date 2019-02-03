@@ -29,7 +29,7 @@ public class AdapterPatternDetectorPreRenderTask extends PreRenderTaskDecorator 
 					if (adaptsArrow instanceof AssociationArrowContainer) {
 						ClassContainer target = inheritanceOrImplementation.to;
 						ClassContainer adaptee = adaptsArrow.to;
-						if (inheritanceOrImplementation.from.equals(adaptsArrow.from)
+						if (!target.equals(adaptee) && inheritanceOrImplementation.from.equals(adaptsArrow.from)
 								&& doesOverrideAMethod(inheritanceOrImplementation.from, target)
 								&& hasConstructorParameterOfType(adaptsArrow.from, adaptee)) {
 							ClassContainer adapter = inheritanceOrImplementation.from;
@@ -52,18 +52,20 @@ public class AdapterPatternDetectorPreRenderTask extends PreRenderTaskDecorator 
 	private boolean doesOverrideAMethod(ClassContainer child, ClassContainer parent) {
 		for (MethodContainer parentMethod : parent.methods) {
 			for (MethodContainer childMethod : child.methods) {
-				if (childMethod.methodNodeWrapper.name.equals(parentMethod.methodNodeWrapper.name)
-						&& !childMethod.methodNodeWrapper.name.equals("<init>")
-						&& childMethod.methodNodeWrapper.parameterNodeWrappers
-								.size() == parentMethod.methodNodeWrapper.parameterNodeWrappers.size()) {
-					for (int i = 0; i < childMethod.methodNodeWrapper.parameterNodeWrappers.size(); i++) {
-						if (!childMethod.methodNodeWrapper.parameterNodeWrappers.get(i).type
-								.equals(parentMethod.methodNodeWrapper.parameterNodeWrappers.get(i).type)) {
-							return false;
+				if(parentMethod.methodNodeWrapper.isPresent() && childMethod.methodNodeWrapper.isPresent()){
+					if (childMethod.methodNodeWrapper.get().name.equals(parentMethod.methodNodeWrapper.get().name)
+							&& !childMethod.methodNodeWrapper.get().name.equals("<init>")
+							&& childMethod.methodNodeWrapper.get().parameterNodeWrappers
+									.size() == parentMethod.methodNodeWrapper.get().parameterNodeWrappers.size()) {
+						for (int i = 0; i < childMethod.methodNodeWrapper.get().parameterNodeWrappers.size(); i++) {
+							if (!childMethod.methodNodeWrapper.get().parameterNodeWrappers.get(i).type
+									.equals(parentMethod.methodNodeWrapper.get().parameterNodeWrappers.get(i).type)) {
+								return false;
+							}
 						}
+						return true;
 					}
-					return true;
-				}
+				}				
 			}
 		}
 		return false;

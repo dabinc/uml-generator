@@ -65,9 +65,10 @@ public class SingletonPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 	private boolean hasPrivateConstructor(ClassContainer classContainer) {
 		List<MethodNodeWrapper> constructors = new LinkedList<MethodNodeWrapper>();
 		for (MethodContainer methodContainer : classContainer.methods) {
-			if (methodContainer.methodNodeWrapper.name.equals("<init>")
-					&& methodContainer.methodNodeWrapper.type.equals("void")) {
-				constructors.add(methodContainer.methodNodeWrapper);
+			if (methodContainer.methodNodeWrapper.isPresent()
+					&& methodContainer.methodNodeWrapper.get().name.equals("<init>")
+					&& methodContainer.methodNodeWrapper.get().type.equals("void")) {
+				constructors.add(methodContainer.methodNodeWrapper.get());
 			}
 		}
 		if (constructors.size() == 0) {
@@ -84,9 +85,10 @@ public class SingletonPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 
 	private boolean hasGetInstanceMethod(ClassContainer classContainer) {
 		for (MethodContainer methodContainer : classContainer.methods) {
-			if (methodContainer.methodNodeWrapper.modifiers.contains(Modifier.STATIC)
-					&& methodContainer.methodNodeWrapper.modifiers.contains(Modifier.PUBLIC)
-					&& methodContainer.methodNodeWrapper.type.equals(classContainer.classNodeWrapper.name)) {
+			if (methodContainer.methodNodeWrapper.isPresent()
+					&& methodContainer.methodNodeWrapper.get().modifiers.contains(Modifier.STATIC)
+					&& methodContainer.methodNodeWrapper.get().modifiers.contains(Modifier.PUBLIC)
+					&& methodContainer.methodNodeWrapper.get().type.equals(classContainer.classNodeWrapper.name)) {
 				return true;
 			}
 		}

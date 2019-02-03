@@ -44,9 +44,11 @@ public class KeepProtectedAndPublicPreRenderTask extends PreRenderTaskDecorator 
 			}
 		}
 		for (MethodContainer methodContainer : classContainer.methods) {
-			if (!(Enums.Modifier.PUBLIC.listContains(methodContainer.methodNodeWrapper.modifiers)
-					|| Enums.Modifier.PROTECTED.listContains(methodContainer.methodNodeWrapper.modifiers))) {
-				toRemoveMethods.add(methodContainer);
+			if (methodContainer.methodNodeWrapper.isPresent()) {
+				if (!(Enums.Modifier.PUBLIC.listContains(methodContainer.methodNodeWrapper.get().modifiers)
+						|| Enums.Modifier.PROTECTED.listContains(methodContainer.methodNodeWrapper.get().modifiers))) {
+					toRemoveMethods.add(methodContainer);
+				}
 			}
 		}
 		classContainer.fields.removeAll(toRemoveFields);

@@ -6,12 +6,14 @@ import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
 import Containers.DoubleAssociationArrowContainer;
 import Containers.DoubleDependencyArrowContainer;
+import Containers.FakeMethodContainer;
 import Containers.FieldContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
 import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
+import Containers.RealMethodContainer;
 import Containers.SkinParamContainer;
 
 public interface Renderer {
@@ -41,4 +43,8 @@ public interface Renderer {
 
 	public String renderDoubleAssociationArrowContainer(
 			DoubleAssociationArrowContainer doubleAssociationARrowContainer);
+
+	public String renderRealMethodContainer(RealMethodContainer realMethodContainer);
+
+	public String renderFakeMethodContainer(FakeMethodContainer fakeMethodContainer);
 }
