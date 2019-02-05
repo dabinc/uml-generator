@@ -41,16 +41,16 @@ import Renderers.Renderer;
 import Wrappers.ClassNodeWrapper;
 
 public class API {
-	private Map<String, ReaderFactory> readerMapOld;
-	private Map<String, ReaderFactory> readerFilterMapOld;
+	private Map<String, ReaderFactory> readerMap;
+	private Map<String, ReaderFactory> readerFilterMap;
 	private Map<String, Class<? extends PreRenderTask>> preRenderMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
 	private static final String DEFAULT_CONFIG_FILE = "config.properties";
 
 	public API() {
-		this.readerMapOld = new HashMap<String, ReaderFactory>();
-		this.readerFilterMapOld = new HashMap<String, ReaderFactory>();
+		this.readerMap = new HashMap<String, ReaderFactory>();
+		this.readerFilterMap = new HashMap<String, ReaderFactory>();
 		this.preRenderMap = new HashMap<String, Class<? extends PreRenderTask>>();
 		this.displayMap = new HashMap<String, Display>();
 		this.rendererMap = new HashMap<String, Renderer>();
@@ -130,16 +130,16 @@ public class API {
 				display = this.displayMap.get(option);
 			} else if (this.rendererMap.containsKey(option)) {
 				renderer = this.rendererMap.get(option);
-			} else if (this.readerMapOld.containsKey(option)) {
-				reader = this.readerMapOld.get(option).getReader(reader);
+			} else if (this.readerMap.containsKey(option)) {
+				reader = this.readerMap.get(option).getReader(reader);
 			}
 		}
 
 		for (String option : map.keySet()) {
-			for (String key : this.readerFilterMapOld.keySet()) {
+			for (String key : this.readerFilterMap.keySet()) {
 				if (key.startsWith(option)) {
 					List<String> args = map.get(option);
-					reader = this.readerFilterMapOld.get(key).getReader(reader, args);
+					reader = this.readerFilterMap.get(key).getReader(reader, args);
 				}
 			}
 		}
@@ -196,11 +196,11 @@ public class API {
 	}
 
 	private void initializeHashMaps() {
-		this.readerMapOld.put("-recursive", new RecursiveReaderFactory());
+		this.readerMap.put("-recursive", new RecursiveReaderFactory());
 		
-		this.readerFilterMapOld.put("-packages=", new PackageFilterReaderFactory());
-		this.readerFilterMapOld.put("-list=", new WhitelistBlacklistReaderFactory());
-		this.readerFilterMapOld.put("-removelambdas", new LambdaFilterReaderFactory());
+		this.readerFilterMap.put("-packages=", new PackageFilterReaderFactory());
+		this.readerFilterMap.put("-list=", new WhitelistBlacklistReaderFactory());
+		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
 		
 		this.displayMap.put("-file", new FileDisplay());
 		
