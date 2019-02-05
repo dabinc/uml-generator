@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,18 +17,18 @@ import Containers.ProgramContainer;
 import Displays.Display;
 import Displays.FileDisplay;
 import Displays.TextDisplay;
-import PreRenderTasks.AdapterPatternDetectorPreRenderTaskFactory;
-import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTaskFactory;
-import PreRenderTasks.DecoratorPatternDetectorPreRenderTaskFactory;
+import PreRenderTasks.AdapterPatternDetectorPreRenderTask;
+import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTask;
+import PreRenderTasks.DecoratorPatternDetectorPreRenderTask;
 import PreRenderTasks.DefaultPreRenderTask;
-import PreRenderTasks.DependencyInversionPrincipleViolationDetectorPreRenderTaskFactory;
-import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTaskFactory;
-import PreRenderTasks.KeepOnlyPublicPreRenderTaskFactory;
-import PreRenderTasks.KeepPrivateAndUpPreRenderTaskFactory;
-import PreRenderTasks.KeepProtectedAndPublicPreRenderTaskFactory;
+import PreRenderTasks.DependencyInversionPrincipleViolationDetectorPreRenderTask;
+import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTask;
+import PreRenderTasks.KeepOnlyPublicPreRenderTask;
+import PreRenderTasks.KeepPrivateAndUpPreRenderTask;
+import PreRenderTasks.KeepProtectedAndPublicPreRenderTask;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskFactory;
-import PreRenderTasks.SingletonPatternDetectorPreRenderTaskFactory;
+import PreRenderTasks.SingletonPatternDetectorPreRenderTask;
 import Readers.ASMReader;
 import Readers.LambdaFilterReaderFactory;
 import Readers.PackageFilterReaderFactory;
@@ -42,17 +41,17 @@ import Renderers.Renderer;
 import Wrappers.ClassNodeWrapper;
 
 public class API {
-	private Map<String, ReaderFactory> readerMap;
-	private Map<String, ReaderFactory> readerFilterMap;
-	private Map<String, PreRenderTaskFactory> preRenderMap;
+	private Map<String, ReaderFactory> readerMapOld;
+	private Map<String, ReaderFactory> readerFilterMapOld;
+	private Map<String, Class<? extends PreRenderTask>> preRenderMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
 	private static final String DEFAULT_CONFIG_FILE = "config.properties";
 
 	public API() {
-		this.readerMap = new HashMap<String, ReaderFactory>();
-		this.readerFilterMap = new HashMap<String, ReaderFactory>();
-		this.preRenderMap = new HashMap<String, PreRenderTaskFactory>();
+		this.readerMapOld = new HashMap<String, ReaderFactory>();
+		this.readerFilterMapOld = new HashMap<String, ReaderFactory>();
+		this.preRenderMap = new HashMap<String, Class<? extends PreRenderTask>>();
 		this.displayMap = new HashMap<String, Display>();
 		this.rendererMap = new HashMap<String, Renderer>();
 		initializeHashMaps();
@@ -131,16 +130,16 @@ public class API {
 				display = this.displayMap.get(option);
 			} else if (this.rendererMap.containsKey(option)) {
 				renderer = this.rendererMap.get(option);
-			} else if (this.readerMap.containsKey(option)) {
-				reader = this.readerMap.get(option).getReader(reader);
+			} else if (this.readerMapOld.containsKey(option)) {
+				reader = this.readerMapOld.get(option).getReader(reader);
 			}
 		}
 
 		for (String option : map.keySet()) {
-			for (String key : this.readerFilterMap.keySet()) {
+			for (String key : this.readerFilterMapOld.keySet()) {
 				if (key.startsWith(option)) {
 					List<String> args = map.get(option);
-					reader = this.readerFilterMap.get(key).getReader(reader, args);
+					reader = this.readerFilterMapOld.get(key).getReader(reader, args);
 				}
 			}
 		}
@@ -165,9 +164,9 @@ public class API {
 
 		PreRenderTask preRenderTask = new DefaultPreRenderTask(classNodeWrappers);
 
-		for (String option : map.keySet()) {
-			if (this.preRenderMap.containsKey(option)) {
-				preRenderTask = this.preRenderMap.get(option).getPreRenderTask(preRenderTask);
+		for(String option : map.keySet()){
+			if(this.preRenderMap.containsKey(option)){
+				preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask(this.preRenderMap.get(option), preRenderTask);
 			}
 		}
 
@@ -176,14 +175,8 @@ public class API {
 			if (option.equals(toCheck)) {
 				for (String preRenderTaskClassName : map.get(option)) {
 					try {
-						Class<?> preRenderTaskClass = Class.forName(preRenderTaskClassName);
-						if (PreRenderTask.class.isAssignableFrom(preRenderTaskClass)) {
-							preRenderTask = (PreRenderTask) preRenderTaskClass.getConstructor(PreRenderTask.class)
-									.newInstance(preRenderTask);
-						}
-					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-							| IllegalArgumentException | SecurityException | NoSuchMethodException
-							| InvocationTargetException e) {
+						preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask((Class<? extends PreRenderTask>) Class.forName(preRenderTaskClassName), preRenderTask);
+					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 					}
 				}
@@ -203,20 +196,22 @@ public class API {
 	}
 
 	private void initializeHashMaps() {
-		this.readerMap.put("-recursive", new RecursiveReaderFactory());
-		this.readerFilterMap.put("-packages=", new PackageFilterReaderFactory());
-		this.readerFilterMap.put("-list=", new WhitelistBlacklistReaderFactory());
-		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
+		this.readerMapOld.put("-recursive", new RecursiveReaderFactory());
+		
+		this.readerFilterMapOld.put("-packages=", new PackageFilterReaderFactory());
+		this.readerFilterMapOld.put("-list=", new WhitelistBlacklistReaderFactory());
+		this.readerFilterMapOld.put("-removelambdas", new LambdaFilterReaderFactory());
+		
 		this.displayMap.put("-file", new FileDisplay());
-		this.preRenderMap.put("-public", new KeepOnlyPublicPreRenderTaskFactory());
-		this.preRenderMap.put("-private", new KeepPrivateAndUpPreRenderTaskFactory());
-		this.preRenderMap.put("-protected", new KeepProtectedAndPublicPreRenderTaskFactory());
-		this.preRenderMap.put("-singleton", new SingletonPatternDetectorPreRenderTaskFactory());
-		this.preRenderMap.put("-inheritancecomposition", new InheritanceOverCompositionDetectorPreRenderTaskFactory());
-		this.preRenderMap.put("-adapter", new AdapterPatternDetectorPreRenderTaskFactory());
-		this.preRenderMap.put("-decorator", new DecoratorPatternDetectorPreRenderTaskFactory());
-		this.preRenderMap.put("-dependencyinversionviolation",
-				new DependencyInversionPrincipleViolationDetectorPreRenderTaskFactory());
-		this.preRenderMap.put("-baddecorator", new BadDecoratorPatternDetectorPreRenderTaskFactory());
+		
+		this.preRenderMap.put("-singleton", SingletonPatternDetectorPreRenderTask.class);
+		this.preRenderMap.put("inheritancecomposition", InheritanceOverCompositionDetectorPreRenderTask.class);
+		this.preRenderMap.put("-adapter", AdapterPatternDetectorPreRenderTask.class);
+		this.preRenderMap.put("-decorator", DecoratorPatternDetectorPreRenderTask.class);
+		this.preRenderMap.put("dependencyinversionviolation", DependencyInversionPrincipleViolationDetectorPreRenderTask.class);
+		this.preRenderMap.put("baddecorator", BadDecoratorPatternDetectorPreRenderTask.class);
+		this.preRenderMap.put("-public", KeepOnlyPublicPreRenderTask.class);
+		this.preRenderMap.put("-private", KeepPrivateAndUpPreRenderTask.class);
+		this.preRenderMap.put("-protected", KeepProtectedAndPublicPreRenderTask.class);
 	}
 }
