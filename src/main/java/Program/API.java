@@ -205,7 +205,7 @@ public class API {
 		this.displayMap.put("-file", new FileDisplay());
 		
 		this.preRenderMap.put("-singleton", SingletonPatternDetectorPreRenderTask.class);
-		this.preRenderMap.put("inheritancecomposition", InheritanceOverCompositionDetectorPreRenderTask.class);
+		this.preRenderMap.put("-inheritancecomposition", InheritanceOverCompositionDetectorPreRenderTask.class);
 		this.preRenderMap.put("-adapter", AdapterPatternDetectorPreRenderTask.class);
 		this.preRenderMap.put("-decorator", DecoratorPatternDetectorPreRenderTask.class);
 		this.preRenderMap.put("-dependencyinversionviolation", DependencyInversionPrincipleViolationDetectorPreRenderTask.class);
