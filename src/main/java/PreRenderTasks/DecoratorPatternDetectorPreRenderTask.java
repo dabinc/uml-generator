@@ -1,5 +1,6 @@
 package PreRenderTasks;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,18 +35,9 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 							&& associationOrDependency.to.equals(inheritanceOrImplementation.to)) {
 						ClassContainer decoratedClass = inheritanceOrImplementation.to;
 						ClassContainer decorator = inheritanceOrImplementation.from;
-						Boolean isDecorator = false;
-						for (ArrowContainer inheritanceToDecorator : toReturn.arrows) {
-							if (inheritanceToDecorator instanceof InheritanceArrowContainer
-									&& inheritanceToDecorator.to.equals(decorator)
-									&& overridesAllConcreteMethods(inheritanceToDecorator)) {
-								ClassContainer concreteDecorator = inheritanceToDecorator.from;
-								concreteDecorator.displayContainer.color = Optional.of("lightgreen");
-								concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
-								isDecorator = true;
-							}
-						}
-						if (isDecorator) {
+						if(overridesAllConcreteMethods(inheritanceOrImplementation)){
+							ClassContainer concreteDecorator = inheritanceOrImplementation.from;
+							concreteDecorator.displayContainer.color = Optional.of("lightgreen");
 							inheritanceOrImplementation.stereotypeContainer.add(new StereotypeContainer("decorates"));
 							decoratedClass.displayContainer.color = Optional.of("lightgreen");
 							decorator.displayContainer.color = Optional.of("lightgreen");
@@ -61,6 +53,12 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 	private boolean overridesAllConcreteMethods(ArrowContainer arrowContainer) {
 		List<MethodNodeWrapper> toMethodNodeWrappers = arrowContainer.to.classNodeWrapper.methodNodeWrappers;
 		List<MethodNodeWrapper> fromMethodNodeWrappers = arrowContainer.from.classNodeWrapper.methodNodeWrappers;
+		List<String> fromMethods = new LinkedList<>();
+		for(MethodNodeWrapper fromMethodNodeWrapper : fromMethodNodeWrappers){
+			if(!fromMethodNodeWrapper.name.equals("<init>")){
+				fromMethods.add(fromMethodNodeWrapper.name);
+			}
+		}
 		for (MethodNodeWrapper toMethodNodeWrapper : toMethodNodeWrappers) {
 			if (!toMethodNodeWrapper.modifiers.contains(Modifier.ABSTRACT)) {
 				for (MethodNodeWrapper fromMethodNodeWrapper : fromMethodNodeWrappers) {
@@ -69,18 +67,22 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 								&& !fromMethodNodeWrapper.name.equals("<init>")
 								&& fromMethodNodeWrapper.parameterNodeWrappers
 										.size() == toMethodNodeWrapper.parameterNodeWrappers.size()) {
-							for (int i = 0; i < fromMethodNodeWrapper.parameterNodeWrappers.size(); i++) {
+							int i;
+							for (i = 0; i < fromMethodNodeWrapper.parameterNodeWrappers.size(); i++) {
 								if (!fromMethodNodeWrapper.parameterNodeWrappers.get(i).type
-										.equals(toMethodNodeWrapper.parameterNodeWrappers.get(i).type)) {
-									return false;
+										.equals(toMethodNodeWrapper.parameterNodeWrappers.get(i).type)) {	
+									break;
 								}
+							}
+							if(i == fromMethodNodeWrapper.parameterNodeWrappers.size()){
+								fromMethods.remove(fromMethodNodeWrapper.name);
 							}
 						}
 					}
 				}
 			}
-		}
-		return true;
+		} 
+		return fromMethods.size() == 0;
 	}
 
 }
