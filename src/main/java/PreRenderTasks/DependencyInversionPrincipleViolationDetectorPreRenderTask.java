@@ -30,12 +30,13 @@ public class DependencyInversionPrincipleViolationDetectorPreRenderTask extends 
 							|| inheritanceOrImplementation instanceof ImplementationArrowContainer)
 							&& inheritanceOrImplementation.from.equals(to)) {
 						associationOrDependency.displayContainer.color = Optional.of("lightblue");
-						associationOrDependency.stereotypeContainer.add(new StereotypeContainer("Violates Dependency Inversion Principle"));
+						associationOrDependency.stereotypeContainer
+								.add(new StereotypeContainer("Violates Dependency Inversion Principle"));
 					}
 				}
 			}
 		}
-		
+
 		return toReturn;
 	}
 }
