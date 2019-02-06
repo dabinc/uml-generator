@@ -7,10 +7,8 @@ import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
-import Containers.FieldContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
-import Containers.MethodContainer;
 import Containers.ProgramContainer;
 import Containers.StereotypeContainer;
 import Enums.Modifier;
@@ -25,29 +23,29 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 	@Override
 	public ProgramContainer getProgramContainer() {
 		ProgramContainer toReturn = super.getProgramContainer();
-		
-		for (ArrowContainer inheritanceOrImplementation : toReturn.arrows){
+
+		for (ArrowContainer inheritanceOrImplementation : toReturn.arrows) {
 			if (inheritanceOrImplementation instanceof InheritanceArrowContainer
 					|| inheritanceOrImplementation instanceof ImplementationArrowContainer) {
-				for(ArrowContainer associationOrDependency : toReturn.arrows){
-					if((associationOrDependency instanceof AssociationArrowContainer || associationOrDependency instanceof DependencyArrowContainer) && 
-							associationOrDependency.from.equals(inheritanceOrImplementation.from) && associationOrDependency.to.equals(inheritanceOrImplementation.to)){
+				for (ArrowContainer associationOrDependency : toReturn.arrows) {
+					if ((associationOrDependency instanceof AssociationArrowContainer
+							|| associationOrDependency instanceof DependencyArrowContainer)
+							&& associationOrDependency.from.equals(inheritanceOrImplementation.from)
+							&& associationOrDependency.to.equals(inheritanceOrImplementation.to)) {
 						ClassContainer decoratedClass = inheritanceOrImplementation.to;
 						ClassContainer decorator = inheritanceOrImplementation.from;
 						Boolean isDecorator = false;
-						for(ArrowContainer inheritanceToDecorator : toReturn.arrows){
-							if (inheritanceToDecorator instanceof InheritanceArrowContainer &&
-									inheritanceToDecorator.to.equals(decorator) && 
-//										overridesAllMethod(inheritanceToDecorator.from, decorator)
-									overridesAllConcreteMethods(inheritanceToDecorator)
-									) {
+						for (ArrowContainer inheritanceToDecorator : toReturn.arrows) {
+							if (inheritanceToDecorator instanceof InheritanceArrowContainer
+									&& inheritanceToDecorator.to.equals(decorator)
+									&& overridesAllConcreteMethods(inheritanceToDecorator)) {
 								ClassContainer concreteDecorator = inheritanceToDecorator.from;
 								concreteDecorator.displayContainer.color = Optional.of("lightgreen");
 								concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
 								isDecorator = true;
 							}
 						}
-						if(isDecorator){
+						if (isDecorator) {
 							inheritanceOrImplementation.stereotypeContainer.add(new StereotypeContainer("decorates"));
 							decoratedClass.displayContainer.color = Optional.of("lightgreen");
 							decorator.displayContainer.color = Optional.of("lightgreen");
@@ -59,7 +57,7 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 		}
 		return toReturn;
 	}
-	
+
 	private boolean overridesAllConcreteMethods(ArrowContainer arrowContainer) {
 		List<MethodNodeWrapper> toMethodNodeWrappers = arrowContainer.to.classNodeWrapper.methodNodeWrappers;
 		List<MethodNodeWrapper> fromMethodNodeWrappers = arrowContainer.from.classNodeWrapper.methodNodeWrappers;
@@ -80,15 +78,6 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 						}
 					}
 				}
-			}
-		}
-		return true;
-	}
-	
-	private boolean overridesAllMethod(ClassContainer decorator, ClassContainer abstractDecorator){
-		for(MethodContainer method : abstractDecorator.methods){
-			if(!decorator.methods.contains(method)){
-				return false;
 			}
 		}
 		return true;
