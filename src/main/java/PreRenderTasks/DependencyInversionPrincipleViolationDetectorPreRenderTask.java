@@ -9,6 +9,7 @@ import Containers.DependencyArrowContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
 import Containers.ProgramContainer;
+import Containers.StereotypeContainer;
 
 public class DependencyInversionPrincipleViolationDetectorPreRenderTask extends PreRenderTaskDecorator {
 
@@ -19,47 +20,22 @@ public class DependencyInversionPrincipleViolationDetectorPreRenderTask extends 
 	@Override
 	public ProgramContainer getProgramContainer() {
 		ProgramContainer toReturn = super.getProgramContainer();
-		
-		for(ArrowContainer inheritanceOrImplementation : toReturn.arrows){
-			if(inheritanceOrImplementation instanceof InheritanceArrowContainer || 
-					inheritanceOrImplementation instanceof ImplementationArrowContainer){
-				for(ArrowContainer dependencyOrAssociation : toReturn.arrows){
-					if(dependencyOrAssociation instanceof DependencyArrowContainer ||
-							dependencyOrAssociation instanceof AssociationArrowContainer){
-						ClassContainer abstraction = inheritanceOrImplementation.to;
-						if(abstraction.equals(dependencyOrAssociation.to)){
-							for(ArrowContainer dependencyOrAssociationFromHighToLow : toReturn.arrows){
-								if(dependencyOrAssociationFromHighToLow instanceof DependencyArrowContainer ||
-										dependencyOrAssociationFromHighToLow instanceof AssociationArrowContainer){
-									ClassContainer highLevelClass = dependencyOrAssociationFromHighToLow.from;
-									ClassContainer lowLevelClass = dependencyOrAssociationFromHighToLow.to;
-									if(highLevelClass.equals(dependencyOrAssociation.from) &&
-											lowLevelClass.equals(inheritanceOrImplementation.from)){
-										highLevelClass.displayContainer.color = Optional.of("lightblue");
-										lowLevelClass.displayContainer.color = Optional.of("lightblue");
-										abstraction.displayContainer.color = Optional.of("lightblue");
-									}
-								}
-							}
-							for(ArrowContainer dependencyOrAssociationOrInheritanceFromLowToHigh : toReturn.arrows){
-								if(dependencyOrAssociationOrInheritanceFromLowToHigh instanceof DependencyArrowContainer ||
-										dependencyOrAssociationOrInheritanceFromLowToHigh instanceof AssociationArrowContainer ||
-										dependencyOrAssociationOrInheritanceFromLowToHigh instanceof InheritanceArrowContainer){
-									ClassContainer lowLevelClass = dependencyOrAssociationOrInheritanceFromLowToHigh.from;
-									ClassContainer highLevelClass = dependencyOrAssociationOrInheritanceFromLowToHigh.to;
-									if(lowLevelClass.equals(inheritanceOrImplementation.from) &&
-											highLevelClass.equals(dependencyOrAssociation.from)){
-										highLevelClass.displayContainer.color = Optional.of("lightblue");
-										lowLevelClass.displayContainer.color = Optional.of("lightblue");
-										abstraction.displayContainer.color = Optional.of("lightblue");
-									}
-								}
-							}
-						}
+
+		for (ArrowContainer associationOrDependency : toReturn.arrows) {
+			if (associationOrDependency instanceof AssociationArrowContainer
+					|| associationOrDependency instanceof DependencyArrowContainer) {
+				ClassContainer to = associationOrDependency.to;
+				for (ArrowContainer inheritanceOrImplementation : toReturn.arrows) {
+					if ((inheritanceOrImplementation instanceof InheritanceArrowContainer
+							|| inheritanceOrImplementation instanceof ImplementationArrowContainer)
+							&& inheritanceOrImplementation.from.equals(to)) {
+						associationOrDependency.displayContainer.color = Optional.of("lightblue");
+						associationOrDependency.stereotypeContainer.add(new StereotypeContainer("Violates Dependency Inversion Principle"));
 					}
 				}
 			}
 		}
+
 		return toReturn;
 	}
 }
