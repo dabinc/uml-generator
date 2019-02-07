@@ -47,7 +47,7 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 									abstractDecorator.displayContainer.color = Optional.of("lightgreen");
 									abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
 									concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
-									decoratedClass.stereotypeContainer.add(new StereotypeContainer("Component"));
+									decoratedClass.stereotypeContainer.add(new StereotypeContainer("component"));
 								}
 							}
 						}	
