@@ -28,16 +28,15 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 		for (ArrowContainer inheritanceOrImplementation : toReturn.arrows) {
 			if (inheritanceOrImplementation instanceof InheritanceArrowContainer
 					|| inheritanceOrImplementation instanceof ImplementationArrowContainer) {
-				for (ArrowContainer associationOrDependency : toReturn.arrows) {
-					if ((associationOrDependency instanceof AssociationArrowContainer
-							|| associationOrDependency instanceof DependencyArrowContainer)
-							&& associationOrDependency.from.equals(inheritanceOrImplementation.from)
-							&& associationOrDependency.to.equals(inheritanceOrImplementation.to)) {
+				for (ArrowContainer association : toReturn.arrows) {
+					if (association instanceof AssociationArrowContainer
+							&& association.from.equals(inheritanceOrImplementation.from)
+							&& association.to.equals(inheritanceOrImplementation.to)) {
 						ClassContainer decoratedClass = inheritanceOrImplementation.to;
 						ClassContainer abstractDecorator = inheritanceOrImplementation.from;
 						if(overridesAllConcreteMethods(inheritanceOrImplementation)){
 							decoratedClass.stereotypeContainer.add(new StereotypeContainer("component"));
-							associationOrDependency.stereotypeContainer.add(new StereotypeContainer("decorates"));
+							association.stereotypeContainer.add(new StereotypeContainer("decorates"));
 							decoratedClass.displayContainer.color = Optional.of("lightgreen");
 							abstractDecorator.displayContainer.color = Optional.of("lightgreen");
 							abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
