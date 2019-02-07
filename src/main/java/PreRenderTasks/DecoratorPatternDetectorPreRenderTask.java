@@ -36,18 +36,18 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 						ClassContainer decoratedClass = inheritanceOrImplementation.to;
 						ClassContainer abstractDecorator = inheritanceOrImplementation.from;
 						if(overridesAllConcreteMethods(inheritanceOrImplementation)){
+							decoratedClass.stereotypeContainer.add(new StereotypeContainer("component"));
+							associationOrDependency.stereotypeContainer.add(new StereotypeContainer("decorates"));
+							decoratedClass.displayContainer.color = Optional.of("lightgreen");
+							abstractDecorator.displayContainer.color = Optional.of("lightgreen");
+							abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
 							for(ArrowContainer inheritanceOrImplementationToAbstractDecorator : toReturn.arrows){
 								if((inheritanceOrImplementationToAbstractDecorator instanceof InheritanceArrowContainer ||
 										inheritanceOrImplementationToAbstractDecorator instanceof ImplementationArrowContainer) &&
 										inheritanceOrImplementationToAbstractDecorator.to.equals(abstractDecorator)){
 									ClassContainer concreteDecorator = inheritanceOrImplementationToAbstractDecorator.from;
 									concreteDecorator.displayContainer.color = Optional.of("lightgreen");
-									associationOrDependency.stereotypeContainer.add(new StereotypeContainer("decorates"));
-									decoratedClass.displayContainer.color = Optional.of("lightgreen");
-									abstractDecorator.displayContainer.color = Optional.of("lightgreen");
-									abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
 									concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
-									decoratedClass.stereotypeContainer.add(new StereotypeContainer("component"));
 								}
 							}
 						}	
