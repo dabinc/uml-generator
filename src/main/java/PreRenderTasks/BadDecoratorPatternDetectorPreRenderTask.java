@@ -1,6 +1,7 @@
 package PreRenderTasks;
 
 import Containers.ProgramContainer;
+import Utilities.DecoratorPatternRunner;
 
 public class BadDecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorator {
 
@@ -8,8 +9,10 @@ public class BadDecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecor
 		super(preRenderTask);
 	}
 
+	@Override
 	public ProgramContainer getProgramContainer() {
-		return super.getProgramContainer();
+		DecoratorPatternRunner decoratorPatternRunner = new DecoratorPatternRunner();
+		return decoratorPatternRunner.runDecoratorPatterDetection(super.getProgramContainer(), true);
 	}
 
 }

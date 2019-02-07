@@ -38,6 +38,7 @@ import Readers.RecursiveReaderFactory;
 import Readers.WhitelistBlacklistReaderFactory;
 import Renderers.PlantUMLRenderer;
 import Renderers.Renderer;
+import Utilities.DirectoryHandler;
 import Wrappers.ClassNodeWrapper;
 
 public class API {
