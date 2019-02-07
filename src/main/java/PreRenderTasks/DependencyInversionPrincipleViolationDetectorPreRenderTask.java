@@ -35,17 +35,12 @@ public class DependencyInversionPrincipleViolationDetectorPreRenderTask extends 
 	}
 
 	private boolean dependsOnOrAssociatesWithConcreteClass(ArrowContainer arrowContainer) {
-		if ((arrowContainer instanceof DependencyArrowContainer || arrowContainer instanceof AssociationArrowContainer) && !isAbstract(arrowContainer.to)) {
-			return true;
-		}
-		return false;
+		return (arrowContainer instanceof DependencyArrowContainer
+				|| arrowContainer instanceof AssociationArrowContainer) && !isAbstract(arrowContainer.to);
 	}
 
 	private boolean extendsConcreteClass(ArrowContainer arrowContainer) {
-		if (arrowContainer instanceof InheritanceArrowContainer && !isAbstract(arrowContainer.to)) {
-			return true;
-		}
-		return false;
+		return arrowContainer instanceof InheritanceArrowContainer && !isAbstract(arrowContainer.to);
 	}
 
 	private boolean overridesSuperclassMethods(ArrowContainer arrowContainer) {
@@ -73,13 +68,16 @@ public class DependencyInversionPrincipleViolationDetectorPreRenderTask extends 
 					&& superClassMethodNodeWrapper.name.equals(childClassMethodNodeWrapper.name)
 					&& superClassMethodNodeWrapper.parameterNodeWrappers
 							.size() == childClassMethodNodeWrapper.parameterNodeWrappers.size()) {
+				boolean doReturn = true;
 				for (int i = 0; i < superClassMethodNodeWrapper.parameterNodeWrappers.size(); i++) {
 					if (!superClassMethodNodeWrapper.parameterNodeWrappers.get(i).type
 							.equals(childClassMethodNodeWrapper.parameterNodeWrappers.get(i).type)) {
-						return false;
+						doReturn = false;
 					}
 				}
-				return true;
+				if (doReturn) {
+					return true;
+				}
 			}
 		}
 		return false;
