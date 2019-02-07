@@ -42,11 +42,12 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 										inheritanceOrImplementationToAbstractDecorator.to.equals(abstractDecorator)){
 									ClassContainer concreteDecorator = inheritanceOrImplementationToAbstractDecorator.from;
 									concreteDecorator.displayContainer.color = Optional.of("lightgreen");
-									inheritanceOrImplementation.stereotypeContainer.add(new StereotypeContainer("decorates"));
+									associationOrDependency.stereotypeContainer.add(new StereotypeContainer("decorates"));
 									decoratedClass.displayContainer.color = Optional.of("lightgreen");
 									abstractDecorator.displayContainer.color = Optional.of("lightgreen");
 									abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
 									concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
+									decoratedClass.stereotypeContainer.add(new StereotypeContainer("Component"));
 								}
 							}
 						}	
