@@ -34,14 +34,21 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 							&& associationOrDependency.from.equals(inheritanceOrImplementation.from)
 							&& associationOrDependency.to.equals(inheritanceOrImplementation.to)) {
 						ClassContainer decoratedClass = inheritanceOrImplementation.to;
-						ClassContainer decorator = inheritanceOrImplementation.from;
-						if(overridesAllConcreteMethods(inheritanceOrImplementation)){
-							ClassContainer concreteDecorator = inheritanceOrImplementation.from;
-							concreteDecorator.displayContainer.color = Optional.of("lightgreen");
-							inheritanceOrImplementation.stereotypeContainer.add(new StereotypeContainer("decorates"));
-							decoratedClass.displayContainer.color = Optional.of("lightgreen");
-							decorator.displayContainer.color = Optional.of("lightgreen");
-							decorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
+						ClassContainer abstractDecorator = inheritanceOrImplementation.from;
+						for(ArrowContainer inheritanceOrImplementationToAbstractDecorator : toReturn.arrows){ 
+							// not sure if we want to consider interface, I think we should
+							if((inheritanceOrImplementationToAbstractDecorator instanceof InheritanceArrowContainer ||
+									inheritanceOrImplementationToAbstractDecorator instanceof ImplementationArrowContainer) &&
+									inheritanceOrImplementationToAbstractDecorator.to.equals(abstractDecorator) && 
+									overridesAllConcreteMethods(inheritanceOrImplementationToAbstractDecorator)){
+								ClassContainer concreteDecorator = inheritanceOrImplementationToAbstractDecorator.from;
+								concreteDecorator.displayContainer.color = Optional.of("lightgreen");
+								inheritanceOrImplementation.stereotypeContainer.add(new StereotypeContainer("decorates"));
+								decoratedClass.displayContainer.color = Optional.of("lightgreen");
+								abstractDecorator.displayContainer.color = Optional.of("lightgreen");
+								abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
+								concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
+							}
 						}
 					}
 				}
