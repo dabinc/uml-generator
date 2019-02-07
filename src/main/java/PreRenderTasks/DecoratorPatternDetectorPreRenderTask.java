@@ -10,9 +10,11 @@ import Containers.ClassContainer;
 import Containers.DependencyArrowContainer;
 import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
+import Containers.MethodContainer;
 import Containers.ProgramContainer;
 import Containers.StereotypeContainer;
 import Enums.Modifier;
+import Renderers.Renderer;
 import Wrappers.MethodNodeWrapper;
 
 public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorator {
@@ -61,10 +63,10 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 	private boolean overridesAllConcreteMethods(ArrowContainer arrowContainer) {
 		List<MethodNodeWrapper> toMethodNodeWrappers = arrowContainer.to.classNodeWrapper.methodNodeWrappers;
 		List<MethodNodeWrapper> fromMethodNodeWrappers = arrowContainer.from.classNodeWrapper.methodNodeWrappers;
-		List<String> fromMethods = new LinkedList<>();
+		List<String> toMethods = new LinkedList<>();
 		for(MethodNodeWrapper toMethodNodeWrapper : toMethodNodeWrappers){
 			if(!toMethodNodeWrapper.name.equals("<init>") && !toMethodNodeWrapper.modifiers.contains(Modifier.ABSTRACT)){
-				fromMethods.add(toMethodNodeWrapper.name);
+				toMethods.add(toMethodNodeWrapper.name);
 			}
 		}
 		for (MethodNodeWrapper toMethodNodeWrapper : toMethodNodeWrappers) {
@@ -83,14 +85,14 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 								}
 							}
 							if(i == fromMethodNodeWrapper.parameterNodeWrappers.size()){
-								fromMethods.remove(fromMethodNodeWrapper.name);
+								toMethods.remove(fromMethodNodeWrapper.name);
 							}
 						}
 					}
 				}
 			}
 		} 
-		return fromMethods.size() == 0;
+		return toMethods.size() == 0;
 	} 
 
 }
