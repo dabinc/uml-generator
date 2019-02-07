@@ -15,6 +15,7 @@ public abstract class MethodContainer {
 	public MethodContainer() {
 		this.parameterContainers = new LinkedList<ParameterContainer>();
 		this.displayContainer = new DisplayContainer();
+		this.methodNodeWrapper = Optional.empty();
 	}
 	
 	public abstract String render(Renderer renderer);
