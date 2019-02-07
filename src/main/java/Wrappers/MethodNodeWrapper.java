@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Enums.Modifier;
@@ -34,14 +33,11 @@ public class MethodNodeWrapper {
 		this.instructionNodeWrappers = new LinkedList<InstructionNodeWrapper>();
 		this.dependencies = new LinkedList<CardinalityWrapper>();
 		for (int i = 0; i < methodNode.instructions.size(); i++) {
-			this.instructionNodeWrappers.add(new InstructionNodeWrapper(methodNode.instructions.get(i)));
 			AbstractInsnNode insn = methodNode.instructions.get(i);
-			if (MethodInsnNode.class.isAssignableFrom(insn.getClass())) {
-				MethodInsnNode methodCall = (MethodInsnNode) insn;
-				if (methodCall.owner != null) {
-					this.dependencies.add(new CardinalityWrapper(
-							removeArrayFromName(Type.getObjectType(methodCall.owner).getClassName()), false));
-				}
+			InstructionNodeWrapper toAdd = new InstructionNodeWrapper(insn);
+			this.instructionNodeWrappers.add(toAdd);
+			if (toAdd.methodOwner.isPresent()) {
+				this.dependencies.add(new CardinalityWrapper(toAdd.methodOwner.get(), false));
 			}
 		}
 		this.signature = Optional.ofNullable(methodNode.signature);
