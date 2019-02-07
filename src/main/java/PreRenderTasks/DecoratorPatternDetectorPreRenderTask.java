@@ -35,21 +35,21 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 							&& associationOrDependency.to.equals(inheritanceOrImplementation.to)) {
 						ClassContainer decoratedClass = inheritanceOrImplementation.to;
 						ClassContainer abstractDecorator = inheritanceOrImplementation.from;
-						for(ArrowContainer inheritanceOrImplementationToAbstractDecorator : toReturn.arrows){ 
-							// not sure if we want to consider interface, I think we should
-							if((inheritanceOrImplementationToAbstractDecorator instanceof InheritanceArrowContainer ||
-									inheritanceOrImplementationToAbstractDecorator instanceof ImplementationArrowContainer) &&
-									inheritanceOrImplementationToAbstractDecorator.to.equals(abstractDecorator) && 
-									overridesAllConcreteMethods(inheritanceOrImplementationToAbstractDecorator)){
-								ClassContainer concreteDecorator = inheritanceOrImplementationToAbstractDecorator.from;
-								concreteDecorator.displayContainer.color = Optional.of("lightgreen");
-								inheritanceOrImplementation.stereotypeContainer.add(new StereotypeContainer("decorates"));
-								decoratedClass.displayContainer.color = Optional.of("lightgreen");
-								abstractDecorator.displayContainer.color = Optional.of("lightgreen");
-								abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
-								concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
+						if(overridesAllConcreteMethods(inheritanceOrImplementation)){
+							for(ArrowContainer inheritanceOrImplementationToAbstractDecorator : toReturn.arrows){
+								if((inheritanceOrImplementationToAbstractDecorator instanceof InheritanceArrowContainer ||
+										inheritanceOrImplementationToAbstractDecorator instanceof ImplementationArrowContainer) &&
+										inheritanceOrImplementationToAbstractDecorator.to.equals(abstractDecorator)){
+									ClassContainer concreteDecorator = inheritanceOrImplementationToAbstractDecorator.from;
+									concreteDecorator.displayContainer.color = Optional.of("lightgreen");
+									inheritanceOrImplementation.stereotypeContainer.add(new StereotypeContainer("decorates"));
+									decoratedClass.displayContainer.color = Optional.of("lightgreen");
+									abstractDecorator.displayContainer.color = Optional.of("lightgreen");
+									abstractDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
+									concreteDecorator.stereotypeContainer.add(new StereotypeContainer("decorator"));
+								}
 							}
-						}
+						}	
 					}
 				}
 			}
@@ -61,9 +61,9 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 		List<MethodNodeWrapper> toMethodNodeWrappers = arrowContainer.to.classNodeWrapper.methodNodeWrappers;
 		List<MethodNodeWrapper> fromMethodNodeWrappers = arrowContainer.from.classNodeWrapper.methodNodeWrappers;
 		List<String> fromMethods = new LinkedList<>();
-		for(MethodNodeWrapper fromMethodNodeWrapper : fromMethodNodeWrappers){
-			if(!fromMethodNodeWrapper.name.equals("<init>")){
-				fromMethods.add(fromMethodNodeWrapper.name);
+		for(MethodNodeWrapper toMethodNodeWrapper : toMethodNodeWrappers){
+			if(!toMethodNodeWrapper.name.equals("<init>") && !toMethodNodeWrapper.modifiers.contains(Modifier.ABSTRACT)){
+				fromMethods.add(toMethodNodeWrapper.name);
 			}
 		}
 		for (MethodNodeWrapper toMethodNodeWrapper : toMethodNodeWrappers) {
@@ -90,6 +90,6 @@ public class DecoratorPatternDetectorPreRenderTask extends PreRenderTaskDecorato
 			}
 		} 
 		return fromMethods.size() == 0;
-	}
+	} 
 
 }
