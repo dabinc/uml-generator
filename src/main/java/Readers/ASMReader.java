@@ -65,6 +65,11 @@ public class ASMReader implements Reader {
 		return toReturn;
 	}
 
+	public FieldNodeWrapper getFieldNodeWrapper(FieldNode fieldNode, String type) {
+		return new FieldNodeWrapper(fieldNode.name, fieldNode.desc, Optional.ofNullable(fieldNode.signature),
+				Modifier.getModifiers(fieldNode.access), type);
+	}
+
 	public ClassNodeWrapper getClassNodeWrapper(ClassNode classNode) {
 		String name;
 		Optional<String> supername;
@@ -88,7 +93,7 @@ public class ASMReader implements Reader {
 		methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		if (classNode.fields != null) {
 			for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
-				fieldNodeWrappers.add(new FieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).getClassName()));
+				fieldNodeWrappers.add(getFieldNodeWrapper(fieldNode, Type.getType(fieldNode.desc).getClassName()));
 				if (fieldNode.signature != null) {
 					SignatureReader sr = new SignatureReader(fieldNode.signature);
 					SignatureVisitor sv = new RelationSignatureVisitor(Opcodes.ASM5, associations);
