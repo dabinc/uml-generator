@@ -3,8 +3,8 @@ package Readers;
 import java.io.InputStream;
 import java.util.List;
 
-import Wrappers.ClassNodeWrapper;
+import Wrappers.ProgramWrapper;
 
 public interface Reader {
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams);
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams);
 }

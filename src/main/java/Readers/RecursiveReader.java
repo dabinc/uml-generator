@@ -7,6 +7,7 @@ import java.util.List;
 import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 import Wrappers.MethodNodeWrapper;
+import Wrappers.ProgramWrapper;
 
 public class RecursiveReader extends ReaderDecorator {
 
@@ -15,8 +16,8 @@ public class RecursiveReader extends ReaderDecorator {
 	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
-		List<ClassNodeWrapper> previous = super.getClassNodeWrappers(classNames, inputStreams);
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
+		List<ClassNodeWrapper> previous = super.getProgramWrapper(classNames, inputStreams).classNodeWrappers;
 		List<String> previouslyVisited = new LinkedList<String>();
 		for(ClassNodeWrapper classNodeWrapper : previous){
 			previouslyVisited.add(classNodeWrapper.name);
@@ -24,10 +25,10 @@ public class RecursiveReader extends ReaderDecorator {
 		return recursiveGetClassNodeWrappers(previous, previouslyVisited);
 	}
 
-	private List<ClassNodeWrapper> recursiveGetClassNodeWrappers(List<ClassNodeWrapper> classNodeWrappers,
+	private ProgramWrapper recursiveGetClassNodeWrappers(List<ClassNodeWrapper> classNodeWrappers,
 			List<String> visitedClassNames) {
 		List<String> classesToVisit = new LinkedList<String>();
-		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
+		ProgramWrapper toReturn = new ProgramWrapper();
 		for (ClassNodeWrapper classNodeWrapper : classNodeWrappers) {
 			if (classNodeWrapper.supername.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername.get())
 					&& !classesToVisit.contains(classNodeWrapper.supername.get())) {
@@ -64,8 +65,8 @@ public class RecursiveReader extends ReaderDecorator {
 
 		visitedClassNames.addAll(classesToVisit);
 
-		toReturn.addAll(classNodeWrappers);
-		toReturn.addAll(recursiveGetClassNodeWrappers(super.getClassNodeWrappers(classesToVisit, new LinkedList<InputStream>()), visitedClassNames));
+		toReturn.classNodeWrappers.addAll(classNodeWrappers);
+		toReturn.classNodeWrappers.addAll(recursiveGetClassNodeWrappers(super.getProgramWrapper(classesToVisit, new LinkedList<InputStream>()).classNodeWrappers, visitedClassNames).classNodeWrappers);
 		return toReturn;
 	}
 

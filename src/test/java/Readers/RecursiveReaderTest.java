@@ -15,6 +15,7 @@ import org.junit.Test;
 import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 import Wrappers.MethodNodeWrapper;
+import Wrappers.ProgramWrapper;
 
 public class RecursiveReaderTest {
 
@@ -36,12 +37,14 @@ public class RecursiveReaderTest {
 	public void testEmptyInput() {
 		List<String> classesToTest = new LinkedList<String>();
 		List<ClassNodeWrapper> fromBaseReader = new LinkedList<ClassNodeWrapper>();
+		ProgramWrapper programWrapper = new ProgramWrapper();
+		programWrapper.classNodeWrappers = fromBaseReader;
 
-		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTest, new LinkedList<InputStream>())).andReturn(fromBaseReader);
+		EasyMock.expect(baseReader.getProgramWrapper(classesToTest, new LinkedList<InputStream>())).andReturn(programWrapper);
 
 		EasyMock.replay(baseReader);
 
-		List<ClassNodeWrapper> actual = reader.getClassNodeWrappers(classesToTest, new LinkedList<InputStream>());
+		List<ClassNodeWrapper> actual = reader.getProgramWrapper(classesToTest, new LinkedList<InputStream>()).classNodeWrappers;
 
 		assertEquals(0, actual.size());
 	}
@@ -66,6 +69,8 @@ public class RecursiveReaderTest {
 		classNodeWrapperFirstTime.interfaces = new LinkedList<String>();
 		classNodeWrapperFirstTime.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		fromBaseReaderFirstTime.add(classNodeWrapperFirstTime);
+		ProgramWrapper firstTime = new ProgramWrapper();
+		firstTime.classNodeWrappers = fromBaseReaderFirstTime;
 
 		List<ClassNodeWrapper> fromBaseReaderSecondTime = new LinkedList<ClassNodeWrapper>();
 		ClassNodeWrapper classNodeWrapperSecondTime = EasyMock.mock(ClassNodeWrapper.class);
@@ -76,13 +81,15 @@ public class RecursiveReaderTest {
 		classNodeWrapperSecondTime.interfaces = new LinkedList<String>();
 		classNodeWrapperSecondTime.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		fromBaseReaderSecondTime.add(classNodeWrapperSecondTime);
+		ProgramWrapper secondTime = new ProgramWrapper();
+		secondTime.classNodeWrappers = fromBaseReaderSecondTime;
 
-		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTestFirstTime, new LinkedList<InputStream>())).andReturn(fromBaseReaderFirstTime);
-		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTestSecondTime, new LinkedList<InputStream>())).andReturn(fromBaseReaderSecondTime);
+		EasyMock.expect(baseReader.getProgramWrapper(classesToTestFirstTime, new LinkedList<InputStream>())).andReturn(firstTime);
+		EasyMock.expect(baseReader.getProgramWrapper(classesToTestSecondTime, new LinkedList<InputStream>())).andReturn(secondTime);
 
 		EasyMock.replay(classNodeWrapperFirstTime, classNodeWrapperSecondTime, baseReader);
 
-		List<ClassNodeWrapper> actual = reader.getClassNodeWrappers(classesToTestFirstTime, new LinkedList<InputStream>());
+		List<ClassNodeWrapper> actual = reader.getProgramWrapper(classesToTestFirstTime, new LinkedList<InputStream>()).classNodeWrappers;
 
 		assertEquals(2, actual.size());
 
@@ -110,6 +117,8 @@ public class RecursiveReaderTest {
 		classNodeWrapperFirstTime.interfaces.add(secondClass);
 		classNodeWrapperFirstTime.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		fromBaseReaderFirstTime.add(classNodeWrapperFirstTime);
+		ProgramWrapper firstTime = new ProgramWrapper();
+		firstTime.classNodeWrappers = fromBaseReaderFirstTime;
 
 		List<ClassNodeWrapper> fromBaseReaderSecondTime = new LinkedList<ClassNodeWrapper>();
 		ClassNodeWrapper classNodeWrapperSecondTime = EasyMock.mock(ClassNodeWrapper.class);
@@ -120,13 +129,15 @@ public class RecursiveReaderTest {
 		classNodeWrapperSecondTime.interfaces = new LinkedList<String>();
 		classNodeWrapperSecondTime.methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		fromBaseReaderSecondTime.add(classNodeWrapperSecondTime);
+		ProgramWrapper secondTime = new ProgramWrapper();
+		secondTime.classNodeWrappers = fromBaseReaderSecondTime;
 
-		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTestFirstTime, new LinkedList<InputStream>())).andReturn(fromBaseReaderFirstTime);
-		EasyMock.expect(baseReader.getClassNodeWrappers(classesToTestSecondTime, new LinkedList<InputStream>())).andReturn(fromBaseReaderSecondTime);
+		EasyMock.expect(baseReader.getProgramWrapper(classesToTestFirstTime, new LinkedList<InputStream>())).andReturn(firstTime);
+		EasyMock.expect(baseReader.getProgramWrapper(classesToTestSecondTime, new LinkedList<InputStream>())).andReturn(secondTime);
 
 		EasyMock.replay(classNodeWrapperFirstTime, baseReader);
 
-		List<ClassNodeWrapper> actual = reader.getClassNodeWrappers(classesToTestFirstTime, new LinkedList<InputStream>());
+		List<ClassNodeWrapper> actual = reader.getProgramWrapper(classesToTestFirstTime, new LinkedList<InputStream>()).classNodeWrappers;
 
 		assertEquals(2, actual.size());
 

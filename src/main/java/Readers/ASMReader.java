@@ -8,11 +8,12 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import Wrappers.ClassNodeWrapper;
+import Wrappers.ProgramWrapper;
 
 public class ASMReader implements Reader {
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
 		List<ClassReader> classReaderList = new LinkedList<ClassReader>();
 		for (int i = 0; i < classNames.size(); i++) {
 			String name = removeArrayFromName(Type.getObjectType(classNames.get(i)).getClassName());
@@ -32,19 +33,19 @@ public class ASMReader implements Reader {
 				e.printStackTrace();
 			}
 		}
-		List<ClassNodeWrapper> toReturn = new LinkedList<ClassNodeWrapper>();
+		ProgramWrapper toReturn = new ProgramWrapper();
 		for (ClassReader reader : classReaderList) {
 			ClassNode classNode = new ClassNode();
 			reader.accept(classNode, ClassReader.EXPAND_FRAMES);
 			ClassNodeWrapper toAdd = new ClassNodeWrapper(classNode);
 			boolean shouldAdd = true;
-			for(ClassNodeWrapper classNodeWrapper : toReturn){
+			for(ClassNodeWrapper classNodeWrapper : toReturn.classNodeWrappers){
 				if(classNodeWrapper.name.equals(toAdd.name)){
 					shouldAdd = false;
 				}
 			}
 			if(shouldAdd){
-				toReturn.add(toAdd);
+				toReturn.classNodeWrappers.add(toAdd);
 			}
 		}
 		return toReturn;
