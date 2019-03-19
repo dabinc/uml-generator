@@ -2,6 +2,7 @@ package Readers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -21,7 +23,9 @@ import Enums.Modifier;
 import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 import Wrappers.FieldNodeWrapper;
+import Wrappers.InstructionNodeWrapper;
 import Wrappers.MethodNodeWrapper;
+import Wrappers.ParameterNodeWrapper;
 import Wrappers.ProgramWrapper;
 
 public class ASMReader implements Reader {
@@ -64,13 +68,44 @@ public class ASMReader implements Reader {
 		}
 		return toReturn;
 	}
+	
+	private MethodNodeWrapper getMethodNodeWrapper(MethodNode methodNode){
+		String name;
+		String desc;
+		List<ParameterNodeWrapper> parameterNodeWrappers;
+		Optional<String> signature;
+		List<Modifier> modifiers;
+		String type = Type.getReturnType(methodNode.desc).getClassName();
+		List<InstructionNodeWrapper> instructionNodeWrappers;
+		List<CardinalityWrapper> dependencies;
+		name = methodNode.name;
+		desc = methodNode.desc;
+		parameterNodeWrappers = new ArrayList<ParameterNodeWrapper>();
+		for (int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++) {
+			parameterNodeWrappers
+					.add(new ParameterNodeWrapper((Type.getArgumentTypes(methodNode.desc))[i].getClassName()));
+		}
+		instructionNodeWrappers = new LinkedList<InstructionNodeWrapper>();
+		dependencies = new LinkedList<CardinalityWrapper>();
+		for (int i = 0; i < methodNode.instructions.size(); i++) {
+			AbstractInsnNode insn = methodNode.instructions.get(i);
+			InstructionNodeWrapper toAdd = new InstructionNodeWrapper(insn);
+			instructionNodeWrappers.add(toAdd);
+			if (toAdd.methodOwner.isPresent()) {
+				dependencies.add(new CardinalityWrapper(toAdd.methodOwner.get(), false));
+			}
+		}
+		signature = Optional.ofNullable(methodNode.signature);
+		modifiers = Modifier.getModifiers(methodNode.access);
+		return new MethodNodeWrapper(name, desc, parameterNodeWrappers, signature, modifiers, type, instructionNodeWrappers, dependencies);
+	}
 
-	public FieldNodeWrapper getFieldNodeWrapper(FieldNode fieldNode) {
+	private FieldNodeWrapper getFieldNodeWrapper(FieldNode fieldNode) {
 		return new FieldNodeWrapper(fieldNode.name, fieldNode.desc, Optional.ofNullable(fieldNode.signature),
 				Modifier.getModifiers(fieldNode.access), Type.getType(fieldNode.desc).getClassName());
 	}
 
-	public ClassNodeWrapper getClassNodeWrapper(ClassNode classNode) {
+	private ClassNodeWrapper getClassNodeWrapper(ClassNode classNode) {
 		String name;
 		Optional<String> supername;
 		List<FieldNodeWrapper> fieldNodeWrappers;
@@ -106,7 +141,7 @@ public class ASMReader implements Reader {
 		if (classNode.methods != null) {
 			for (MethodNode methodNode : (List<MethodNode>) classNode.methods) {
 				methodNodeWrappers
-						.add(new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName()));
+						.add(getMethodNodeWrapper(methodNode));//new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName()));
 				if (methodNode.signature != null) {
 					SignatureReader sr = new SignatureReader(methodNode.signature);
 					SignatureVisitor sv = new RelationSignatureVisitor(Opcodes.ASM5, dependencies);
