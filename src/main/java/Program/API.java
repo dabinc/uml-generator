@@ -39,7 +39,7 @@ import Readers.WhitelistBlacklistReaderFactory;
 import Renderers.PlantUMLRenderer;
 import Renderers.Renderer;
 import Utilities.DirectoryHandler;
-import Wrappers.ClassNodeWrapper;
+import Wrappers.ProgramWrapper;
 
 public class API {
 	private Map<String, ReaderFactory> readerMap;
@@ -161,9 +161,9 @@ public class API {
 			}
 		}
 
-		List<ClassNodeWrapper> classNodeWrappers = reader.getClassNodeWrappers(classNameList, classInputStreamList);
+		ProgramWrapper programWrapper = reader.getClassNodeWrappers(classNameList, classInputStreamList);
 
-		PreRenderTask preRenderTask = new DefaultPreRenderTask(classNodeWrappers);
+		PreRenderTask preRenderTask = new DefaultPreRenderTask(programWrapper);
 
 		for(String option : map.keySet()){
 			if(this.preRenderMap.containsKey(option)){
