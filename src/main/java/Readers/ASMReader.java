@@ -2,7 +2,6 @@ package Readers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,7 +86,7 @@ public class ASMReader implements Reader {
 		String type = Type.getReturnType(methodNode.desc).getClassName();
 		String name = methodNode.name;
 		String desc = methodNode.desc;
-		List<ParameterNodeWrapper> parameterNodeWrappers = new ArrayList<ParameterNodeWrapper>();
+		List<ParameterNodeWrapper> parameterNodeWrappers = new LinkedList<ParameterNodeWrapper>();
 		for (int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++) {
 			parameterNodeWrappers
 					.add(new ParameterNodeWrapper((Type.getArgumentTypes(methodNode.desc))[i].getClassName()));
