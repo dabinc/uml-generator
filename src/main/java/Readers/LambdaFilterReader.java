@@ -16,8 +16,8 @@ public class LambdaFilterReader extends ReaderDecorator {
 	}
 
 	@Override
-	public ProgramWrapper getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
-		ProgramWrapper toReturn = super.getClassNodeWrappers(classNames, inputStreams);
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
+		ProgramWrapper toReturn = super.getProgramWrapper(classNames, inputStreams);
 
 		for (ClassNodeWrapper classNodeWrapper : toReturn.classNodeWrappers) {
 			List<MethodNodeWrapper> toRemove = new LinkedList<MethodNodeWrapper>();

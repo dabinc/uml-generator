@@ -161,7 +161,7 @@ public class API {
 			}
 		}
 
-		ProgramWrapper programWrapper = reader.getClassNodeWrappers(classNameList, classInputStreamList);
+		ProgramWrapper programWrapper = reader.getProgramWrapper(classNameList, classInputStreamList);
 
 		PreRenderTask preRenderTask = new DefaultPreRenderTask(programWrapper);
 

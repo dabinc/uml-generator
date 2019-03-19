@@ -22,12 +22,12 @@ public class PackageFilterReader extends ReaderDecorator {
 	}
 
 	@Override
-	public ProgramWrapper getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
 		ProgramWrapper toReturn = new ProgramWrapper();
 		if (validPackages.isEmpty()) {
 			populateValidPackages(classNames);
 		}
-		for (ClassNodeWrapper classNodeWrapper : super.getClassNodeWrappers(classNames, inputStreams).classNodeWrappers) {
+		for (ClassNodeWrapper classNodeWrapper : super.getProgramWrapper(classNames, inputStreams).classNodeWrappers) {
 			for (String validPackage : validPackages) {
 				if (classNodeWrapper.name.startsWith(validPackage)) {
 					toReturn.classNodeWrappers.add(classNodeWrapper);

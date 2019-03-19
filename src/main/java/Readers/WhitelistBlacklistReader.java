@@ -18,8 +18,8 @@ public class WhitelistBlacklistReader extends ReaderDecorator {
 	}
 
 	@Override
-	public ProgramWrapper getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
-		List<ClassNodeWrapper> previousClassNodeWrappers = super.getClassNodeWrappers(classNames, inputStreams).classNodeWrappers;
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
+		List<ClassNodeWrapper> previousClassNodeWrappers = super.getProgramWrapper(classNames, inputStreams).classNodeWrappers;
 		ProgramWrapper toReturn = new ProgramWrapper();
 		for (ClassNodeWrapper previousClassNodeWrapper : previousClassNodeWrappers) {
 			if (isWhiteListed(previousClassNodeWrapper.name) || !isBlackListed(previousClassNodeWrapper.name)) {

@@ -14,8 +14,8 @@ public abstract class ReaderDecorator implements Reader {
 	}
 
 	@Override
-	public ProgramWrapper getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
-		return this.reader.getClassNodeWrappers(classNames, inputStreams);
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
+		return this.reader.getProgramWrapper(classNames, inputStreams);
 	}
 
 }

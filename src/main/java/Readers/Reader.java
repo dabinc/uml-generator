@@ -6,5 +6,5 @@ import java.util.List;
 import Wrappers.ProgramWrapper;
 
 public interface Reader {
-	public ProgramWrapper getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams);
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams);
 }

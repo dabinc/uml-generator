@@ -13,7 +13,7 @@ import Wrappers.ProgramWrapper;
 public class ASMReader implements Reader {
 
 	@Override
-	public ProgramWrapper getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
+	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
 		List<ClassReader> classReaderList = new LinkedList<ClassReader>();
 		for (int i = 0; i < classNames.size(); i++) {
 			String name = removeArrayFromName(Type.getObjectType(classNames.get(i)).getClassName());
