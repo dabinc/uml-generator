@@ -3,7 +3,7 @@ package Readers;
 import java.io.InputStream;
 import java.util.List;
 
-import Wrappers.ClassNodeWrapper;
+import Wrappers.ProgramWrapper;
 
 public abstract class ReaderDecorator implements Reader {
 
@@ -14,7 +14,7 @@ public abstract class ReaderDecorator implements Reader {
 	}
 
 	@Override
-	public List<ClassNodeWrapper> getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
+	public ProgramWrapper getClassNodeWrappers(List<String> classNames, List<InputStream> inputStreams) {
 		return this.reader.getClassNodeWrappers(classNames, inputStreams);
 	}
 

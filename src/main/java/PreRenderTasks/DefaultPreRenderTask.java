@@ -15,20 +15,20 @@ import Containers.ImplementationArrowContainer;
 import Containers.InheritanceArrowContainer;
 import Containers.ProgramContainer;
 import Wrappers.CardinalityWrapper;
-import Wrappers.ClassNodeWrapper;
+import Wrappers.ProgramWrapper;
 
 public class DefaultPreRenderTask implements PreRenderTask {
 
-	private List<ClassNodeWrapper> classNodeWrappers;
+	private ProgramWrapper programWrapper;
 
-	public DefaultPreRenderTask(List<ClassNodeWrapper> classNodeWrappers) {
-		this.classNodeWrappers = classNodeWrappers;
+	public DefaultPreRenderTask(ProgramWrapper programWrapper) {
+		this.programWrapper = programWrapper;
 	}
 
 	@Override
 	public ProgramContainer getProgramContainer() {
 		// Generate classes
-		ProgramContainer toReturn = new ProgramContainer(this.classNodeWrappers);
+		ProgramContainer toReturn = new ProgramContainer(this.programWrapper);
 
 		// Flesh out classes with references to other classes
 		for (ClassContainer fromClass : toReturn.classes) {
