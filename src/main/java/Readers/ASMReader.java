@@ -84,23 +84,16 @@ public class ASMReader implements Reader {
 	}
 	
 	private MethodNodeWrapper getMethodNodeWrapper(MethodNode methodNode){
-		String name;
-		String desc;
-		List<ParameterNodeWrapper> parameterNodeWrappers;
-		Optional<String> signature;
-		List<Modifier> modifiers;
 		String type = Type.getReturnType(methodNode.desc).getClassName();
-		List<InstructionNodeWrapper> instructionNodeWrappers;
-		List<CardinalityWrapper> dependencies;
-		name = methodNode.name;
-		desc = methodNode.desc;
-		parameterNodeWrappers = new ArrayList<ParameterNodeWrapper>();
+		String name = methodNode.name;
+		String desc = methodNode.desc;
+		List<ParameterNodeWrapper> parameterNodeWrappers = new ArrayList<ParameterNodeWrapper>();
 		for (int i = 0; i < Type.getArgumentTypes(methodNode.desc).length; i++) {
 			parameterNodeWrappers
 					.add(new ParameterNodeWrapper((Type.getArgumentTypes(methodNode.desc))[i].getClassName()));
 		}
-		instructionNodeWrappers = new LinkedList<InstructionNodeWrapper>();
-		dependencies = new LinkedList<CardinalityWrapper>();
+		List<InstructionNodeWrapper> instructionNodeWrappers = new LinkedList<InstructionNodeWrapper>();
+		List<CardinalityWrapper> dependencies = new LinkedList<CardinalityWrapper>();
 		for (int i = 0; i < methodNode.instructions.size(); i++) {
 			AbstractInsnNode insn = methodNode.instructions.get(i);
 			InstructionNodeWrapper toAdd = getInstructionNodeWrapper(insn);
@@ -109,8 +102,8 @@ public class ASMReader implements Reader {
 				dependencies.add(new CardinalityWrapper(toAdd.methodOwner.get(), false));
 			}
 		}
-		signature = Optional.ofNullable(methodNode.signature);
-		modifiers = Modifier.getModifiers(methodNode.access);
+		Optional<String> signature = Optional.ofNullable(methodNode.signature);
+		List<Modifier> modifiers = Modifier.getModifiers(methodNode.access);
 		return new MethodNodeWrapper(name, desc, parameterNodeWrappers, signature, modifiers, type, instructionNodeWrappers, dependencies);
 	}
 
@@ -120,26 +113,17 @@ public class ASMReader implements Reader {
 	}
 
 	private ClassNodeWrapper getClassNodeWrapper(ClassNode classNode) {
-		String name;
-		Optional<String> supername;
-		List<FieldNodeWrapper> fieldNodeWrappers;
-		List<MethodNodeWrapper> methodNodeWrappers;
-		List<String> interfaces;
-		List<CardinalityWrapper> associations;
-		List<CardinalityWrapper> dependencies;
-		Optional<String> signature;
-		List<Modifier> modifiers;
-		name = Type.getObjectType(classNode.name).getClassName();
-		supername = classNode.superName == null ? Optional.empty()
+		String name = Type.getObjectType(classNode.name).getClassName();
+		Optional<String> supername = classNode.superName == null ? Optional.empty()
 				: Optional.of(Type.getObjectType(classNode.superName).getClassName());
-		interfaces = new LinkedList<String>();
-		associations = new LinkedList<CardinalityWrapper>();
-		dependencies = new LinkedList<CardinalityWrapper>();
+		List<String> interfaces = new LinkedList<String>();
+		List<CardinalityWrapper> associations = new LinkedList<CardinalityWrapper>();
+		List<CardinalityWrapper> dependencies = new LinkedList<CardinalityWrapper>();
 		for (String fullInterfaceName : (List<String>) classNode.interfaces) {
 			interfaces.add(Type.getObjectType(fullInterfaceName).getClassName());
 		}
-		fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
-		methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
+		List<FieldNodeWrapper> fieldNodeWrappers = new LinkedList<FieldNodeWrapper>();
+		List<MethodNodeWrapper> methodNodeWrappers = new LinkedList<MethodNodeWrapper>();
 		if (classNode.fields != null) {
 			for (FieldNode fieldNode : (List<FieldNode>) classNode.fields) {
 				fieldNodeWrappers.add(getFieldNodeWrapper(fieldNode));
@@ -189,8 +173,8 @@ public class ASMReader implements Reader {
 				}
 			}
 		}
-		signature = Optional.ofNullable(classNode.signature);
-		modifiers = Modifier.getModifiers(classNode.access);
+		Optional<String> signature = Optional.ofNullable(classNode.signature);
+		List<Modifier> modifiers = Modifier.getModifiers(classNode.access);
 		return new ClassNodeWrapper(name, supername, fieldNodeWrappers, methodNodeWrappers, interfaces, associations,
 				dependencies, signature, modifiers);
 	}
