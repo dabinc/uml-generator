@@ -17,6 +17,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Enums.Modifier;
@@ -69,6 +70,19 @@ public class ASMReader implements Reader {
 		return toReturn;
 	}
 	
+	private InstructionNodeWrapper getInstructionNodeWrapper(AbstractInsnNode abstractInsnNode){
+		Optional<String> methodName = Optional.empty();
+		Optional<String> methodOwner = Optional.empty();
+		if(abstractInsnNode instanceof MethodInsnNode){
+			MethodInsnNode methodInsnNode = (MethodInsnNode) abstractInsnNode;
+			methodName = Optional.ofNullable(methodInsnNode.name);
+			if(methodInsnNode.owner != null){
+				methodOwner = Optional.ofNullable(Type.getObjectType(methodInsnNode.owner).getClassName());
+			}			
+		}
+		return new InstructionNodeWrapper(methodName, methodOwner);
+	}
+	
 	private MethodNodeWrapper getMethodNodeWrapper(MethodNode methodNode){
 		String name;
 		String desc;
@@ -89,7 +103,7 @@ public class ASMReader implements Reader {
 		dependencies = new LinkedList<CardinalityWrapper>();
 		for (int i = 0; i < methodNode.instructions.size(); i++) {
 			AbstractInsnNode insn = methodNode.instructions.get(i);
-			InstructionNodeWrapper toAdd = new InstructionNodeWrapper(insn);
+			InstructionNodeWrapper toAdd = getInstructionNodeWrapper(insn);
 			instructionNodeWrappers.add(toAdd);
 			if (toAdd.methodOwner.isPresent()) {
 				dependencies.add(new CardinalityWrapper(toAdd.methodOwner.get(), false));
