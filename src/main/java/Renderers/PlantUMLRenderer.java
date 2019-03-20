@@ -45,21 +45,21 @@ public class PlantUMLRenderer implements Renderer {
 	@Override
 	public String renderSequenceContainer(SequenceContainer sequenceContainer) {
 		StringBuilder toReturn = new StringBuilder();
-
+		
 		for (SequenceContainer child : sequenceContainer.subsequences) {
 			toReturn.append(sequenceContainer.sequenceWrapper.methodType);
 			toReturn.append(" -> ");
 			toReturn.append(child.sequenceWrapper.methodType);
-			toReturn.append(" : ");
+			toReturn.append(" ++ : ");
 			toReturn.append(child.sequenceWrapper.methodName);
-			toReturn.append(System.lineSeparator());
-			toReturn.append("activate ");
-			toReturn.append(child.sequenceWrapper.methodType);
 			toReturn.append(System.lineSeparator());
 			toReturn.append(renderSequenceContainer(child));
 		}
-		toReturn.append(System.lineSeparator());
-		toReturn.append("return");
+		if(sequenceContainer.subsequences.size() > 0){
+			toReturn.append(System.lineSeparator());
+			toReturn.append("return");
+			toReturn.append(System.lineSeparator());
+		}
 
 		return toReturn.toString();
 	}
