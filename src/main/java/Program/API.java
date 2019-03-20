@@ -20,7 +20,7 @@ import Displays.TextDisplay;
 import PreRenderTasks.AdapterPatternDetectorPreRenderTask;
 import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTask;
 import PreRenderTasks.DecoratorPatternDetectorPreRenderTask;
-import PreRenderTasks.DefaultPreRenderTask;
+import PreRenderTasks.ClassDiagramPreRenderTask;
 import PreRenderTasks.DependencyInversionPrincipleViolationDetectorPreRenderTask;
 import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTask;
 import PreRenderTasks.KeepOnlyPublicPreRenderTask;
@@ -163,7 +163,7 @@ public class API {
 
 		ProgramWrapper programWrapper = reader.getProgramWrapper(classNameList, classInputStreamList);
 
-		PreRenderTask preRenderTask = new DefaultPreRenderTask(programWrapper);
+		PreRenderTask preRenderTask = new ClassDiagramPreRenderTask(programWrapper);
 
 		for(String option : map.keySet()){
 			if(this.preRenderMap.containsKey(option)){
