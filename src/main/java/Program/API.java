@@ -27,7 +27,7 @@ import PreRenderTasks.KeepOnlyPublicPreRenderTask;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTask;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTask;
 import PreRenderTasks.PreRenderTask;
-import PreRenderTasks.PreRenderTaskFactory;
+import PreRenderTasks.PreRenderTaskDecorationFactory;
 import PreRenderTasks.SequenceDiagramPreRenderTask;
 import PreRenderTasks.SingletonPatternDetectorPreRenderTask;
 import Readers.ASMReader;
@@ -169,13 +169,13 @@ public class API {
 		PreRenderTask preRenderTask = new ClassDiagramPreRenderTask(programWrapper);
 		for(String option : map.keySet()){
 			if(this.preRenderBaseMap.containsKey(option)){
-				preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask(this.preRenderBaseMap.get(option), programWrapper);
+				preRenderTask = PreRenderTaskDecorationFactory.getInstance().getPreRenderTask(this.preRenderBaseMap.get(option), programWrapper);
 			}
 		}
 
 		for(String option : map.keySet()){
 			if(this.preRenderMap.containsKey(option)){
-				preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask(this.preRenderMap.get(option), preRenderTask);
+				preRenderTask = PreRenderTaskDecorationFactory.getInstance().getPreRenderTask(this.preRenderMap.get(option), preRenderTask);
 			}
 		}
 
@@ -184,7 +184,7 @@ public class API {
 			if (option.equals(toCheck)) {
 				for (String preRenderTaskClassName : map.get(option)) {
 					try {
-						preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask((Class<? extends PreRenderTask>) Class.forName(preRenderTaskClassName), preRenderTask);
+						preRenderTask = PreRenderTaskDecorationFactory.getInstance().getPreRenderTask((Class<? extends PreRenderTask>) Class.forName(preRenderTaskClassName), preRenderTask);
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 					}
