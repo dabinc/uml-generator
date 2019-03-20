@@ -65,9 +65,9 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(System.lineSeparator());
 			if(!visitedCopy.contains(child)){
 				toReturn.append(renderSequenceContainerRecursive(child, visitedCopy));
-				toReturn.append("return");
-				toReturn.append(System.lineSeparator());
-			}			
+			}
+			toReturn.append("return");
+			toReturn.append(System.lineSeparator());
 		}
 
 		return toReturn.toString();
