@@ -15,6 +15,7 @@ import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
 import Containers.RealMethodContainer;
+import Containers.SequenceContainer;
 import Containers.SkinParamContainer;
 import Containers.StereotypeContainer;
 import Enums.Modifier;
@@ -34,7 +35,32 @@ public class PlantUMLRenderer implements Renderer {
 		for (SkinParamContainer skinParamContainer : programContainer.skinParams) {
 			toReturn.append(renderSkinParamContainer(skinParamContainer));
 		}
+		for (SequenceContainer sequenceContainer : programContainer.sequences){
+			toReturn.append(renderSequenceContainer(sequenceContainer));
+		}
 		toReturn.append("@enduml" + System.lineSeparator());
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderSequenceContainer(SequenceContainer sequenceContainer) {
+		StringBuilder toReturn = new StringBuilder();
+
+		for (SequenceContainer child : sequenceContainer.subsequences) {
+			toReturn.append(sequenceContainer.sequenceWrapper.methodType);
+			toReturn.append(" -> ");
+			toReturn.append(child.sequenceWrapper.methodType);
+			toReturn.append(" : ");
+			toReturn.append(child.sequenceWrapper.methodName);
+			toReturn.append(System.lineSeparator());
+			toReturn.append("activate ");
+			toReturn.append(child.sequenceWrapper.methodType);
+			toReturn.append(System.lineSeparator());
+			toReturn.append(renderSequenceContainer(child));
+		}
+		toReturn.append(System.lineSeparator());
+		toReturn.append("return");
+
 		return toReturn.toString();
 	}
 
@@ -329,7 +355,7 @@ public class PlantUMLRenderer implements Renderer {
 	@Override
 	public String renderRealMethodContainer(RealMethodContainer realMethodContainer) {
 		StringBuilder toReturn = new StringBuilder();
-		if(realMethodContainer.methodNodeWrapper.isPresent()){
+		if (realMethodContainer.methodNodeWrapper.isPresent()) {
 			for (Modifier modifier : realMethodContainer.methodNodeWrapper.get().modifiers) {
 				toReturn.append(renderModifier(modifier));
 			}
@@ -343,8 +369,8 @@ public class PlantUMLRenderer implements Renderer {
 					toReturn.append(renderParameterContainer(realMethodContainer.parameterContainers.get(i)));
 					toReturn.append(", ");
 				}
-				toReturn.append(renderParameterContainer(
-						realMethodContainer.parameterContainers.get(realMethodContainer.parameterContainers.size() - 1)));
+				toReturn.append(renderParameterContainer(realMethodContainer.parameterContainers
+						.get(realMethodContainer.parameterContainers.size() - 1)));
 			}
 			toReturn.append("): ");
 			toReturn.append(realMethodContainer.methodNodeWrapper.get().type);
@@ -355,7 +381,7 @@ public class PlantUMLRenderer implements Renderer {
 	@Override
 	public String renderFakeMethodContainer(FakeMethodContainer fakeMethodContainer) {
 		StringBuilder toReturn = new StringBuilder();
-		for(Modifier modifier : fakeMethodContainer.modifiers){
+		for (Modifier modifier : fakeMethodContainer.modifiers) {
 			toReturn.append(renderModifier(modifier));
 		}
 		toReturn.append(" ");
@@ -364,7 +390,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(fakeMethodContainer.name);
 		toReturn.append("(");
 		if (!fakeMethodContainer.parameters.isEmpty()) {
-			for(int i = 0; i < fakeMethodContainer.parameters.size() - 1; i++){
+			for (int i = 0; i < fakeMethodContainer.parameters.size() - 1; i++) {
 				toReturn.append(fakeMethodContainer.parameters.get(i));
 				toReturn.append(", ");
 			}

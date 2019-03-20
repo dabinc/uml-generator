@@ -28,6 +28,7 @@ import PreRenderTasks.KeepPrivateAndUpPreRenderTask;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTask;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskFactory;
+import PreRenderTasks.SequenceDiagramPreRenderTask;
 import PreRenderTasks.SingletonPatternDetectorPreRenderTask;
 import Readers.ASMReader;
 import Readers.LambdaFilterReaderFactory;
@@ -45,6 +46,7 @@ public class API {
 	private Map<String, ReaderFactory> readerMap;
 	private Map<String, ReaderFactory> readerFilterMap;
 	private Map<String, Class<? extends PreRenderTask>> preRenderMap;
+	private Map<String, Class<? extends PreRenderTask>> preRenderBaseMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
 	private static final String DEFAULT_CONFIG_FILE = "config.properties";
@@ -53,6 +55,7 @@ public class API {
 		this.readerMap = new HashMap<String, ReaderFactory>();
 		this.readerFilterMap = new HashMap<String, ReaderFactory>();
 		this.preRenderMap = new HashMap<String, Class<? extends PreRenderTask>>();
+		this.preRenderBaseMap = new HashMap<String, Class<? extends PreRenderTask>>();
 		this.displayMap = new HashMap<String, Display>();
 		this.rendererMap = new HashMap<String, Renderer>();
 		initializeHashMaps();
@@ -164,6 +167,11 @@ public class API {
 		ProgramWrapper programWrapper = reader.getProgramWrapper(classNameList, classInputStreamList);
 
 		PreRenderTask preRenderTask = new ClassDiagramPreRenderTask(programWrapper);
+		for(String option : map.keySet()){
+			if(this.preRenderBaseMap.containsKey(option)){
+				preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask(this.preRenderBaseMap.get(option), programWrapper);
+			}
+		}
 
 		for(String option : map.keySet()){
 			if(this.preRenderMap.containsKey(option)){
@@ -204,6 +212,8 @@ public class API {
 		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
 		
 		this.displayMap.put("-file", new FileDisplay());
+		
+		this.preRenderBaseMap.put("-sequence", SequenceDiagramPreRenderTask.class);
 		
 		this.preRenderMap.put("-singleton", SingletonPatternDetectorPreRenderTask.class);
 		this.preRenderMap.put("-inheritancecomposition", InheritanceOverCompositionDetectorPreRenderTask.class);
