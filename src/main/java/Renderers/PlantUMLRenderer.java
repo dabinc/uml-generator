@@ -52,7 +52,9 @@ public class PlantUMLRenderer implements Renderer {
 	
 	private String renderSequenceContainerRecursive(SequenceContainer sequenceContainer, List<SequenceContainer> visited){
 		StringBuilder toReturn = new StringBuilder();
-		visited.add(sequenceContainer);
+		List<SequenceContainer> visitedCopy = new LinkedList<SequenceContainer>();
+		visitedCopy.addAll(visited);
+		visitedCopy.add(sequenceContainer);
 		
 		for (SequenceContainer child : sequenceContainer.subsequences) {
 			toReturn.append(sequenceContainer.sequenceWrapper.methodType);
@@ -61,14 +63,11 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(" ++ : ");
 			toReturn.append(child.sequenceWrapper.methodName);
 			toReturn.append(System.lineSeparator());
-			if(!visited.contains(child)){
-				toReturn.append(renderSequenceContainerRecursive(child, visited));
+			if(!visitedCopy.contains(child)){
+				toReturn.append(renderSequenceContainerRecursive(child, visitedCopy));
+				toReturn.append("return");
+				toReturn.append(System.lineSeparator());
 			}			
-		}
-		if(sequenceContainer.subsequences.size() > 0){
-			toReturn.append(System.lineSeparator());
-			toReturn.append("return");
-			toReturn.append(System.lineSeparator());
 		}
 
 		return toReturn.toString();
