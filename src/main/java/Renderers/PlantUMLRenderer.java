@@ -1,5 +1,8 @@
 package Renderers;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
@@ -44,7 +47,12 @@ public class PlantUMLRenderer implements Renderer {
 
 	@Override
 	public String renderSequenceContainer(SequenceContainer sequenceContainer) {
+		return renderSequenceContainerRecursive(sequenceContainer, new LinkedList<SequenceContainer>());
+	}
+	
+	private String renderSequenceContainerRecursive(SequenceContainer sequenceContainer, List<SequenceContainer> visited){
 		StringBuilder toReturn = new StringBuilder();
+		visited.add(sequenceContainer);
 		
 		for (SequenceContainer child : sequenceContainer.subsequences) {
 			toReturn.append(sequenceContainer.sequenceWrapper.methodType);
@@ -53,7 +61,9 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(" ++ : ");
 			toReturn.append(child.sequenceWrapper.methodName);
 			toReturn.append(System.lineSeparator());
-			toReturn.append(renderSequenceContainer(child));
+			if(!visited.contains(child)){
+				toReturn.append(renderSequenceContainerRecursive(child, visited));
+			}			
 		}
 		if(sequenceContainer.subsequences.size() > 0){
 			toReturn.append(System.lineSeparator());
