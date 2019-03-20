@@ -57,11 +57,11 @@ public class PlantUMLRenderer implements Renderer {
 		visitedCopy.add(sequenceContainer);
 		
 		for (SequenceContainer child : sequenceContainer.subsequences) {
-			toReturn.append(sequenceContainer.sequenceWrapper.methodType);
+			toReturn.append(sequenceContainer.sequenceWrapper.methodType.replace('$', '_'));
 			toReturn.append(" -> ");
-			toReturn.append(child.sequenceWrapper.methodType);
+			toReturn.append(child.sequenceWrapper.methodType.replace('$', '_'));
 			toReturn.append(" ++ : ");
-			toReturn.append(child.sequenceWrapper.methodName);
+			toReturn.append(child.sequenceWrapper.methodName.replace('$', '_'));
 			toReturn.append(System.lineSeparator());
 			if(!visitedCopy.contains(child)){
 				toReturn.append(renderSequenceContainerRecursive(child, visitedCopy));
