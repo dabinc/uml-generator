@@ -3,10 +3,13 @@ package Readers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -27,6 +30,7 @@ import Wrappers.InstructionNodeWrapper;
 import Wrappers.MethodNodeWrapper;
 import Wrappers.ParameterNodeWrapper;
 import Wrappers.ProgramWrapper;
+import Wrappers.SequenceWrapper;
 
 public class ASMReader implements Reader {
 
@@ -64,9 +68,25 @@ public class ASMReader implements Reader {
 			}
 			if (shouldAdd) {
 				toReturn.classNodeWrappers.add(toAdd);
+				for(MethodNodeWrapper methodNodeWrapper : toAdd.methodNodeWrappers){
+					toReturn.sequenceWrappers.add(getSequenceWrapper(methodNodeWrapper, toAdd.name));
+				}
 			}
 		}
 		return toReturn;
+	}
+	
+	private SequenceWrapper getSequenceWrapper(MethodNodeWrapper methodNodeWrapper, String methodCaller){
+		Map<String, Set<String>> calledMethodsTypeToNames = new HashMap<String, Set<String>>();
+		for(InstructionNodeWrapper instructionNodeWrapper : methodNodeWrapper.instructionNodeWrappers){
+			if(instructionNodeWrapper.methodName.isPresent() && instructionNodeWrapper.methodOwner.isPresent()){
+				if(!calledMethodsTypeToNames.containsKey(instructionNodeWrapper.methodOwner.get())){
+					calledMethodsTypeToNames.put(instructionNodeWrapper.methodOwner.get(), new HashSet<String>());
+				}
+				calledMethodsTypeToNames.get(instructionNodeWrapper.methodOwner.get()).add(instructionNodeWrapper.methodName.get());
+			}
+		}
+		return new SequenceWrapper(methodNodeWrapper.name, methodCaller, calledMethodsTypeToNames);
 	}
 	
 	private InstructionNodeWrapper getInstructionNodeWrapper(AbstractInsnNode abstractInsnNode){
