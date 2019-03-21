@@ -10,6 +10,14 @@ public class ProgramContainer {
 	public List<ClassContainer> classes;
 	public List<ArrowContainer> arrows;
 	public List<SkinParamContainer> skinParams;
+	public List<SequenceContainer> sequences;
+	
+	public ProgramContainer(){
+		this.classes = new LinkedList<ClassContainer>();
+		this.arrows = new LinkedList<ArrowContainer>();
+		this.skinParams = new LinkedList<SkinParamContainer>();
+		this.sequences = new LinkedList<SequenceContainer>();
+	}
 
 	public ProgramContainer(ProgramWrapper programWrapper) {
 		this.classes = new LinkedList<ClassContainer>();
@@ -18,6 +26,7 @@ public class ProgramContainer {
 		}
 		this.arrows = new LinkedList<ArrowContainer>();
 		this.skinParams = new LinkedList<SkinParamContainer>();
+		this.sequences = new LinkedList<SequenceContainer>();
 	}
 
 }

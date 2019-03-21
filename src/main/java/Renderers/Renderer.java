@@ -14,10 +14,13 @@ import Containers.MethodContainer;
 import Containers.ParameterContainer;
 import Containers.ProgramContainer;
 import Containers.RealMethodContainer;
+import Containers.SequenceContainer;
 import Containers.SkinParamContainer;
 
 public interface Renderer {
 	public String render(ProgramContainer programContainer);
+	
+	public String renderSequenceContainer(SequenceContainer sequenceContainer);
 
 	public String renderClassContainer(ClassContainer classContainer);
 

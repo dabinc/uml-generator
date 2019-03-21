@@ -5,6 +5,7 @@ import java.util.List;
 
 import Wrappers.ClassNodeWrapper;
 import Wrappers.ProgramWrapper;
+import Wrappers.SequenceWrapper;
 
 public class WhitelistBlacklistReader extends ReaderDecorator {
 
@@ -19,11 +20,17 @@ public class WhitelistBlacklistReader extends ReaderDecorator {
 
 	@Override
 	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
-		List<ClassNodeWrapper> previousClassNodeWrappers = super.getProgramWrapper(classNames, inputStreams).classNodeWrappers;
+		ProgramWrapper previous = super.getProgramWrapper(classNames, inputStreams);
 		ProgramWrapper toReturn = new ProgramWrapper();
-		for (ClassNodeWrapper previousClassNodeWrapper : previousClassNodeWrappers) {
+		for (ClassNodeWrapper previousClassNodeWrapper : previous.classNodeWrappers) {
 			if (isWhiteListed(previousClassNodeWrapper.name) || !isBlackListed(previousClassNodeWrapper.name)) {
 				toReturn.classNodeWrappers.add(previousClassNodeWrapper);
+			}
+		}
+		for (SequenceWrapper previousSequenceWrapper : previous.sequenceWrappers) {
+			if (isWhiteListed(previousSequenceWrapper.methodType)
+					|| !isBlackListed(previousSequenceWrapper.methodType)) {
+				toReturn.sequenceWrappers.add(previousSequenceWrapper);
 			}
 		}
 		return toReturn;

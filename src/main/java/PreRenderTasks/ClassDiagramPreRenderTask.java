@@ -17,11 +17,11 @@ import Containers.ProgramContainer;
 import Wrappers.CardinalityWrapper;
 import Wrappers.ProgramWrapper;
 
-public class DefaultPreRenderTask implements PreRenderTask {
+public class ClassDiagramPreRenderTask implements PreRenderTask {
 
 	private ProgramWrapper programWrapper;
 
-	public DefaultPreRenderTask(ProgramWrapper programWrapper) {
+	public ClassDiagramPreRenderTask(ProgramWrapper programWrapper) {
 		this.programWrapper = programWrapper;
 	}
 

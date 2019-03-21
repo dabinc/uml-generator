@@ -17,19 +17,17 @@ public class RecursiveReader extends ReaderDecorator {
 
 	@Override
 	public ProgramWrapper getProgramWrapper(List<String> classNames, List<InputStream> inputStreams) {
-		List<ClassNodeWrapper> previous = super.getProgramWrapper(classNames, inputStreams).classNodeWrappers;
+		ProgramWrapper previous = super.getProgramWrapper(classNames, inputStreams);
 		List<String> previouslyVisited = new LinkedList<String>();
-		for(ClassNodeWrapper classNodeWrapper : previous){
+		for (ClassNodeWrapper classNodeWrapper : previous.classNodeWrappers) {
 			previouslyVisited.add(classNodeWrapper.name);
 		}
-		return recursiveGetClassNodeWrappers(previous, previouslyVisited);
+		return recursiveGetProgramWrapper(previous, previouslyVisited);
 	}
 
-	private ProgramWrapper recursiveGetClassNodeWrappers(List<ClassNodeWrapper> classNodeWrappers,
-			List<String> visitedClassNames) {
+	private ProgramWrapper recursiveGetProgramWrapper(ProgramWrapper programWrapper, List<String> visitedClassNames) {
 		List<String> classesToVisit = new LinkedList<String>();
-		ProgramWrapper toReturn = new ProgramWrapper();
-		for (ClassNodeWrapper classNodeWrapper : classNodeWrappers) {
+		for (ClassNodeWrapper classNodeWrapper : programWrapper.classNodeWrappers) {
 			if (classNodeWrapper.supername.isPresent() && !visitedClassNames.contains(classNodeWrapper.supername.get())
 					&& !classesToVisit.contains(classNodeWrapper.supername.get())) {
 				classesToVisit.add(classNodeWrapper.supername.get());
@@ -60,14 +58,17 @@ public class RecursiveReader extends ReaderDecorator {
 		}
 
 		if (classesToVisit.isEmpty()) {
-			return toReturn;
+			return programWrapper;
 		}
 
 		visitedClassNames.addAll(classesToVisit);
 
-		toReturn.classNodeWrappers.addAll(classNodeWrappers);
-		toReturn.classNodeWrappers.addAll(recursiveGetClassNodeWrappers(super.getProgramWrapper(classesToVisit, new LinkedList<InputStream>()).classNodeWrappers, visitedClassNames).classNodeWrappers);
-		return toReturn;
+		ProgramWrapper children = recursiveGetProgramWrapper(
+				super.getProgramWrapper(classesToVisit, new LinkedList<InputStream>()), visitedClassNames);
+		programWrapper.classNodeWrappers.addAll(children.classNodeWrappers);
+		programWrapper.sequenceWrappers.addAll(children.sequenceWrappers);
+
+		return programWrapper;
 	}
 
 }

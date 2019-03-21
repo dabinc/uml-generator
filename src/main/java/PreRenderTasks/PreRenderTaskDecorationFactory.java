@@ -3,16 +3,16 @@ package PreRenderTasks;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class PreRenderTaskFactory {
+public class PreRenderTaskDecorationFactory {
 
-	private static PreRenderTaskFactory preRenderTaskFactory;
+	private static PreRenderTaskDecorationFactory preRenderTaskFactory;
 
-	private PreRenderTaskFactory() {
+	private PreRenderTaskDecorationFactory() {
 	}
 	
-	public synchronized static PreRenderTaskFactory getInstance(){
+	public synchronized static PreRenderTaskDecorationFactory getInstance(){
 		if(preRenderTaskFactory == null){
-			preRenderTaskFactory = new PreRenderTaskFactory();
+			preRenderTaskFactory = new PreRenderTaskDecorationFactory();
 		}
 		return preRenderTaskFactory;
 	}

@@ -20,14 +20,17 @@ import Displays.TextDisplay;
 import PreRenderTasks.AdapterPatternDetectorPreRenderTask;
 import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTask;
 import PreRenderTasks.DecoratorPatternDetectorPreRenderTask;
-import PreRenderTasks.DefaultPreRenderTask;
+import PreRenderTasks.ClassDiagramPreRenderTask;
 import PreRenderTasks.DependencyInversionPrincipleViolationDetectorPreRenderTask;
 import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTask;
 import PreRenderTasks.KeepOnlyPublicPreRenderTask;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTask;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTask;
 import PreRenderTasks.PreRenderTask;
-import PreRenderTasks.PreRenderTaskFactory;
+import PreRenderTasks.PreRenderTaskBaseFactory;
+import PreRenderTasks.PreRenderTaskDecorationFactory;
+import PreRenderTasks.SequenceDiagramPreRenderTask;
+import PreRenderTasks.SequenceDiagramPreRenderTaskFactory;
 import PreRenderTasks.SingletonPatternDetectorPreRenderTask;
 import Readers.ASMReader;
 import Readers.LambdaFilterReaderFactory;
@@ -45,6 +48,7 @@ public class API {
 	private Map<String, ReaderFactory> readerMap;
 	private Map<String, ReaderFactory> readerFilterMap;
 	private Map<String, Class<? extends PreRenderTask>> preRenderMap;
+	private Map<String, PreRenderTaskBaseFactory> preRenderBaseMap;
 	private Map<String, Display> displayMap;
 	private Map<String, Renderer> rendererMap;
 	private static final String DEFAULT_CONFIG_FILE = "config.properties";
@@ -53,6 +57,7 @@ public class API {
 		this.readerMap = new HashMap<String, ReaderFactory>();
 		this.readerFilterMap = new HashMap<String, ReaderFactory>();
 		this.preRenderMap = new HashMap<String, Class<? extends PreRenderTask>>();
+		this.preRenderBaseMap = new HashMap<String, PreRenderTaskBaseFactory>();
 		this.displayMap = new HashMap<String, Display>();
 		this.rendererMap = new HashMap<String, Renderer>();
 		initializeHashMaps();
@@ -163,11 +168,19 @@ public class API {
 
 		ProgramWrapper programWrapper = reader.getProgramWrapper(classNameList, classInputStreamList);
 
-		PreRenderTask preRenderTask = new DefaultPreRenderTask(programWrapper);
+		PreRenderTask preRenderTask = new ClassDiagramPreRenderTask(programWrapper);
+		for(String option : map.keySet()){
+			for(String key : this.preRenderBaseMap.keySet()){
+				if(key.startsWith(option)){
+					List<String> args = map.get(option);
+					preRenderTask = this.preRenderBaseMap.get(key).getPreRenderTask(programWrapper, args);
+				}
+			}
+		}
 
 		for(String option : map.keySet()){
 			if(this.preRenderMap.containsKey(option)){
-				preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask(this.preRenderMap.get(option), preRenderTask);
+				preRenderTask = PreRenderTaskDecorationFactory.getInstance().getPreRenderTask(this.preRenderMap.get(option), preRenderTask);
 			}
 		}
 
@@ -176,7 +189,7 @@ public class API {
 			if (option.equals(toCheck)) {
 				for (String preRenderTaskClassName : map.get(option)) {
 					try {
-						preRenderTask = PreRenderTaskFactory.getInstance().getPreRenderTask((Class<? extends PreRenderTask>) Class.forName(preRenderTaskClassName), preRenderTask);
+						preRenderTask = PreRenderTaskDecorationFactory.getInstance().getPreRenderTask((Class<? extends PreRenderTask>) Class.forName(preRenderTaskClassName), preRenderTask);
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -204,6 +217,8 @@ public class API {
 		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
 		
 		this.displayMap.put("-file", new FileDisplay());
+		
+		this.preRenderBaseMap.put("-sequence=", new SequenceDiagramPreRenderTaskFactory());
 		
 		this.preRenderMap.put("-singleton", SingletonPatternDetectorPreRenderTask.class);
 		this.preRenderMap.put("-inheritancecomposition", InheritanceOverCompositionDetectorPreRenderTask.class);

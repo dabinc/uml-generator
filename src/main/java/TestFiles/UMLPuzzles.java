@@ -20,6 +20,10 @@ public class UMLPuzzles {
 	ClassExtendingConcreteClass classExtendingConcreteClass;
 	ConcreteClass1 concreteClass1;
 	ConcreteClass2 concreteClass2;
+	
+	public Singleton findSingleton(){
+		return Singleton.getInstance();
+	}
 }
 
 class GenericClass<T> {
@@ -57,6 +61,12 @@ class OneTooManyDependencies {
 
 	public String[] dependsOnManyStrings() {
 		return null;
+	}
+}
+
+class TestSequence {
+	public Singleton findSingleton(){
+		return Singleton.getInstance();
 	}
 }
 
