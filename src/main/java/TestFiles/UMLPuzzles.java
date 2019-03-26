@@ -20,6 +20,7 @@ public class UMLPuzzles {
 	ClassExtendingConcreteClass classExtendingConcreteClass;
 	ConcreteClass1 concreteClass1;
 	ConcreteClass2 concreteClass2;
+	public static int publicStaticField;
 	
 	public Singleton findSingleton(){
 		return Singleton.getInstance();
