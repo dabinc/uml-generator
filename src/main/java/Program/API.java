@@ -26,6 +26,7 @@ import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTask;
 import PreRenderTasks.KeepOnlyPublicPreRenderTask;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTask;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTask;
+import PreRenderTasks.LowercaseClassNameDetectorPreRenderTask;
 import PreRenderTasks.NonFinalPublicStaticFieldDetectorPreRenderTask;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskBaseFactory;
@@ -228,6 +229,7 @@ public class API {
 		this.preRenderMap.put("-dependencyinversionviolation", DependencyInversionPrincipleViolationDetectorPreRenderTask.class);
 		this.preRenderMap.put("-baddecorator", BadDecoratorPatternDetectorPreRenderTask.class);
 		this.preRenderMap.put("-nonfinalpublicstatic", NonFinalPublicStaticFieldDetectorPreRenderTask.class);
+		this.preRenderMap.put("-lowercaseclassname", LowercaseClassNameDetectorPreRenderTask.class);
 		this.preRenderMap.put("-public", KeepOnlyPublicPreRenderTask.class);
 		this.preRenderMap.put("-private", KeepPrivateAndUpPreRenderTask.class);
 		this.preRenderMap.put("-protected", KeepProtectedAndPublicPreRenderTask.class);

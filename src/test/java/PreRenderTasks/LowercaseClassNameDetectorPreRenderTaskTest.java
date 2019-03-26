@@ -11,71 +11,58 @@ import org.mockito.Mockito;
 
 import Containers.ClassContainer;
 import Containers.DisplayContainer;
-import Containers.FieldContainer;
 import Containers.ProgramContainer;
-import Enums.Modifier;
-import Wrappers.FieldNodeWrapper;
+import Wrappers.ClassNodeWrapper;
 
-public class NonFinalPublicStaticFieldDetectorPreRenderTaskTest {
+public class LowercaseClassNameDetectorPreRenderTaskTest {
 	
 	private ClassDiagramPreRenderTask parent;
-	private NonFinalPublicStaticFieldDetectorPreRenderTask toTest;
-	
+	private LowercaseClassNameDetectorPreRenderTask toTest;
+
 	@Before
 	public void setup() {
 		this.parent = Mockito.mock(ClassDiagramPreRenderTask.class);
-		this.toTest = Mockito.spy(new NonFinalPublicStaticFieldDetectorPreRenderTask(this.parent));
+		this.toTest = Mockito.spy(new LowercaseClassNameDetectorPreRenderTask(parent));
 	}
 
 	@Test
 	public void testGetProgramContainerWithChange() {
 		ProgramContainer programContainer = Mockito.mock(ProgramContainer.class);
 		ClassContainer classContainer = Mockito.mock(ClassContainer.class);
-		FieldContainer fieldContainer = Mockito.mock(FieldContainer.class);
-		FieldNodeWrapper fieldNodeWrapper = Mockito.mock(FieldNodeWrapper.class);
+		ClassNodeWrapper classNodeWrapper = Mockito.mock(ClassNodeWrapper.class);
 		DisplayContainer displayContainer = Mockito.mock(DisplayContainer.class);
 		programContainer.classes = new LinkedList<ClassContainer>();
 		programContainer.classes.add(classContainer);
-		classContainer.fields = new LinkedList<FieldContainer>();
-		classContainer.fields.add(fieldContainer);
-		fieldContainer.fieldNodeWrapper = fieldNodeWrapper;
-		fieldContainer.displayContainer = displayContainer;
+		classContainer.classNodeWrapper = classNodeWrapper;
+		classContainer.displayContainer = displayContainer;
 		displayContainer.color = Optional.empty();
-		fieldNodeWrapper.modifiers = new LinkedList<Modifier>();
-		fieldNodeWrapper.modifiers.add(Modifier.PUBLIC);
-		fieldNodeWrapper.modifiers.add(Modifier.STATIC);
+		classNodeWrapper.name = "java.util.list";
 		
 		Mockito.when(parent.getProgramContainer()).thenReturn(programContainer);
 		
 		ProgramContainer actual = toTest.getProgramContainer();
 		
-		assertEquals("Fuchsia", actual.classes.get(0).fields.get(0).displayContainer.color.get());
+		assertEquals("DeepPink", actual.classes.get(0).displayContainer.color.get());
 	}
 	
 	@Test
 	public void testGetProgramContainerWithoutChange() {
 		ProgramContainer programContainer = Mockito.mock(ProgramContainer.class);
 		ClassContainer classContainer = Mockito.mock(ClassContainer.class);
-		FieldContainer fieldContainer = Mockito.mock(FieldContainer.class);
-		FieldNodeWrapper fieldNodeWrapper = Mockito.mock(FieldNodeWrapper.class);
+		ClassNodeWrapper classNodeWrapper = Mockito.mock(ClassNodeWrapper.class);
 		DisplayContainer displayContainer = Mockito.mock(DisplayContainer.class);
 		programContainer.classes = new LinkedList<ClassContainer>();
 		programContainer.classes.add(classContainer);
-		classContainer.fields = new LinkedList<FieldContainer>();
-		classContainer.fields.add(fieldContainer);
-		fieldContainer.fieldNodeWrapper = fieldNodeWrapper;
-		fieldContainer.displayContainer = displayContainer;
+		classContainer.classNodeWrapper = classNodeWrapper;
+		classContainer.displayContainer = displayContainer;
 		displayContainer.color = Optional.empty();
-		fieldNodeWrapper.modifiers = new LinkedList<Modifier>();
-		fieldNodeWrapper.modifiers.add(Modifier.PUBLIC);
-		fieldNodeWrapper.modifiers.add(Modifier.STATIC);
-		fieldNodeWrapper.modifiers.add(Modifier.FINAL);
+		classNodeWrapper.name = "java.util.List";
 		
 		Mockito.when(parent.getProgramContainer()).thenReturn(programContainer);
 		
 		ProgramContainer actual = toTest.getProgramContainer();
 		
-		assertFalse(actual.classes.get(0).fields.get(0).displayContainer.color.isPresent());
+		assertFalse(actual.classes.get(0).displayContainer.color.isPresent());
 	}
 
 }
