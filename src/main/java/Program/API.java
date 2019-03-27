@@ -28,6 +28,7 @@ import PreRenderTasks.KeepPrivateAndUpPreRenderTask;
 import PreRenderTasks.KeepProtectedAndPublicPreRenderTask;
 import PreRenderTasks.LowercaseClassNameDetectorPreRenderTask;
 import PreRenderTasks.NonFinalPublicStaticFieldDetectorPreRenderTask;
+import PreRenderTasks.OnlyNonPublicConstructorDetectorPreRenderTask;
 import PreRenderTasks.PreRenderTask;
 import PreRenderTasks.PreRenderTaskBaseFactory;
 import PreRenderTasks.PreRenderTaskDecorationFactory;
@@ -223,6 +224,7 @@ public class API {
 		
 		this.preRenderBaseMap.put("-sequence=", new SequenceDiagramPreRenderTaskFactory());
 		
+		this.preRenderMap.put("-onlynonpublicconstructor", OnlyNonPublicConstructorDetectorPreRenderTask.class);
 		this.preRenderMap.put("-singleton", SingletonPatternDetectorPreRenderTask.class);
 		this.preRenderMap.put("-inheritancecomposition", InheritanceOverCompositionDetectorPreRenderTask.class);
 		this.preRenderMap.put("-adapter", AdapterPatternDetectorPreRenderTask.class);
