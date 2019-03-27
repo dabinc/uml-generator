@@ -34,6 +34,7 @@ import PreRenderTasks.PreRenderTaskDecorationFactory;
 import PreRenderTasks.SequenceDiagramPreRenderTask;
 import PreRenderTasks.SequenceDiagramPreRenderTaskFactory;
 import PreRenderTasks.SingletonPatternDetectorPreRenderTask;
+import PreRenderTasks.UnderscoreNonFinalDetectorPreRenderTask;
 import Readers.ASMReader;
 import Readers.LambdaFilterReaderFactory;
 import Readers.PackageFilterReaderFactory;
@@ -233,5 +234,6 @@ public class API {
 		this.preRenderMap.put("-public", KeepOnlyPublicPreRenderTask.class);
 		this.preRenderMap.put("-private", KeepPrivateAndUpPreRenderTask.class);
 		this.preRenderMap.put("-protected", KeepProtectedAndPublicPreRenderTask.class);
+		this.preRenderMap.put("-underscorenonfinal", UnderscoreNonFinalDetectorPreRenderTask.class);
 	}
 }
