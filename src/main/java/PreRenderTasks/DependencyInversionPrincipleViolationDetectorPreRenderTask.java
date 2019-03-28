@@ -27,7 +27,7 @@ public class DependencyInversionPrincipleViolationDetectorPreRenderTask extends 
 			if (this.dependsOnOrAssociatesWithConcreteClass(arrowContainer) || this.extendsConcreteClass(arrowContainer)
 					|| this.overridesSuperclassMethods(arrowContainer)) {
 				arrowContainer.displayContainer.color = Optional.of("lightblue");
-				arrowContainer.stereotypeContainer.add(new StereotypeContainer("Violates DIP"));
+				arrowContainer.stereotypeContainers.add(new StereotypeContainer("Violates DIP"));
 			}
 		}
 

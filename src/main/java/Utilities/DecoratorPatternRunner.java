@@ -37,7 +37,7 @@ public class DecoratorPatternRunner {
 						if ((nonOverridenMethods.size() != 0 && isBadDecoratorDetector)
 								|| (nonOverridenMethods.size() == 0 && !isBadDecoratorDetector)) {
 							decoratedClass.stereotypeContainer.add(new StereotypeContainer("component"));
-							association.stereotypeContainer.add(new StereotypeContainer("decorates"));
+							association.stereotypeContainers.add(new StereotypeContainer("decorates"));
 							decoratedClass.displayContainer.color = Optional.of("lightgreen");
 							abstractDecorator.displayContainer.color = Optional.of("lightgreen");
 							abstractDecorator.stereotypeContainer.add(
