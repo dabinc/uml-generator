@@ -90,35 +90,31 @@ public class PlantUMLRendererTest {
 
 	@Test
 	public void testRenderAssociationArrowContainerNoCardinality() {
-		ClassContainer fromClass = EasyMock.createMock(ClassContainer.class);
-		ClassNodeWrapper fromClassWrapper = EasyMock.createMock(ClassNodeWrapper.class);
+		ClassContainer fromClass = Mockito.mock(ClassContainer.class);
+		ClassNodeWrapper fromClassWrapper = Mockito.mock(ClassNodeWrapper.class);
+		ClassContainer toClass = Mockito.mock(ClassContainer.class);
+		ClassNodeWrapper toClassWrapper = Mockito.mock(ClassNodeWrapper.class);
+		DisplayContainer displayContainer = Mockito.mock(DisplayContainer.class);
+		AssociationArrowContainer toRender = Mockito.mock(AssociationArrowContainer.class);
+		
 		fromClass.classNodeWrapper = fromClassWrapper;
 		fromClassWrapper.name = "FromClass";
-
-		ClassContainer toClass = EasyMock.createMock(ClassContainer.class);
-		ClassNodeWrapper toClassWrapper = EasyMock.createMock(ClassNodeWrapper.class);
 		toClass.classNodeWrapper = toClassWrapper;
 		toClassWrapper.name = "ToClass";
-
-		DisplayContainer displayContainer = EasyMock.mock(DisplayContainer.class);
-
-		AssociationArrowContainer toRender = EasyMock.createMock(AssociationArrowContainer.class);
 		toRender.from = fromClass;
 		toRender.to = toClass;
 		toRender.fromCardinality = Optional.empty();
 		toRender.toCardinality = Optional.empty();
 		toRender.displayContainer = displayContainer;
+		toRender.stereotypeContainer = new LinkedList<StereotypeContainer>();
+		displayContainer.color = Optional.empty();
 
-		EasyMock.expect(testRenderer.renderDisplayContainerHashTag(displayContainer)).andReturn("");
-
-		EasyMock.replay(fromClass, fromClassWrapper, toClass, toClassWrapper, displayContainer, toRender, testRenderer);
+		Mockito.when(testRenderer.renderDisplayContainerHashTag(displayContainer)).thenReturn("");
 
 		String actual = testRenderer.renderAssociationArrowContainer(toRender);
 		String expected = "ToClass <-- FromClass " + System.lineSeparator();
 
 		assertEquals(expected, actual);
-
-		EasyMock.verify(fromClass, fromClassWrapper, toClass, toClassWrapper, displayContainer, toRender);
 	}
 
 	@Test
