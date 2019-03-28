@@ -119,68 +119,60 @@ public class PlantUMLRendererTest {
 
 	@Test
 	public void testRenderAssociationArrowContainerWithCardinality() {
-		ClassContainer fromClass = EasyMock.createMock(ClassContainer.class);
-		ClassNodeWrapper fromClassWrapper = EasyMock.createMock(ClassNodeWrapper.class);
+		ClassContainer fromClass = Mockito.mock(ClassContainer.class);
+		ClassNodeWrapper fromClassWrapper = Mockito.mock(ClassNodeWrapper.class);
+		ClassContainer toClass = Mockito.mock(ClassContainer.class);
+		ClassNodeWrapper toClassWrapper = Mockito.mock(ClassNodeWrapper.class);
+		DisplayContainer displayContainer = Mockito.mock(DisplayContainer.class);
+		AssociationArrowContainer toRender = Mockito.mock(AssociationArrowContainer.class);
+		
 		fromClass.classNodeWrapper = fromClassWrapper;
-		fromClassWrapper.name = "FromClass";
-
-		ClassContainer toClass = EasyMock.createMock(ClassContainer.class);
-		ClassNodeWrapper toClassWrapper = EasyMock.createMock(ClassNodeWrapper.class);
+		fromClassWrapper.name = "FromClass";		
 		toClass.classNodeWrapper = toClassWrapper;
-		toClassWrapper.name = "ToClass";
-
-		DisplayContainer displayContainer = EasyMock.mock(DisplayContainer.class);
-
-		AssociationArrowContainer toRender = EasyMock.createMock(AssociationArrowContainer.class);
+		toClassWrapper.name = "ToClass";		
 		toRender.from = fromClass;
 		toRender.to = toClass;
 		toRender.fromCardinality = Optional.of("1");
 		toRender.toCardinality = Optional.of("1");
 		toRender.displayContainer = displayContainer;
+		toRender.stereotypeContainer = new LinkedList<StereotypeContainer>();
+		displayContainer.color = Optional.empty();
 
-		EasyMock.expect(testRenderer.renderDisplayContainerHashTag(displayContainer)).andReturn("");
-
-		EasyMock.replay(fromClass, fromClassWrapper, toClass, toClassWrapper, displayContainer, toRender, testRenderer);
+		Mockito.when(testRenderer.renderDisplayContainerHashTag(displayContainer)).thenReturn("");
 
 		String actual = testRenderer.renderAssociationArrowContainer(toRender);
 		String expected = "ToClass \"1\" <-- \"1\" FromClass " + System.lineSeparator();
 
 		assertEquals(expected, actual);
-
-		EasyMock.verify(fromClass, fromClassWrapper, toClass, toClassWrapper, displayContainer, toRender);
 	}
 
 	@Test
 	public void testRenderInheritanceArrowContainerNoCardinality() {
-		ClassContainer fromClass = EasyMock.createMock(ClassContainer.class);
-		ClassNodeWrapper fromClassWrapper = EasyMock.createMock(ClassNodeWrapper.class);
+		ClassContainer fromClass = Mockito.mock(ClassContainer.class);
+		ClassNodeWrapper fromClassWrapper = Mockito.mock(ClassNodeWrapper.class);
+		ClassContainer toClass = Mockito.mock(ClassContainer.class);
+		ClassNodeWrapper toClassWrapper = Mockito.mock(ClassNodeWrapper.class);
+		DisplayContainer displayContainer = Mockito.mock(DisplayContainer.class);
+		InheritanceArrowContainer toRender = Mockito.mock(InheritanceArrowContainer.class);
+		
 		fromClass.classNodeWrapper = fromClassWrapper;
-		fromClassWrapper.name = "FromClass";
-
-		ClassContainer toClass = EasyMock.createMock(ClassContainer.class);
-		ClassNodeWrapper toClassWrapper = EasyMock.createMock(ClassNodeWrapper.class);
+		fromClassWrapper.name = "FromClass";		
 		toClass.classNodeWrapper = toClassWrapper;
-		toClassWrapper.name = "ToClass";
-
-		DisplayContainer displayContainer = EasyMock.mock(DisplayContainer.class);
-
-		InheritanceArrowContainer toRender = EasyMock.createMock(InheritanceArrowContainer.class);
+		toClassWrapper.name = "ToClass";		
 		toRender.from = fromClass;
 		toRender.to = toClass;
 		toRender.fromCardinality = Optional.empty();
 		toRender.toCardinality = Optional.empty();
 		toRender.displayContainer = displayContainer;
+		toRender.stereotypeContainer = new LinkedList<StereotypeContainer>();
+		displayContainer.color = Optional.empty();
 
-		EasyMock.expect(testRenderer.renderDisplayContainerHashTag(displayContainer)).andReturn("");
-
-		EasyMock.replay(fromClass, fromClassWrapper, toClass, toClassWrapper, displayContainer, toRender, testRenderer);
+		Mockito.when(testRenderer.renderDisplayContainerHashTag(displayContainer)).thenReturn("");
 
 		String actual = testRenderer.renderInheritanceArrowContainer(toRender);
 		String expected = "ToClass <|-- FromClass " + System.lineSeparator();
 
 		assertEquals(expected, actual);
-
-		EasyMock.verify(fromClass, fromClassWrapper, toClass, toClassWrapper, displayContainer, toRender);
 	}
 
 	@Test
