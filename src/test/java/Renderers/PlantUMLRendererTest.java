@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.util.LinkedList;
 import java.util.Optional;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
