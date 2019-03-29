@@ -251,6 +251,8 @@ public class PlantUMLRendererTest {
 		toRender.fromCardinality = Optional.of("1");
 		toRender.toCardinality = Optional.of("1");
 		toRender.displayContainer = displayContainer;
+		toRender.stereotypeContainers = new LinkedList<StereotypeContainer>();
+		displayContainer.color = Optional.empty();
 		
 		Mockito.when(testRenderer.renderDisplayContainerHashTag(displayContainer)).thenReturn("");
 		
