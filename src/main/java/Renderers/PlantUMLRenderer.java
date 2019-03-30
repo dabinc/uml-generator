@@ -258,7 +258,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(dependencyArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(dependencyArrowContainer.displayContainer));
-		for (StereotypeContainer stereotypeContainer : dependencyArrowContainer.stereotypeContainer) {
+		for (StereotypeContainer stereotypeContainer : dependencyArrowContainer.stereotypeContainers) {
 			toReturn.append(renderArrowStereotypeContainer(stereotypeContainer));
 		}
 		toReturn.append(System.lineSeparator());
@@ -277,7 +277,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(associationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(associationArrowContainer.displayContainer));
-		for (StereotypeContainer stereotypeContainer : associationArrowContainer.stereotypeContainer) {
+		for (StereotypeContainer stereotypeContainer : associationArrowContainer.stereotypeContainers) {
 			toReturn.append(renderArrowStereotypeContainer(stereotypeContainer));
 		}
 		toReturn.append(System.lineSeparator());
@@ -296,7 +296,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(inheritanceArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(inheritanceArrowContainer.displayContainer));
-		for (StereotypeContainer stereotypeContainer : inheritanceArrowContainer.stereotypeContainer) {
+		for (StereotypeContainer stereotypeContainer : inheritanceArrowContainer.stereotypeContainers) {
 			toReturn.append(renderArrowStereotypeContainer(stereotypeContainer));
 		}
 		toReturn.append(System.lineSeparator());
@@ -315,7 +315,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(implementationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(implementationArrowContainer.displayContainer));
-		for (StereotypeContainer stereotypeContainer : implementationArrowContainer.stereotypeContainer) {
+		for (StereotypeContainer stereotypeContainer : implementationArrowContainer.stereotypeContainers) {
 			toReturn.append(renderArrowStereotypeContainer(stereotypeContainer));
 		}
 		toReturn.append(System.lineSeparator());
@@ -335,7 +335,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(doubleAssociationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(doubleAssociationArrowContainer.displayContainer));
-		for (StereotypeContainer stereotypeContainer : doubleAssociationArrowContainer.stereotypeContainer) {
+		for (StereotypeContainer stereotypeContainer : doubleAssociationArrowContainer.stereotypeContainers) {
 			toReturn.append(renderArrowStereotypeContainer(stereotypeContainer));
 		}
 		toReturn.append(System.lineSeparator());
@@ -354,7 +354,7 @@ public class PlantUMLRenderer implements Renderer {
 		toReturn.append(doubleDependencyArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(doubleDependencyArrowContainer.displayContainer));
-		for (StereotypeContainer stereotypeContainer : doubleDependencyArrowContainer.stereotypeContainer) {
+		for (StereotypeContainer stereotypeContainer : doubleDependencyArrowContainer.stereotypeContainers) {
 			toReturn.append(renderArrowStereotypeContainer(stereotypeContainer));
 		}
 		toReturn.append(System.lineSeparator());

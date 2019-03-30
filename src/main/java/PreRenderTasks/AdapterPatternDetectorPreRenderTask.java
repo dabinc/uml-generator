@@ -36,7 +36,7 @@ public class AdapterPatternDetectorPreRenderTask extends PreRenderTaskDecorator 
 							target.stereotypeContainer.add(new StereotypeContainer("target"));
 							adapter.stereotypeContainer.add(new StereotypeContainer("adapter"));
 							adaptee.stereotypeContainer.add(new StereotypeContainer("adaptee"));
-							adaptsArrow.stereotypeContainer.add(new StereotypeContainer("adapts"));
+							adaptsArrow.stereotypeContainers.add(new StereotypeContainer("adapts"));
 							target.displayContainer.color = Optional.of("FireBrick");
 							adapter.displayContainer.color = Optional.of("FireBrick");
 							adaptee.displayContainer.color = Optional.of("FireBrick");

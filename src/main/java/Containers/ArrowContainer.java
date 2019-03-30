@@ -12,7 +12,7 @@ public abstract class ArrowContainer {
 	public Optional<String> toCardinality;
 	public Optional<String> fromCardinality;
 	public DisplayContainer displayContainer;
-	public List<StereotypeContainer> stereotypeContainer;
+	public List<StereotypeContainer> stereotypeContainers;
 
 	public ArrowContainer(ClassContainer to, ClassContainer from, String toCardinality, String fromCardinality) {
 		this.to = to;
@@ -20,7 +20,7 @@ public abstract class ArrowContainer {
 		this.toCardinality = Optional.ofNullable(toCardinality);
 		this.fromCardinality = Optional.ofNullable(fromCardinality);
 		this.displayContainer = new DisplayContainer();
-		this.stereotypeContainer = new LinkedList<StereotypeContainer>();
+		this.stereotypeContainers = new LinkedList<StereotypeContainer>();
 	}
 
 	public abstract String render(Renderer renderer);

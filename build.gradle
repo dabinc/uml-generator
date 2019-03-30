@@ -37,11 +37,4 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/org.ow2.asm/asm-tree
 	compile group: 'org.ow2.asm', name: 'asm-tree', version: '5.0.4'
-	
-	// https://mvnrepository.com/artifact/org.easymock/easymock/4.0.2
-	compile group: 'org.easymock', name: 'easymock', version: '4.0.2'
-	
-	
-
-	
 }
