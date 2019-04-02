@@ -23,7 +23,8 @@ public class FileDisplayTest {
 		String testText = "Example generated UML code";
 		testDisplay.display(testText);
 		File tempDirectory = new File("temp");
-		File toCheck = tempDirectory.listFiles()[tempDirectory.listFiles().length - 1];
+		File[] files = tempDirectory.listFiles();
+		File toCheck = files[files.length - 1];
 		Scanner scanner;
 		try {
 			scanner = new Scanner(toCheck);
@@ -41,7 +42,8 @@ public class FileDisplayTest {
 		String testText = "";
 		testDisplay.display(testText);
 		File tempDirectory = new File("temp");
-		File toCheck = tempDirectory.listFiles()[tempDirectory.listFiles().length - 1];
+		File[] files = tempDirectory.listFiles();
+		File toCheck = files[files.length - 1];
 		Scanner scanner;
 		try {
 			scanner = new Scanner(toCheck);
