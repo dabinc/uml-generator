@@ -28,6 +28,7 @@ public class FileDisplayTest {
 		try {
 			scanner = new Scanner(toCheck);
 			scanner.useDelimiter("\\Z");
+			assertTrue(scanner.hasNext());
 			assertEquals(testText, scanner.next());
 		} catch (FileNotFoundException e) {
 			fail(String.format("Could not find file %s", toCheck.toString()));
