@@ -25,6 +25,7 @@ public class FileDisplayTest {
 		File tempDirectory = new File("temp");
 		File[] files = tempDirectory.listFiles();
 		File toCheck = files[files.length - 1];
+		System.out.println("File under test: " + toCheck.getName());
 		Scanner scanner;
 		try {
 			scanner = new Scanner(toCheck);
