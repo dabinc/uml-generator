@@ -7,3 +7,9 @@ build:
     - gradle build
   tags:
     - gradle
+  artifacts:
+    untracked: true
+    paths:
+      - temp/
+    when: on_failure
+    expire_in: 1 day
