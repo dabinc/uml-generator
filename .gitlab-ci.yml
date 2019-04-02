@@ -7,3 +7,5 @@ build:
     - gradle build
   tags:
     - gradle
+  artifacts:
+    untracked: true
