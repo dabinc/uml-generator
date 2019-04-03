@@ -19,6 +19,8 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -27,6 +29,9 @@ import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 import Wrappers.FieldNodeWrapper;
 import Wrappers.InstructionNodeWrapper;
+import Wrappers.JumpInstructionNodeWrapper;
+import Wrappers.LabelInstructionNodeWrapper;
+import Wrappers.MethodInstructionNodeWrapper;
 import Wrappers.MethodNodeWrapper;
 import Wrappers.ParameterNodeWrapper;
 import Wrappers.ProgramWrapper;
@@ -68,41 +73,55 @@ public class ASMReader implements Reader {
 			}
 			if (shouldAdd) {
 				toReturn.classNodeWrappers.add(toAdd);
-				for(MethodNodeWrapper methodNodeWrapper : toAdd.methodNodeWrappers){
+				for (MethodNodeWrapper methodNodeWrapper : toAdd.methodNodeWrappers) {
 					toReturn.sequenceWrappers.add(getSequenceWrapper(methodNodeWrapper, toAdd.name));
 				}
 			}
 		}
 		return toReturn;
 	}
-	
-	private SequenceWrapper getSequenceWrapper(MethodNodeWrapper methodNodeWrapper, String methodCaller){
+
+	private SequenceWrapper getSequenceWrapper(MethodNodeWrapper methodNodeWrapper, String methodCaller) {
 		Map<String, Set<String>> calledMethodsTypeToNames = new HashMap<String, Set<String>>();
-		for(InstructionNodeWrapper instructionNodeWrapper : methodNodeWrapper.instructionNodeWrappers){
-			if(instructionNodeWrapper.methodName.isPresent() && instructionNodeWrapper.methodOwner.isPresent()){
-				if(!calledMethodsTypeToNames.containsKey(instructionNodeWrapper.methodOwner.get())){
+		for (InstructionNodeWrapper instructionNodeWrapper : methodNodeWrapper.instructionNodeWrappers) {
+			if (instructionNodeWrapper instanceof MethodInstructionNodeWrapper
+					&& instructionNodeWrapper.methodName.isPresent()
+					&& instructionNodeWrapper.methodOwner.isPresent()) {
+				if (!calledMethodsTypeToNames.containsKey(instructionNodeWrapper.methodOwner.get())) {
 					calledMethodsTypeToNames.put(instructionNodeWrapper.methodOwner.get(), new HashSet<String>());
 				}
-				calledMethodsTypeToNames.get(instructionNodeWrapper.methodOwner.get()).add(instructionNodeWrapper.methodName.get());
+				calledMethodsTypeToNames.get(instructionNodeWrapper.methodOwner.get())
+						.add(instructionNodeWrapper.methodName.get());
+			} else if (instructionNodeWrapper instanceof JumpInstructionNodeWrapper
+					&& instructionNodeWrapper.jumpTarget.isPresent()) {
+				// TODO implement this
+			} else if (instructionNodeWrapper instanceof LabelInstructionNodeWrapper
+					&& instructionNodeWrapper.label.isPresent()) {
+				// TODO implement this
 			}
 		}
 		return new SequenceWrapper(methodNodeWrapper.name, methodCaller, calledMethodsTypeToNames);
 	}
-	
-	private InstructionNodeWrapper getInstructionNodeWrapper(AbstractInsnNode abstractInsnNode){
-		Optional<String> methodName = Optional.empty();
-		Optional<String> methodOwner = Optional.empty();
-		if(abstractInsnNode instanceof MethodInsnNode){
+
+	private Optional<InstructionNodeWrapper> getInstructionNodeWrapper(AbstractInsnNode abstractInsnNode) {
+		if (abstractInsnNode instanceof MethodInsnNode) {
 			MethodInsnNode methodInsnNode = (MethodInsnNode) abstractInsnNode;
-			methodName = Optional.ofNullable(methodInsnNode.name);
-			if(methodInsnNode.owner != null){
-				methodOwner = Optional.ofNullable(Type.getObjectType(methodInsnNode.owner).getClassName());
-			}			
+			String methodOwner = null;
+			if (methodInsnNode.owner != null) {
+				methodOwner = Type.getObjectType(methodInsnNode.owner).getClassName();
+			}
+			return Optional.of(new MethodInstructionNodeWrapper(methodInsnNode.name, methodOwner));
+		} else if (abstractInsnNode instanceof JumpInsnNode) {
+			JumpInsnNode jumpInsnNode = (JumpInsnNode) abstractInsnNode;
+			return Optional.of(new JumpInstructionNodeWrapper(jumpInsnNode.label.getLabel().toString()));
+		} else if (abstractInsnNode instanceof LabelNode) {
+			LabelNode labelNode = (LabelNode) abstractInsnNode;
+			return Optional.of(new LabelInstructionNodeWrapper(labelNode.getLabel().toString()));
 		}
-		return new InstructionNodeWrapper(methodName, methodOwner);
+		return Optional.empty();
 	}
-	
-	private MethodNodeWrapper getMethodNodeWrapper(MethodNode methodNode){
+
+	private MethodNodeWrapper getMethodNodeWrapper(MethodNode methodNode) {
 		String type = Type.getReturnType(methodNode.desc).getClassName();
 		String name = methodNode.name;
 		String desc = methodNode.desc;
@@ -115,15 +134,18 @@ public class ASMReader implements Reader {
 		List<CardinalityWrapper> dependencies = new LinkedList<CardinalityWrapper>();
 		for (int i = 0; i < methodNode.instructions.size(); i++) {
 			AbstractInsnNode insn = methodNode.instructions.get(i);
-			InstructionNodeWrapper toAdd = getInstructionNodeWrapper(insn);
-			instructionNodeWrappers.add(toAdd);
-			if (toAdd.methodOwner.isPresent()) {
-				dependencies.add(new CardinalityWrapper(toAdd.methodOwner.get(), false));
+			Optional<InstructionNodeWrapper> toAdd = getInstructionNodeWrapper(insn);
+			if (toAdd.isPresent()) {
+				instructionNodeWrappers.add(toAdd.get());
+				if (toAdd.get().methodOwner.isPresent()) {
+					dependencies.add(new CardinalityWrapper(toAdd.get().methodOwner.get(), false));
+				}
 			}
 		}
 		Optional<String> signature = Optional.ofNullable(methodNode.signature);
 		List<Modifier> modifiers = Modifier.getModifiers(methodNode.access);
-		return new MethodNodeWrapper(name, desc, parameterNodeWrappers, signature, modifiers, type, instructionNodeWrappers, dependencies);
+		return new MethodNodeWrapper(name, desc, parameterNodeWrappers, signature, modifiers, type,
+				instructionNodeWrappers, dependencies);
 	}
 
 	private FieldNodeWrapper getFieldNodeWrapper(FieldNode fieldNode) {
@@ -157,8 +179,7 @@ public class ASMReader implements Reader {
 		}
 		if (classNode.methods != null) {
 			for (MethodNode methodNode : (List<MethodNode>) classNode.methods) {
-				methodNodeWrappers
-						.add(getMethodNodeWrapper(methodNode));//new MethodNodeWrapper(methodNode, Type.getReturnType(methodNode.desc).getClassName()));
+				methodNodeWrappers.add(getMethodNodeWrapper(methodNode));
 				if (methodNode.signature != null) {
 					SignatureReader sr = new SignatureReader(methodNode.signature);
 					SignatureVisitor sv = new RelationSignatureVisitor(Opcodes.ASM5, dependencies);
