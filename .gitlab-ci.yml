@@ -9,14 +9,13 @@ build:
   tags:
     - gradle
   artifacts:
-    reports: codequality
+    reports: 
+      codequality: code-quality-report.json
 
 test:
   stage: test
   script:
     - gradle test
-  tags:
-    -gradle
   artifacts:
     untracked: true
     when: on_failure
