@@ -170,18 +170,6 @@ public class ASMReader implements Reader {
 		List<InstructionNodeWrapper> instructionNodeWrappers = getInstructionNodeWrappers(
 				Arrays.asList(methodNode.instructions.toArray()));
 		List<CardinalityWrapper> dependencies = new LinkedList<CardinalityWrapper>();
-		// for (int i = 0; i < methodNode.instructions.size(); i++) {
-		// AbstractInsnNode insn = methodNode.instructions.get(i);
-		// Optional<InstructionNodeWrapper> toAdd =
-		// getInstructionNodeWrapper(insn);
-		// if (toAdd.isPresent()) {
-		// instructionNodeWrappers.add(toAdd.get());
-		// if (toAdd.get().methodOwner.isPresent()) {
-		// dependencies.add(new
-		// CardinalityWrapper(toAdd.get().methodOwner.get(), false));
-		// }
-		// }
-		// }
 		for (InstructionNodeWrapper instructionNodeWrapper : instructionNodeWrappers) {
 			if (instructionNodeWrapper instanceof MethodInstructionNodeWrapper) {
 				MethodInstructionNodeWrapper methodInstructionNodeWrapper = (MethodInstructionNodeWrapper) instructionNodeWrapper;
