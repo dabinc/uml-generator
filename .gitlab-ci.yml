@@ -1,15 +1,23 @@
 stages:
   - build
+  - test
 
 build:
   stage: build
   script:
-    - gradle build
+    - gradle build -x test
   tags:
     - gradle
   artifacts:
+    reports: codequality
+
+test:
+  stage: test
+  script:
+    - gradle test
+  tags:
+    -gradle
+  artifacts:
     untracked: true
-    paths:
-      - temp/
     when: on_failure
     expire_in: 1 day
