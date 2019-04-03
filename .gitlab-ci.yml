@@ -8,9 +8,6 @@ build:
     - gradle build -x test
   tags:
     - gradle
-  artifacts:
-    reports: 
-      codequality: code-quality-report.json
 
 test:
   stage: test
