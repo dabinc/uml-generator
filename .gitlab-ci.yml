@@ -13,6 +13,8 @@ test:
   stage: test
   script:
     - gradle test
+  tags:
+    - gradle
   artifacts:
     untracked: true
     when: on_failure
