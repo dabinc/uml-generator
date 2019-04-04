@@ -22,6 +22,7 @@ import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTask;
 import PreRenderTasks.DecoratorPatternDetectorPreRenderTask;
 import PreRenderTasks.ClassDiagramPreRenderTask;
 import PreRenderTasks.DependencyInversionPrincipleViolationDetectorPreRenderTask;
+import PreRenderTasks.GodClassDetectorPreRenderTask;
 import PreRenderTasks.InheritanceOverCompositionDetectorPreRenderTask;
 import PreRenderTasks.KeepOnlyPublicPreRenderTask;
 import PreRenderTasks.KeepPrivateAndUpPreRenderTask;
@@ -225,6 +226,7 @@ public class API {
 		this.preRenderBaseMap.put("-sequence=", new SequenceDiagramPreRenderTaskFactory());
 		
 		this.preRenderMap.put("-onlynonpublicconstructor", OnlyNonPublicConstructorDetectorPreRenderTask.class);
+		this.preRenderMap.put("-godclass", GodClassDetectorPreRenderTask.class);
 		this.preRenderMap.put("-singleton", SingletonPatternDetectorPreRenderTask.class);
 		this.preRenderMap.put("-inheritancecomposition", InheritanceOverCompositionDetectorPreRenderTask.class);
 		this.preRenderMap.put("-adapter", AdapterPatternDetectorPreRenderTask.class);
