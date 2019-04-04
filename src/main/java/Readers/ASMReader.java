@@ -20,7 +20,6 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -30,7 +29,6 @@ import Wrappers.CardinalityWrapper;
 import Wrappers.ClassNodeWrapper;
 import Wrappers.FieldNodeWrapper;
 import Wrappers.InstructionNodeWrapper;
-import Wrappers.JumpInstructionNodeWrapper;
 import Wrappers.LabelInstructionNodeWrapper;
 import Wrappers.MethodInstructionNodeWrapper;
 import Wrappers.MethodNodeWrapper;
@@ -99,19 +97,16 @@ public class ASMReader implements Reader {
 					calledMethodsTypeToNames.get(methodInstructionNodeWrapper.methodOwner.get())
 							.add(methodInstructionNodeWrapper.methodName.get());
 				}
-			} else if (instructionNodeWrapper instanceof JumpInstructionNodeWrapper) {
-				JumpInstructionNodeWrapper jumpInstructionNodeWrapper = (JumpInstructionNodeWrapper) instructionNodeWrapper;
-				if (jumpInstructionNodeWrapper.jumpTarget.isPresent()) {
-					if (!calledMethodsTypeToNames.containsKey(methodCaller)) {
-						calledMethodsTypeToNames.put(methodCaller, new HashSet<String>());
-					}
-					calledMethodsTypeToNames.get(methodCaller)
-							.add(initialMethodName + "." + jumpInstructionNodeWrapper.jumpTarget.get());
-				}
 			} else if (instructionNodeWrapper instanceof LabelInstructionNodeWrapper) {
 				LabelInstructionNodeWrapper labelInstructionNodeWrapper = (LabelInstructionNodeWrapper) instructionNodeWrapper;
+				if (!calledMethodsTypeToNames.containsKey(methodCaller)) {
+					calledMethodsTypeToNames.put(methodCaller, new HashSet<String>());
+				}
+				calledMethodsTypeToNames.get(methodCaller)
+						.add(initialMethodName + "." + labelInstructionNodeWrapper.label.get());
 				toReturn.addAll(getSequenceWrappers(methodCaller,
-						methodName + "." + labelInstructionNodeWrapper.label.get(), labelInstructionNodeWrapper.body, methodName));
+						initialMethodName + "." + labelInstructionNodeWrapper.label.get(),
+						labelInstructionNodeWrapper.body, initialMethodName));
 			}
 		}
 		toReturn.add(new SequenceWrapper(methodName, methodCaller, calledMethodsTypeToNames));
@@ -126,9 +121,6 @@ public class ASMReader implements Reader {
 				methodOwner = Type.getObjectType(methodInsnNode.owner).getClassName();
 			}
 			return Optional.of(new MethodInstructionNodeWrapper(methodInsnNode.name, methodOwner));
-		} else if (abstractInsnNode instanceof JumpInsnNode) {
-			JumpInsnNode jumpInsnNode = (JumpInsnNode) abstractInsnNode;
-			return Optional.of(new JumpInstructionNodeWrapper(jumpInsnNode.label.getLabel().toString()));
 		} else if (abstractInsnNode instanceof LabelNode) {
 			LabelNode labelNode = (LabelNode) abstractInsnNode;
 			return Optional.of(new LabelInstructionNodeWrapper(labelNode.getLabel().toString()));
