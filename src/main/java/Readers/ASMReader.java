@@ -101,16 +101,19 @@ public class ASMReader implements Reader {
 				}
 			} else if (instructionNodeWrapper instanceof LabelInstructionNodeWrapper) {
 				LabelInstructionNodeWrapper labelInstructionNodeWrapper = (LabelInstructionNodeWrapper) instructionNodeWrapper;
-				if (!calledMethodsTypeToNames.containsKey(methodCaller)) {
-					calledMethodsTypeToNames.put(methodCaller, new HashSet<String>());
+				if (labelInstructionNodeWrapper.label.isPresent()) {
+					if (!calledMethodsTypeToNames.containsKey(methodCaller)) {
+						calledMethodsTypeToNames.put(methodCaller, new HashSet<String>());
+					}
+					calledMethodsTypeToNames.get(methodCaller)
+							.add(methodName + "." + methodDesc + "." + labelInstructionNodeWrapper.label.get());
+					toReturn.addAll(getSequenceWrappers(methodCaller, methodName, labelInstructionNodeWrapper.body,
+							labelInstructionNodeWrapper.label, methodDesc));
 				}
-				calledMethodsTypeToNames.get(methodCaller)
-						.add(methodName + "." + methodDesc + "." + labelInstructionNodeWrapper.label.get());
-				toReturn.addAll(getSequenceWrappers(methodCaller, methodName, labelInstructionNodeWrapper.body,
-						labelInstructionNodeWrapper.label, methodDesc));
 			}
 		}
-		String fullMethodName = labelName.isPresent() ? methodName + "." + methodDesc + "." + labelName.get() : methodName + "." + methodDesc;
+		String fullMethodName = labelName.isPresent() ? methodName + "." + methodDesc + "." + labelName.get()
+				: methodName + "." + methodDesc;
 		toReturn.add(new SequenceWrapper(fullMethodName, methodCaller, calledMethodsTypeToNames));
 		return toReturn;
 	}
