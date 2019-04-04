@@ -74,7 +74,7 @@ public class ASMReader implements Reader {
 				toReturn.classNodeWrappers.add(toAdd);
 				for (MethodNodeWrapper methodNodeWrapper : toAdd.methodNodeWrappers) {
 					toReturn.sequenceWrappers.addAll(getSequenceWrappers(toAdd.name, methodNodeWrapper.name,
-							methodNodeWrapper.instructionNodeWrappers, methodNodeWrapper.name));
+							methodNodeWrapper.instructionNodeWrappers, Optional.empty(), methodNodeWrapper.desc));
 				}
 			}
 		}
@@ -82,20 +82,22 @@ public class ASMReader implements Reader {
 	}
 
 	private List<SequenceWrapper> getSequenceWrappers(String methodCaller, String methodName,
-			List<InstructionNodeWrapper> methodInstructions, String initialMethodName) {
+			List<InstructionNodeWrapper> methodInstructions, Optional<String> labelName, String methodDesc) {
 		Map<String, Set<String>> calledMethodsTypeToNames = new HashMap<String, Set<String>>();
 		List<SequenceWrapper> toReturn = new LinkedList<SequenceWrapper>();
 		for (InstructionNodeWrapper instructionNodeWrapper : methodInstructions) {
 			if (instructionNodeWrapper instanceof MethodInstructionNodeWrapper) {
 				MethodInstructionNodeWrapper methodInstructionNodeWrapper = (MethodInstructionNodeWrapper) instructionNodeWrapper;
 				if (methodInstructionNodeWrapper.methodName.isPresent()
-						&& methodInstructionNodeWrapper.methodOwner.isPresent()) {
+						&& methodInstructionNodeWrapper.methodOwner.isPresent()
+						&& methodInstructionNodeWrapper.methodDesc.isPresent()) {
 					if (!calledMethodsTypeToNames.containsKey(methodInstructionNodeWrapper.methodOwner.get())) {
 						calledMethodsTypeToNames.put(methodInstructionNodeWrapper.methodOwner.get(),
 								new HashSet<String>());
 					}
 					calledMethodsTypeToNames.get(methodInstructionNodeWrapper.methodOwner.get())
-							.add(methodInstructionNodeWrapper.methodName.get());
+							.add(methodInstructionNodeWrapper.methodName.get() + "."
+									+ methodInstructionNodeWrapper.methodDesc.get());
 				}
 			} else if (instructionNodeWrapper instanceof LabelInstructionNodeWrapper) {
 				LabelInstructionNodeWrapper labelInstructionNodeWrapper = (LabelInstructionNodeWrapper) instructionNodeWrapper;
@@ -103,13 +105,13 @@ public class ASMReader implements Reader {
 					calledMethodsTypeToNames.put(methodCaller, new HashSet<String>());
 				}
 				calledMethodsTypeToNames.get(methodCaller)
-						.add(initialMethodName + "." + labelInstructionNodeWrapper.label.get());
-				toReturn.addAll(getSequenceWrappers(methodCaller,
-						initialMethodName + "." + labelInstructionNodeWrapper.label.get(),
-						labelInstructionNodeWrapper.body, initialMethodName));
+						.add(methodName + "." + methodDesc + "." + labelInstructionNodeWrapper.label.get());
+				toReturn.addAll(getSequenceWrappers(methodCaller, methodName, labelInstructionNodeWrapper.body,
+						labelInstructionNodeWrapper.label, methodDesc));
 			}
 		}
-		toReturn.add(new SequenceWrapper(methodName, methodCaller, calledMethodsTypeToNames));
+		String fullMethodName = labelName.isPresent() ? methodName + "." + methodDesc + "." + labelName.get() : methodName + "." + methodDesc;
+		toReturn.add(new SequenceWrapper(fullMethodName, methodCaller, calledMethodsTypeToNames));
 		return toReturn;
 	}
 
@@ -120,7 +122,7 @@ public class ASMReader implements Reader {
 			if (methodInsnNode.owner != null) {
 				methodOwner = Type.getObjectType(methodInsnNode.owner).getClassName();
 			}
-			return Optional.of(new MethodInstructionNodeWrapper(methodInsnNode.name, methodOwner));
+			return Optional.of(new MethodInstructionNodeWrapper(methodInsnNode.name, methodOwner, methodInsnNode.desc));
 		} else if (abstractInsnNode instanceof LabelNode) {
 			LabelNode labelNode = (LabelNode) abstractInsnNode;
 			return Optional.of(new LabelInstructionNodeWrapper(labelNode.getLabel().toString()));

@@ -45,7 +45,7 @@ public class SequenceDiagramPreRenderTask implements PreRenderTask {
 						this.methodFullName.get().length() - methodName.length() - 1);
 				List<SequenceContainer> toRemove = new LinkedList<SequenceContainer>();
 				for (SequenceContainer sequenceContainer : toReturn.sequences) {
-					if (!sequenceContainer.sequenceWrapper.methodName.equals(methodName)
+					if (!sequenceContainer.sequenceWrapper.methodName.startsWith(methodName)
 							|| !sequenceContainer.sequenceWrapper.methodType.equals(className)) {
 						toRemove.add(sequenceContainer);
 					}
