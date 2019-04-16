@@ -5,9 +5,21 @@
  * For more details take a look at the Java Libraries chapter in the Gradle
  * user guide available at https://docs.gradle.org/4.3/userguide/java_library_plugin.html
  */
+ 
+ buildscript {
+ 	repositories {
+ 		mavenCentral()
+ 	}
+ 	
+ 	dependencies {
+ 		classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.4.0'
+ 	}
+ }
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'info.solidsoft.pitest'
+apply plugin: 'jacoco'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -15,6 +27,18 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
     mavenCentral()
+}
+
+pitest {
+	targetClasses = ['Containers.*', 'Displays.*', 'Enums.*', 'PreRenderTasks.*', 'Program.*', 'Readers.*', 'Utilities.*', 'Wrappers.*']
+	pitestVersion = '1.4.3'
+	threads = 4
+	outputFormats = ['HTML']
+	timestampedReports = false
+}
+
+jacoco {
+	toolVersion = "0.8.3"
 }
 
 dependencies {
