@@ -35,6 +35,7 @@ mutation:
 coverage:
   stage: qa
   script:
+    - gradle jacocoTestReport
     - gradle codeCoverageInfo
   tags:
     - gradle
