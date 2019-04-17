@@ -8,6 +8,7 @@
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'java'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -29,6 +30,7 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.+'
+    testCompile 'junit:junit:4.+'
     
     testCompile "org.mockito:mockito-core:2.+"
     
@@ -37,4 +39,6 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/org.ow2.asm/asm-tree
 	compile group: 'org.ow2.asm', name: 'asm-tree', version: '5.0.4'
+	
+	compile group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.4.+'
 }
