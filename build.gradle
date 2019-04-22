@@ -37,4 +37,6 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/org.ow2.asm/asm-tree
 	compile group: 'org.ow2.asm', name: 'asm-tree', version: '5.0.4'
+	
+	compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
 }
