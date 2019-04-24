@@ -1,5 +1,6 @@
 package Renderers;
 
+import Containers.ActivityContainer;
 import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
@@ -21,6 +22,8 @@ public interface Renderer {
 	public String render(ProgramContainer programContainer);
 	
 	public String renderSequenceContainer(SequenceContainer sequenceContainer);
+	
+	public String renderActivityContainer(ActivityContainer activityContainer);
 
 	public String renderClassContainer(ClassContainer classContainer);
 
