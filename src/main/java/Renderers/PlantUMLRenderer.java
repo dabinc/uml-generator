@@ -102,7 +102,7 @@ public class PlantUMLRenderer implements Renderer {
 			for(int i = 1; i < activityContainer.subActivities.size(); i++) {
 				toReturn.append("fork again");
 				toReturn.append(System.lineSeparator());
-				toReturn.append(renderActivityContainerRecursive(activityContainer.subActivities.get(0), visitedCopy));
+				toReturn.append(renderActivityContainerRecursive(activityContainer.subActivities.get(i), visitedCopy));
 			}
 			toReturn.append("endFork");
 			toReturn.append(System.lineSeparator());
@@ -129,7 +129,7 @@ public class PlantUMLRenderer implements Renderer {
 		
 		toReturn.append(activityNodeInformationWrapper.name);
 		if(!activityNodeInformationWrapper.subData.isEmpty()) {
-			toReturn.append(" ~");
+			toReturn.append("~");
 			toReturn.append(System.lineSeparator());
 			for(ActivityNodeInformationWrapper subData : activityNodeInformationWrapper.subData) {
 				toReturn.append(renderActivityNodeInformationWrapper(subData));
