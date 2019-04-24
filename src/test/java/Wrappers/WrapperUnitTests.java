@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ ActivityNodeInformationWrapperTest.class, ActivityNodeWrapperTest.class, CardinalityWrapperTest.class,
-		ClassNodeWrapperTest.class })
+		ClassNodeWrapperTest.class, FieldNodeWrapperTest.class })
 public class WrapperUnitTests {
 
 }
