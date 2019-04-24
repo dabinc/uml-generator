@@ -128,13 +128,15 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		
 		toReturn.append(activityNodeInformationWrapper.name);
-		toReturn.append(" {");
-		toReturn.append(System.lineSeparator());
-		for(ActivityNodeInformationWrapper subData : activityNodeInformationWrapper.subData) {
-			toReturn.append(renderActivityNodeInformationWrapper(subData));
+		if(!activityNodeInformationWrapper.subData.isEmpty()) {
+			toReturn.append(" ~");
 			toReturn.append(System.lineSeparator());
-		}
-		toReturn.append("}");		
+			for(ActivityNodeInformationWrapper subData : activityNodeInformationWrapper.subData) {
+				toReturn.append(renderActivityNodeInformationWrapper(subData));
+				toReturn.append(System.lineSeparator());
+			}
+			toReturn.append("$");	
+		}			
 		
 		return toReturn.toString();
 	}

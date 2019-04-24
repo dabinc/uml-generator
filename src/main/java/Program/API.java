@@ -2,6 +2,7 @@ package Program;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import Containers.ProgramContainer;
 import Displays.Display;
 import Displays.FileDisplay;
 import Displays.TextDisplay;
+import PreRenderTasks.ActivityDiagramPreRenderTaskFactory;
 import PreRenderTasks.AdapterPatternDetectorPreRenderTask;
 import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTask;
 import PreRenderTasks.DecoratorPatternDetectorPreRenderTask;
@@ -38,6 +40,7 @@ import PreRenderTasks.SequenceDiagramPreRenderTaskFactory;
 import PreRenderTasks.SingletonPatternDetectorPreRenderTask;
 import PreRenderTasks.UnderscoreNonFinalDetectorPreRenderTask;
 import Readers.ASMReader;
+import Readers.GitlabCIReader;
 import Readers.LambdaFilterReaderFactory;
 import Readers.PackageFilterReaderFactory;
 import Readers.Reader;
@@ -51,6 +54,7 @@ import Wrappers.ProgramWrapper;
 
 public class API {
 	private Map<String, ReaderFactory> readerMap;
+	private Map<String, Reader> readerBaseMap;
 	private Map<String, ReaderFactory> readerFilterMap;
 	private Map<String, Class<? extends PreRenderTask>> preRenderMap;
 	private Map<String, PreRenderTaskBaseFactory> preRenderBaseMap;
@@ -60,6 +64,7 @@ public class API {
 
 	public API() {
 		this.readerMap = new HashMap<String, ReaderFactory>();
+		this.readerBaseMap = new HashMap<String, Reader>();
 		this.readerFilterMap = new HashMap<String, ReaderFactory>();
 		this.preRenderMap = new HashMap<String, Class<? extends PreRenderTask>>();
 		this.preRenderBaseMap = new HashMap<String, PreRenderTaskBaseFactory>();
@@ -135,6 +140,14 @@ public class API {
 				}
 			}
 		}
+		
+		for (String option : map.keySet()) {
+			for(String key : this.readerBaseMap.keySet()) {
+				if(key.startsWith(option)) {
+					reader = this.readerBaseMap.get(key);
+				}
+			}
+		}
 
 		for (String option : map.keySet()) {
 			if (this.displayMap.containsKey(option)) {
@@ -162,11 +175,19 @@ public class API {
 
 		List<InputStream> classInputStreamList = new LinkedList<InputStream>();
 		for (String option : map.keySet()) {
-			String toCheck = "-runfordirectories";
-			if (option.equals(toCheck)) {
+			if (option.equals("-runfordirectories")) {
 				DirectoryHandler directoryParser = DirectoryHandler.getInstance();
 				for (String directory : map.get(option)) {
 					classInputStreamList.addAll(directoryParser.getJavaFileData(new File(directory)));
+				}
+			}
+			else if(option.equals("-gitlabCI")) {
+				if(map.get(option).size() > 0) {
+					try {
+						classInputStreamList.add(new FileInputStream(new File(map.get(option).get(0))));
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -217,6 +238,8 @@ public class API {
 	private void initializeHashMaps() {
 		this.readerMap.put("-recursive", new RecursiveReaderFactory());
 		
+		this.readerBaseMap.put("-gitlabCI=", new GitlabCIReader());
+		
 		this.readerFilterMap.put("-packages=", new PackageFilterReaderFactory());
 		this.readerFilterMap.put("-list=", new WhitelistBlacklistReaderFactory());
 		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
@@ -224,6 +247,7 @@ public class API {
 		this.displayMap.put("-file", new FileDisplay());
 		
 		this.preRenderBaseMap.put("-sequence=", new SequenceDiagramPreRenderTaskFactory());
+		this.preRenderBaseMap.put("-gitlabCI", new ActivityDiagramPreRenderTaskFactory());
 		
 		this.preRenderMap.put("-onlynonpublicconstructor", OnlyNonPublicConstructorDetectorPreRenderTask.class);
 		this.preRenderMap.put("-godclass", GodClassDetectorPreRenderTask.class);
