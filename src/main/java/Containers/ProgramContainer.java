@@ -2,6 +2,7 @@ package Containers;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import Wrappers.ClassNodeWrapper;
 import Wrappers.ProgramWrapper;
@@ -11,12 +12,14 @@ public class ProgramContainer {
 	public List<ArrowContainer> arrows;
 	public List<SkinParamContainer> skinParams;
 	public List<SequenceContainer> sequences;
+	public Optional<ActivityContainer> startActivity;
 	
 	public ProgramContainer(){
 		this.classes = new LinkedList<ClassContainer>();
 		this.arrows = new LinkedList<ArrowContainer>();
 		this.skinParams = new LinkedList<SkinParamContainer>();
 		this.sequences = new LinkedList<SequenceContainer>();
+		this.startActivity = Optional.empty();
 	}
 
 	public ProgramContainer(ProgramWrapper programWrapper) {
@@ -27,6 +30,7 @@ public class ProgramContainer {
 		this.arrows = new LinkedList<ArrowContainer>();
 		this.skinParams = new LinkedList<SkinParamContainer>();
 		this.sequences = new LinkedList<SequenceContainer>();
+		this.startActivity = Optional.empty();
 	}
 
 }
