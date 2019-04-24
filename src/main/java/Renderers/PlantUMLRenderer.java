@@ -120,7 +120,6 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(renderActivityContainerRecursive(activityContainer.onSuccess.get(), visitedCopy));
 		}
 		
-		toReturn.append(System.lineSeparator());
 		return toReturn.toString();
 	}
 	
