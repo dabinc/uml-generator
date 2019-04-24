@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ ActivityNodeInformationWrapperTest.class, ActivityNodeWrapperTest.class, CardinalityWrapperTest.class,
 		ClassNodeWrapperTest.class, FieldNodeWrapperTest.class, LabelInstructionNodeWrapperTest.class,
 		MethodInstructionNodeWrapperTest.class, MethodNodeWrapperTest.class, ParameterNodeWrapperTest.class,
-		ProgramWrapperTest.class })
+		ProgramWrapperTest.class, SequenceWrapperTest.class })
 public class WrapperUnitTests {
 
 }
