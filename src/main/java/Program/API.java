@@ -125,6 +125,13 @@ public class API {
 				map.put(tuple[0], args);
 			}
 		}
+		
+		for(String option : map.keySet()) {
+			if(option.equals("-clearTemp")) {
+				File toClear = new File("temp");
+				toClear.delete();
+			}
+		}
 
 		for (String option : map.keySet()) {
 			String toCheck = "-importdirectories";
