@@ -26,8 +26,9 @@ public class VisualDisplay implements Display {
 		if (!tempDirectory.exists()) {
 			tempDirectory.mkdir();
 		}
+		long currentTime = System.currentTimeMillis();
 		String fileDirectory = "temp" + System.getProperty("file.separator") + "UMLGenerator-"
-				+ System.currentTimeMillis() + ".txt";
+				+ currentTime + ".txt";
 		FileOutputStream svgOutput;
 
 		try {
@@ -41,7 +42,7 @@ public class VisualDisplay implements Display {
 			// Write the first image to "os"
 
 			try {
-				svgOutput = new FileOutputStream("UML/diagram.svg");
+				svgOutput = new FileOutputStream("temp" + System.getProperty("file.separator") + "UMLGenerator-" + currentTime + ".svg");
 				String desc = reader.generateImage(os, new FileFormatOption(FileFormat.SVG));
 				os.close();
 				svgOutput.write(os.toByteArray());
