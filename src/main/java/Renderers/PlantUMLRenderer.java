@@ -3,6 +3,7 @@ package Renderers;
 import java.util.LinkedList;
 import java.util.List;
 
+import Containers.ActivityContainer;
 import Containers.ArrowContainer;
 import Containers.AssociationArrowContainer;
 import Containers.ClassContainer;
@@ -22,6 +23,7 @@ import Containers.SequenceContainer;
 import Containers.SkinParamContainer;
 import Containers.StereotypeContainer;
 import Enums.Modifier;
+import Wrappers.ActivityNodeInformationWrapper;
 
 public class PlantUMLRenderer implements Renderer {
 
@@ -38,8 +40,11 @@ public class PlantUMLRenderer implements Renderer {
 		for (SkinParamContainer skinParamContainer : programContainer.skinParams) {
 			toReturn.append(renderSkinParamContainer(skinParamContainer));
 		}
-		for (SequenceContainer sequenceContainer : programContainer.sequences){
+		for (SequenceContainer sequenceContainer : programContainer.sequences) {
 			toReturn.append(renderSequenceContainer(sequenceContainer));
+		}
+		if (programContainer.startActivity.isPresent()) {
+			toReturn.append(renderActivityContainer(programContainer.startActivity.get()));
 		}
 		toReturn.append("@enduml" + System.lineSeparator());
 		return toReturn.toString();
@@ -49,13 +54,14 @@ public class PlantUMLRenderer implements Renderer {
 	public String renderSequenceContainer(SequenceContainer sequenceContainer) {
 		return renderSequenceContainerRecursive(sequenceContainer, new LinkedList<SequenceContainer>());
 	}
-	
-	private String renderSequenceContainerRecursive(SequenceContainer sequenceContainer, List<SequenceContainer> visited){
+
+	private String renderSequenceContainerRecursive(SequenceContainer sequenceContainer,
+			List<SequenceContainer> visited) {
 		StringBuilder toReturn = new StringBuilder();
 		List<SequenceContainer> visitedCopy = new LinkedList<SequenceContainer>();
 		visitedCopy.addAll(visited);
 		visitedCopy.add(sequenceContainer);
-		
+
 		for (SequenceContainer child : sequenceContainer.subsequences) {
 			toReturn.append(sequenceContainer.sequenceWrapper.methodType.replace('$', '_'));
 			toReturn.append(" -> ");
@@ -63,13 +69,74 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(" ++ : ");
 			toReturn.append(child.sequenceWrapper.methodName.replace('$', '_'));
 			toReturn.append(System.lineSeparator());
-			if(!visitedCopy.contains(child)){
+			if (!visitedCopy.contains(child)) {
 				toReturn.append(renderSequenceContainerRecursive(child, visitedCopy));
 			}
 			toReturn.append("return");
 			toReturn.append(System.lineSeparator());
 		}
 
+		return toReturn.toString();
+	}
+
+	@Override
+	public String renderActivityContainer(ActivityContainer activityContainer) {
+		return renderActivityContainerRecursive(activityContainer, new LinkedList<ActivityContainer>());
+	}
+	
+	private String renderActivityContainerRecursive(ActivityContainer activityContainer, List<ActivityContainer> visited) {
+		StringBuilder toReturn = new StringBuilder();
+		List<ActivityContainer> visitedCopy = new LinkedList<ActivityContainer>();
+		visitedCopy.addAll(visited);
+		visitedCopy.add(activityContainer);
+		
+		toReturn.append(":");
+		toReturn.append(renderActivityNodeInformationWrapper(activityContainer.activityNodeWrapper.info));
+		toReturn.append(";");
+		toReturn.append(System.lineSeparator());
+		
+		if(activityContainer.subActivities.size() > 0) {
+			toReturn.append("fork");
+			toReturn.append(System.lineSeparator());
+			toReturn.append(renderActivityContainerRecursive(activityContainer.subActivities.get(0), visitedCopy));
+			for(int i = 1; i < activityContainer.subActivities.size(); i++) {
+				toReturn.append("fork again");
+				toReturn.append(System.lineSeparator());
+				toReturn.append(renderActivityContainerRecursive(activityContainer.subActivities.get(i), visitedCopy));
+			}
+			toReturn.append("endFork");
+			toReturn.append(System.lineSeparator());
+		}
+		
+		if(activityContainer.onFailure.isPresent() && activityContainer.onSuccess.isPresent()) {
+			toReturn.append("if (succeed?) then (yes)");
+			toReturn.append(System.lineSeparator());
+			toReturn.append(renderActivityContainerRecursive(activityContainer.onSuccess.get(), visitedCopy));
+			toReturn.append("else (no)");
+			toReturn.append(System.lineSeparator());
+			toReturn.append(renderActivityContainerRecursive(activityContainer.onFailure.get(), visitedCopy));
+			toReturn.append("endif");
+		} else if(activityContainer.onSuccess.isPresent()) {
+			toReturn.append(renderActivityContainerRecursive(activityContainer.onSuccess.get(), visitedCopy));
+		}
+		
+		return toReturn.toString();
+	}
+	
+	private String renderActivityNodeInformationWrapper(ActivityNodeInformationWrapper activityNodeInformationWrapper) {
+		StringBuilder toReturn = new StringBuilder();
+		
+		toReturn.append(activityNodeInformationWrapper.name);
+		if(!activityNodeInformationWrapper.subData.isEmpty()) {
+			toReturn.append("~");
+			toReturn.append(System.lineSeparator());
+			for(ActivityNodeInformationWrapper subData : activityNodeInformationWrapper.subData) {
+				toReturn.append(renderActivityNodeInformationWrapper(subData));
+				toReturn.append(System.lineSeparator());
+			}
+			toReturn.append("$");	
+		}			
+		
 		return toReturn.toString();
 	}
 
@@ -218,7 +285,8 @@ public class PlantUMLRenderer implements Renderer {
 			toReturn.append(System.lineSeparator());
 			String stereotype = skinParamContainer.stereotype.isPresent()
 					&& skinParamContainer.stereotype.get().label.isPresent()
-							? "<<" + skinParamContainer.stereotype.get().label.get() + ">>" : "";
+							? "<<" + skinParamContainer.stereotype.get().label.get() + ">>"
+							: "";
 			if (skinParamContainer.arrowColor.isPresent()) {
 				toReturn.append("ArrowColor");
 				toReturn.append(stereotype);
@@ -251,10 +319,12 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(dependencyArrowContainer.to.classNodeWrapper.name);
 		toReturn.append(dependencyArrowContainer.toCardinality.isPresent()
-				? " \"" + dependencyArrowContainer.toCardinality.get() + "\"" : "");
+				? " \"" + dependencyArrowContainer.toCardinality.get() + "\""
+				: "");
 		toReturn.append(" <.. ");
 		toReturn.append(dependencyArrowContainer.fromCardinality.isPresent()
-				? "\"" + dependencyArrowContainer.fromCardinality.get() + "\" " : "");
+				? "\"" + dependencyArrowContainer.fromCardinality.get() + "\" "
+				: "");
 		toReturn.append(dependencyArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(dependencyArrowContainer.displayContainer));
@@ -270,10 +340,12 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(associationArrowContainer.to.classNodeWrapper.name);
 		toReturn.append(associationArrowContainer.toCardinality.isPresent()
-				? " \"" + associationArrowContainer.toCardinality.get() + "\"" : "");
+				? " \"" + associationArrowContainer.toCardinality.get() + "\""
+				: "");
 		toReturn.append(" <-- ");
 		toReturn.append(associationArrowContainer.fromCardinality.isPresent()
-				? "\"" + associationArrowContainer.fromCardinality.get() + "\" " : "");
+				? "\"" + associationArrowContainer.fromCardinality.get() + "\" "
+				: "");
 		toReturn.append(associationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(associationArrowContainer.displayContainer));
@@ -289,10 +361,12 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(inheritanceArrowContainer.to.classNodeWrapper.name);
 		toReturn.append(inheritanceArrowContainer.toCardinality.isPresent()
-				? " \"" + inheritanceArrowContainer.toCardinality.get() + "\"" : "");
+				? " \"" + inheritanceArrowContainer.toCardinality.get() + "\""
+				: "");
 		toReturn.append(" <|-- ");
 		toReturn.append(inheritanceArrowContainer.fromCardinality.isPresent()
-				? "\"" + inheritanceArrowContainer.fromCardinality.get() + "\" " : "");
+				? "\"" + inheritanceArrowContainer.fromCardinality.get() + "\" "
+				: "");
 		toReturn.append(inheritanceArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(inheritanceArrowContainer.displayContainer));
@@ -308,10 +382,12 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(implementationArrowContainer.to.classNodeWrapper.name);
 		toReturn.append(implementationArrowContainer.toCardinality.isPresent()
-				? " \"" + implementationArrowContainer.toCardinality.get() + "\"" : "");
+				? " \"" + implementationArrowContainer.toCardinality.get() + "\""
+				: "");
 		toReturn.append(" <|.. ");
 		toReturn.append(implementationArrowContainer.fromCardinality.isPresent()
-				? "\"" + implementationArrowContainer.fromCardinality.get() + "\" " : "");
+				? "\"" + implementationArrowContainer.fromCardinality.get() + "\" "
+				: "");
 		toReturn.append(implementationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(implementationArrowContainer.displayContainer));
@@ -328,10 +404,12 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(doubleAssociationArrowContainer.to.classNodeWrapper.name);
 		toReturn.append(doubleAssociationArrowContainer.toCardinality.isPresent()
-				? " \"" + doubleAssociationArrowContainer.toCardinality.get() + "\"" : "");
+				? " \"" + doubleAssociationArrowContainer.toCardinality.get() + "\""
+				: "");
 		toReturn.append(" <--> ");
 		toReturn.append(doubleAssociationArrowContainer.fromCardinality.isPresent()
-				? "\"" + doubleAssociationArrowContainer.fromCardinality.get() + "\" " : "");
+				? "\"" + doubleAssociationArrowContainer.fromCardinality.get() + "\" "
+				: "");
 		toReturn.append(doubleAssociationArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(doubleAssociationArrowContainer.displayContainer));
@@ -347,10 +425,12 @@ public class PlantUMLRenderer implements Renderer {
 		StringBuilder toReturn = new StringBuilder();
 		toReturn.append(doubleDependencyArrowContainer.to.classNodeWrapper.name);
 		toReturn.append(doubleDependencyArrowContainer.toCardinality.isPresent()
-				? " \"" + doubleDependencyArrowContainer.toCardinality.get() + "\"" : "");
+				? " \"" + doubleDependencyArrowContainer.toCardinality.get() + "\""
+				: "");
 		toReturn.append(" <..> ");
 		toReturn.append(doubleDependencyArrowContainer.fromCardinality.isPresent()
-				? "\"" + doubleDependencyArrowContainer.fromCardinality.get() + "\" " : "");
+				? "\"" + doubleDependencyArrowContainer.fromCardinality.get() + "\" "
+				: "");
 		toReturn.append(doubleDependencyArrowContainer.from.classNodeWrapper.name);
 		toReturn.append(" ");
 		toReturn.append(renderDisplayContainerHashTag(doubleDependencyArrowContainer.displayContainer));
