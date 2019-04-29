@@ -17,7 +17,6 @@ import Containers.ProgramContainer;
 import Displays.Display;
 import Displays.FileDisplay;
 import Displays.TextDisplay;
-import Displays.VisualDisplay;
 import PreRenderTasks.AdapterPatternDetectorPreRenderTask;
 import PreRenderTasks.BadDecoratorPatternDetectorPreRenderTask;
 import PreRenderTasks.DecoratorPatternDetectorPreRenderTask;
@@ -230,7 +229,6 @@ public class API {
 		this.readerFilterMap.put("-removelambdas", new LambdaFilterReaderFactory());
 		
 		this.displayMap.put("-file", new FileDisplay());
-		this.displayMap.put("-visual", new VisualDisplay());
 		
 		this.preRenderBaseMap.put("-sequence=", new SequenceDiagramPreRenderTaskFactory());
 		

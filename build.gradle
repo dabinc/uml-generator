@@ -43,5 +43,4 @@ dependencies {
 	compile group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.4.+'
 	compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
 	
-	compile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '6703'
 }
