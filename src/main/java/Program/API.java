@@ -134,6 +134,10 @@ public class API {
 		for(String option : map.keySet()) {
 			if(option.equals("-clearTemp")) {
 				File toClear = new File("temp");
+				File[] children = toClear.listFiles();
+				for(File child : children) {
+					child.delete();
+				}
 				toClear.delete();
 			}
 		}
