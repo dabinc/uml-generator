@@ -15,6 +15,11 @@
  		classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.3.0'
  	}
  }
+ 
+ plugins {
+    id 'checkstyle'
+    id "com.github.spotbugs" version "1.7.1"
+}
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
@@ -75,6 +80,13 @@ task codeCoverageInfo (dependsOn: jacocoTestReport) {
             }
         }
     }
+}
+
+tasks.withType(Checkstyle) {
+	reports {
+		xml.enabled false
+		html.enabled true
+	}
 }
 
 dependencies {

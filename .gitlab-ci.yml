@@ -6,28 +6,26 @@ stages:
 build:
   stage: build
   script:
-    - gradle build -x test
-  tags:
-    - gradle
+    - chmod +x ./gradlew
+    - ./gradlew build -x check test
 
 test:
   stage: test
   script:
-    - gradle test
-  tags:
-    - gradle
+    - chmod +x ./gradlew
+    - ./gradlew test
   artifacts:
     untracked: true
     when: on_failure
-    expire_in: 1 day
+    expire_in: 1 week
 
 mutation:
   stage: qa
   script:
-    - gradle pitest
-  tags:
-    - gradle
+    - chmod +x ./gradlew
+    - ./gradlew pitest
   artifacts:
+    untracked: true
     when: always
     expire_in: 1 week
   allow_failure: true
@@ -35,11 +33,22 @@ mutation:
 coverage:
   stage: qa
   script:
-    - gradle jacocoTestReport
-    - gradle codeCoverageInfo
-  tags:
-    - gradle
+    - chmod +x ./gradlew
+    - ./gradlew jacocoTestReport
+    - ./gradlew codeCoverageInfo
   artifacts:
+    untracked: true
+    when: always
+    expire_in: 1 week
+  allow_failure: true
+  
+checks:
+  stage: qa
+  script:
+  - chmod +x ./gradlew
+  - ./gradlew check
+  artifacts:
+    untracked: true
     when: always
     expire_in: 1 week
   allow_failure: true
