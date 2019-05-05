@@ -50,7 +50,8 @@ checks:
   stage: qa
   script:
   - gradle check
-  tags: gradle
+  tags:
+  - gradle
   artifacts:
     untracked: true
     when: always
