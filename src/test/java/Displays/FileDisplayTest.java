@@ -28,7 +28,7 @@ public class FileDisplayTest {
 		Scanner scanner;
 		try {
 			scanner = new Scanner(toCheck);
-			scanner.useDelimiter(System.lineSeparator());
+			scanner.useDelimiter(System.lineSeparator() + "|\n");
 			assertTrue(scanner.hasNext());
 			assertEquals(testText, scanner.next());
 		} catch (FileNotFoundException e) {
@@ -43,7 +43,7 @@ public class FileDisplayTest {
 		toCheck = files[files.length - 1];
 		try {
 			scanner = new Scanner(toCheck);
-			scanner.useDelimiter(System.lineSeparator());
+			scanner.useDelimiter(System.lineSeparator() + "|\n");
 			assertFalse(scanner.hasNext());
 		} catch (FileNotFoundException e) {
 			fail(String.format("Could not find file %s", toCheck.toString()));
