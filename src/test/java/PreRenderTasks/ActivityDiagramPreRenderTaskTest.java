@@ -28,7 +28,7 @@ public class ActivityDiagramPreRenderTaskTest {
 	}
 
 	@Test
-	public void testGetProgramContainer() {
+	public void testGetProgramContainerPresent() {
 		ActivityNodeWrapper startActivity = Mockito.mock(ActivityNodeWrapper.class);
 		startActivity.subActivities = new LinkedList<ActivityNodeWrapper>();
 		startActivity.onFailure = Optional.empty();
@@ -67,6 +67,13 @@ public class ActivityDiagramPreRenderTaskTest {
 
 		assertTrue(actual.startActivity.get().onSuccess.isPresent());
 		assertEquals(onSuccess, actual.startActivity.get().onSuccess.get().activityNodeWrapper);
+	}
+	
+	@Test
+	public void testGetProgramContainerNotPresent() {
+		ProgramContainer actual = this.toTest.getProgramContainer();
+		
+		assertFalse(actual.startActivity.isPresent());
 	}
 
 }
