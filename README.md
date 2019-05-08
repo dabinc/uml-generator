@@ -1,5 +1,7 @@
 # UML Generator
 
+[![pipeline status](https://ada.csse.rose-hulman.edu/choid/uml-generator/badges/master/pipeline.svg)](https://ada.csse.rose-hulman.edu/choid/uml-generator/commits/master)
+
 ## How to use
 
 Pass in any full classnames to args(ex: java.lang.String, not just String)
