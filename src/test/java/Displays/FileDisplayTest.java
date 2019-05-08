@@ -19,7 +19,7 @@ public class FileDisplayTest {
 	}
 
 	@Test
-	public void testDisplayWithText() {
+	public void testDisplay() {
 		String testText = "Example generated UML code";
 		testDisplay.display(testText);
 		File tempDirectory = new File("temp");
@@ -28,27 +28,9 @@ public class FileDisplayTest {
 		Scanner scanner;
 		try {
 			scanner = new Scanner(toCheck);
-			scanner.useDelimiter("\\Z");
+			scanner.useDelimiter(System.lineSeparator());
 			assertTrue(scanner.hasNext());
 			assertEquals(testText, scanner.next());
-		} catch (FileNotFoundException e) {
-			fail(String.format("Could not find file %s", toCheck.toString()));
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void testDisplayWithoutText() {
-		String testText = "";
-		testDisplay.display(testText);
-		File tempDirectory = new File("temp");
-		File[] files = tempDirectory.listFiles();
-		File toCheck = files[files.length - 1];
-		Scanner scanner;
-		try {
-			scanner = new Scanner(toCheck);
-			scanner.useDelimiter("\\Z");
-			assertFalse(scanner.hasNext());
 		} catch (FileNotFoundException e) {
 			fail(String.format("Could not find file %s", toCheck.toString()));
 			e.printStackTrace();
