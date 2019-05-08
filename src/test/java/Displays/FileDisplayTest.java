@@ -35,21 +35,6 @@ public class FileDisplayTest {
 			fail(String.format("Could not find file %s", toCheck.toString()));
 			e.printStackTrace();
 		}
-		
-		testText = "";
-		testDisplay.display(testText);
-		tempDirectory = new File("temp");
-		files = tempDirectory.listFiles();
-		toCheck = files[files.length - 1];
-		assertEquals(0, toCheck.length());
-		try {
-			scanner = new Scanner(toCheck);
-			scanner.useDelimiter(System.lineSeparator());
-			assertFalse(scanner.hasNext());
-		} catch (FileNotFoundException e) {
-			fail(String.format("Could not find file %s", toCheck.toString()));
-			e.printStackTrace();
-		}
 	}
 
 }

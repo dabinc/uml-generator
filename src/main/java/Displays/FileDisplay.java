@@ -17,9 +17,7 @@ public class FileDisplay implements Display {
 		try {
 			writer = new PrintWriter("temp" + System.getProperty("file.separator") + "UMLGenerator-"
 					+ System.currentTimeMillis() + ".txt", "UTF-8");
-			if(umlCode.length() > 0) {
-				writer.print(umlCode);
-			}
+			writer.print(umlCode);
 			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
