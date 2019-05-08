@@ -41,6 +41,7 @@ public class FileDisplayTest {
 		tempDirectory = new File("temp");
 		files = tempDirectory.listFiles();
 		toCheck = files[files.length - 1];
+		assertEquals(0, toCheck.length());
 		try {
 			scanner = new Scanner(toCheck);
 			scanner.useDelimiter(System.lineSeparator());
