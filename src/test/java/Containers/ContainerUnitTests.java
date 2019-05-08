@@ -5,7 +5,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ActivityContainerTest.class, AssociationArrowContainerTest.class, DependencyArrowContainerTest.class, DoubleAssociationArrowContainerTest.class })
+@SuiteClasses({ ActivityContainerTest.class, AssociationArrowContainerTest.class, DependencyArrowContainerTest.class,
+		DoubleAssociationArrowContainerTest.class, DoubleDependencyArrowContainerTest.class,
+		ImplementationArrowContainerTest.class, InheritanceArrowContainerTest.class })
 public class ContainerUnitTests {
 
 }
