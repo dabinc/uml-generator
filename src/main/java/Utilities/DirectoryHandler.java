@@ -37,7 +37,7 @@ public class DirectoryHandler {
 					try {
 						toReturn.add(new FileInputStream(file));
 					} catch (FileNotFoundException e) {
-						System.out.println("Directory Handler could not find file: " + file + "closing program");
+						System.out.println("Directory Handler could not find file: " + file.toString() + "closing program");
 						System.exit(1);
 					}
 				}
