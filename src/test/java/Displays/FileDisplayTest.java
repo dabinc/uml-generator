@@ -2,8 +2,10 @@ package Displays;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 import org.junit.Before;
@@ -12,6 +14,7 @@ import org.junit.Test;
 public class FileDisplayTest {
 
 	private Display testDisplay;
+	private final InputStream defaultIn = System.in;
 
 	@Before
 	public void setup() {
@@ -21,6 +24,8 @@ public class FileDisplayTest {
 	@Test
 	public void testDisplay() {
 		String testText = "Example generated UML code";
+		String fileName = "exampleFileName";
+		System.setIn(new ByteArrayInputStream(fileName.getBytes()));
 		testDisplay.display(testText);
 		File tempDirectory = new File("temp");
 		File[] files = tempDirectory.listFiles();
@@ -35,6 +40,7 @@ public class FileDisplayTest {
 			fail(String.format("Could not find file %s", toCheck.toString()));
 			e.printStackTrace();
 		}
+		System.setIn(defaultIn);
 	}
 
 }

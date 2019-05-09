@@ -28,8 +28,6 @@ public class LambdaFilterReader extends ReaderDecorator {
 			}
 			classNodeWrapper.methodNodeWrappers.removeAll(toRemove);
 		}
-
 		return toReturn;
 	}
-
 }

@@ -58,25 +58,25 @@ public class GitlabCIReader implements Reader {
 			for (int i = 0; i < stages.size() - 1; i++) {
 				stages.get(i).onSuccess = Optional.of(stages.get(i + 1));
 			}
-			
+
 			jobs = populateJobsWithStage(jobs);
-			
+
 			linkStagesToJobs(stages, jobs);
 		}
 
 		return toReturn;
 	}
-	
+
 	private List<ActivityNodeWrapper> populateJobsWithStage(List<ActivityNodeWrapper> jobs) {
-		for(ActivityNodeWrapper job : jobs) {
+		for (ActivityNodeWrapper job : jobs) {
 			boolean hasStage = false;
-			for(ActivityNodeInformationWrapper jobInfo : job.info.subData) {
-				if(jobInfo.name.equals("stage")) {
+			for (ActivityNodeInformationWrapper jobInfo : job.info.subData) {
+				if (jobInfo.name.equals("stage")) {
 					hasStage = true;
 					break;
 				}
 			}
-			if(!hasStage) {
+			if (!hasStage) {
 				ActivityNodeInformationWrapper stageToAdd = new ActivityNodeInformationWrapper("stage");
 				stageToAdd.subData.add(new ActivityNodeInformationWrapper("test"));
 				job.info.subData.add(stageToAdd);
@@ -84,12 +84,13 @@ public class GitlabCIReader implements Reader {
 		}
 		return jobs;
 	}
-	
+
 	private void linkStagesToJobs(List<ActivityNodeWrapper> stages, List<ActivityNodeWrapper> jobs) {
-		for(ActivityNodeWrapper stage : stages) {
-			for(ActivityNodeWrapper job : jobs) {
-				for(ActivityNodeInformationWrapper jobInfo : job.info.subData) {
-					if(jobInfo.name.equals("stage") && !jobInfo.subData.isEmpty() && jobInfo.subData.get(0).name.equals(stage.info.name)) {
+		for (ActivityNodeWrapper stage : stages) {
+			for (ActivityNodeWrapper job : jobs) {
+				for (ActivityNodeInformationWrapper jobInfo : job.info.subData) {
+					if (jobInfo.name.equals("stage") && !jobInfo.subData.isEmpty()
+							&& jobInfo.subData.get(0).name.equals(stage.info.name)) {
 						stage.subActivities.add(job);
 					}
 				}
@@ -113,8 +114,6 @@ public class GitlabCIReader implements Reader {
 		} else if (data instanceof String) {
 			toReturn.subData.add(new ActivityNodeInformationWrapper((String) data));
 		}
-
 		return toReturn;
 	}
-
 }
