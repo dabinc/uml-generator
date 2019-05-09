@@ -68,4 +68,34 @@ public class SpeedAcceptanceTests {
 		assertTrue(endTime - startTime < 300);
 	}
 
+	@Test
+	public void testLargeProjectClassDiagram() {
+		String[] args = new String[1];
+		args[0] = "-runfordirectories=build" + System.getProperty("file.separator") + "classes"
+				+ System.getProperty("file.separator") + "java" + System.getProperty("file.separator") + "main"
+				+ System.getProperty("file.separator") + "TestFiles" + System.getProperty("file.separator")
+				+ "AcceptanceTestProjects" + System.getProperty("file.separator") + "LargeProject";
+
+		long startTime = System.currentTimeMillis();
+		Main.main(args);
+		long endTime = System.currentTimeMillis();
+		
+		assertTrue(endTime - startTime < 1000);
+	}
+	
+	@Test
+	public void testLargeProjectSequenceDiagram() {
+		String[] args = new String[2];
+		args[0] = "-runfordirectories=build" + System.getProperty("file.separator") + "classes"
+				+ System.getProperty("file.separator") + "java" + System.getProperty("file.separator") + "main"
+				+ System.getProperty("file.separator") + "TestFiles" + System.getProperty("file.separator")
+				+ "AcceptanceTestProjects" + System.getProperty("file.separator") + "LargeProject";
+		args[1] = "-sequence";
+
+		long startTime = System.currentTimeMillis();
+		Main.main(args);
+		long endTime = System.currentTimeMillis();
+		
+		assertTrue(endTime - startTime < 4000);
+	}
 }
