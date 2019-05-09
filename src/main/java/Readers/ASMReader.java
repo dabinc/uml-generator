@@ -56,7 +56,7 @@ public class ASMReader implements Reader {
 			try {
 				classReaderList.add(new ClassReader(inputStream));
 			} catch (IOException e) {
-				 System.err.println("An IOException was caught :"+e.getMessage());
+				 System.err.println("An IOException was caught trying to get fullTypeName:"+e.getMessage());
 				e.printStackTrace();
 			}
 		}
