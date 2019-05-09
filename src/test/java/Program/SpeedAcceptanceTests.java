@@ -65,7 +65,7 @@ public class SpeedAcceptanceTests {
 		Main.main(args);
 		long endTime = System.currentTimeMillis();
 		
-		assertTrue(endTime - startTime < 300);
+		assertTrue(endTime - startTime < 500);
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class SpeedAcceptanceTests {
 		Main.main(args);
 		long endTime = System.currentTimeMillis();
 		
-		assertTrue(endTime - startTime < 500);
+		assertTrue(endTime - startTime < 750);
 	}
 	
 	@Test
@@ -96,6 +96,6 @@ public class SpeedAcceptanceTests {
 		Main.main(args);
 		long endTime = System.currentTimeMillis();
 		
-		assertTrue(endTime - startTime < 2000);
+		assertTrue(endTime - startTime < 3000);
 	}
 }
