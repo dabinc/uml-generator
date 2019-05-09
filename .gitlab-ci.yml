@@ -7,7 +7,7 @@ build:
   stage: build
   script:
     - chmod +x ./gradlew
-    - ./gradlew build -x check test
+    - ./gradlew build -x check -x test
 
 test:
   stage: test
