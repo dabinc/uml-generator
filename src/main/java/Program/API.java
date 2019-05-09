@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import Containers.ProgramContainer;
 import Displays.Display;
@@ -110,6 +111,7 @@ public class API {
 					}
 				}
 			} catch (IOException e) {
+				System.err.println("An IOException was caught :"+ e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -197,6 +199,7 @@ public class API {
 					try {
 						classInputStreamList.add(new FileInputStream(new File(map.get(option).get(0))));
 					} catch (FileNotFoundException e) {
+						System.err.println("A FileNotFoundException was caught in API: gitlabCI");
 						e.printStackTrace();
 					}
 				}
@@ -228,6 +231,7 @@ public class API {
 					try {
 						preRenderTask = PreRenderTaskDecorationFactory.getInstance().getPreRenderTask((Class<? extends PreRenderTask>) Class.forName(preRenderTaskClassName), preRenderTask);
 					} catch (ClassNotFoundException e) {
+						System.err.println("A ClassNotFoundException was caught in API: prerendertasks");
 						e.printStackTrace();
 					}
 				}

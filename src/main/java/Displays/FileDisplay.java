@@ -17,16 +17,18 @@ public class FileDisplay implements Display {
 		}
 		try {
 			Scanner in = new Scanner(System.in);
-			System.out.println("What is the filename?\n");
+			System.out.println("What is the filename?   ");
 			String input = in.nextLine();
 			File file = new File(input);
 			writer = new PrintWriter("temp" + System.getProperty("file.separator") + file + ".txt", "UTF-8");
 			writer.print(umlCode);
 			writer.close();
-			System.out.println("Successfully generated txt file.");
+			System.out.println("Successfully generated txt file. Refresh Temp File Folder! ");
 		} catch (FileNotFoundException e) {
+			System.out.println("File Not Found.");
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
+			System.out.println("Unable to support the character encoding.");
 			e.printStackTrace();
 		}
 	}
