@@ -56,6 +56,7 @@ public class ASMReader implements Reader {
 			try {
 				classReaderList.add(new ClassReader(inputStream));
 			} catch (IOException e) {
+				 System.err.println("An IOException was caught :"+e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -304,6 +305,7 @@ public class ASMReader implements Reader {
 				Class<?> clazz = Class.forName(fullTypeName);
 				toReturn = Collection.class.isAssignableFrom(clazz) || Map.class.isAssignableFrom(clazz);
 			} catch (ClassNotFoundException e) {
+				System.err.println("A ClassNotFoundException was caught: " + e.getMessage());
 				e.printStackTrace();
 			}
 			if (!toReturn && this.parent != null) {
