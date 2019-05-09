@@ -19,8 +19,10 @@ public class FileDisplay implements Display {
 			Scanner in = new Scanner(System.in);
 			System.out.println("What is the filename?   ");
 			String input = in.nextLine();
-			File file = new File(input);
-			writer = new PrintWriter("temp" + System.getProperty("file.separator") + file + ".txt", "UTF-8");
+			if(input.length() == 0) {
+				input = "UMLGenerator-" + System.currentTimeMillis();
+			}
+			writer = new PrintWriter("temp" + System.getProperty("file.separator") + input + ".txt", "UTF-8");
 			writer.print(umlCode);
 			writer.close();
 			System.out.println("Successfully generated txt file. Refresh Temp File Folder! ");
