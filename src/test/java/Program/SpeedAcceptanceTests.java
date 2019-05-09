@@ -96,6 +96,6 @@ public class SpeedAcceptanceTests {
 		Main.main(args);
 		long endTime = System.currentTimeMillis();
 		
-		assertTrue(endTime - startTime < 3000);
+		assertTrue(endTime - startTime < 3500);
 	}
 }
