@@ -34,7 +34,7 @@ public class SpeedAcceptanceTests {
 		Main.main(args);
 		long endTime = System.currentTimeMillis();
 		
-		assertTrue(endTime - startTime < 1750);
+		assertTrue(endTime - startTime < 2000);
 	}
 	
 	@Test
