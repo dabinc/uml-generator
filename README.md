@@ -38,4 +38,4 @@ The default options are to not recurse into superclasses and interfacess, privat
 ## Work Contributions
 
 For milestone 1:
-We pretty much pair programmed the whole time since we had to set up the infrastructure of the codebase. For future work we will probably work more individually.
+We pretty much pair programmed the whole time since we had to set up the infrastructure of the codebase. For future work we will probably work more individually.# uml-generator
